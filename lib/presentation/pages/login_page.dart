@@ -9,23 +9,49 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
+    final userController = TextEditingController();
     final passwordController = TextEditingController();
     final loginController = LoginController();
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+
+    final darkGradient = LinearGradient(
+      colors: [Colors.black, const Color(0xFF212121)], // gris oscuro manual
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    final lightGradient = LinearGradient(
+      colors: [
+        const Color(0xFFFFFFFF), // white
+        const Color(0xFFE0E0E0), // gris claro
+        const Color(0xFFBDBDBD), // gris medio
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+
     return NavigationView(
       content: ScaffoldPage(
-        header: const PageHeader(title: Text('Login')),
-        content: Center(
+        content: Container(
+          decoration: BoxDecoration(
+            gradient: themeProvider.isDarkMode ? darkGradient : lightGradient,
+          ),
+          child: Stack(
+            children: [
+          Center(
           child: SizedBox(
             width: 300,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CustomInput(label: 'Email', controller: emailController),
+                CustomInput(label: 'Usuario',placeholder: 'usuario123', controller: userController),
                 const SizedBox(height: 20),
                 CustomInput(
                   label: 'Contraseña',
+                  placeholder: '******',
                   controller: passwordController,
                   obscureText: true,
                 ),
@@ -34,7 +60,7 @@ class LoginPage extends StatelessWidget {
                   child: const Text('Ingresar'),
                   onPressed: () async {
                     final succes = await loginController.login(
-                      emailController.text,
+                      userController.text,
                       passwordController.text,
                     );
                     if (succes) {
@@ -68,7 +94,22 @@ class LoginPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
+        //text version app
+        Align(alignment: Alignment.bottomRight,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'V 1.0.0',
+            style: TextStyle(
+              fontSize: 12,
+              color: themeProvider.isDarkMode ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.7)
+            ),
+          ),
+        ),)
+            ],
+          )
+          ),
+        )
     );
   }
 }

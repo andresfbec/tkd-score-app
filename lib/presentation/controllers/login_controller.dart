@@ -1,8 +1,8 @@
 class LoginController {
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String user, String password) async {
 
     //simulation
-    if (email == 'pepito07@gmail.com' && password == '12345') {
+    if (user == 'usuario123' && password == '12345') {
       return true;
     } else {
       return false;
