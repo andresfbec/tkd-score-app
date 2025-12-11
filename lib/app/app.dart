@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       title: 'TKD App',
       debugShowCheckedModeBanner: false,
       theme: FluentThemeData(
-        accentColor: Colors.blue,
+        accentColor: Colors.accentColors[5],
         brightness: themeProvider.isDarkMode
             ? Brightness.dark
             : Brightness.light,

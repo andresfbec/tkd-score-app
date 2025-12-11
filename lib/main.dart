@@ -5,7 +5,7 @@ import 'core/theme/theme_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 
-void main() { //start app
+void main() { // start app
 
   // Inicializar SQLite FFI
   sqfliteFfiInit();
