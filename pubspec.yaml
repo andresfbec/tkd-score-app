@@ -49,6 +49,9 @@ dependencies:
   # Information about the application package
   package_info_plus: ^8.0.0
 
+  # Equatable para comparar objetos de forma sencilla
+  equatable: ^2.0.5
+
 
 dev_dependencies:
   flutter_test:

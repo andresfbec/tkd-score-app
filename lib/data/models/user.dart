@@ -1,28 +1,34 @@
 import 'package:equatable/equatable.dart';
+import 'headquarters.dart';
 
-class Grub extends Equatable {
+class User extends Equatable {
   final int id;
-  final String name;
-  final String description;
+  final String username;
+  final String password;
+  final Headquarters headquarters;
 
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int synchronized;
 
-  const Grub({
+  const User({
     required this.id,
-    required this.name,
-    required this.description,
+    required this.username,
+    required this.password,
+    required this.headquarters,
     this.createdAt,
     this.updatedAt,
     this.synchronized = 0,
   });
 
-  factory Grub.fromJson(Map<String, dynamic> json) {
-    return Grub(
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
       id: json['id'] as int,
-      name: json['name'] as String,
-      description: json['description'] as String,
+      username: json['username'] as String,
+      password: json['password'] as String,
+      headquarters: Headquarters.fromJson(
+        json['headquarters'] as Map<String, dynamic>,
+      ),
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,
@@ -36,26 +42,29 @@ class Grub extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
-      'description': description,
+      'username': username,
+      'password': password,
+      'headquarters': headquarters.toJson(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'synchronized': synchronized,
     };
   }
 
-  Grub copyWith({
+  User copyWith({
     int? id,
-    String? name,
-    String? description,
+    String? username,
+    String? password,
+    Headquarters? headquarters,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? synchronized,
   }) {
-    return Grub(
+    return User(
       id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
+      username: username ?? this.username,
+      password: password ?? this.password,
+      headquarters: headquarters ?? this.headquarters,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       synchronized: synchronized ?? this.synchronized,
@@ -64,11 +73,12 @@ class Grub extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        createdAt,
-        updatedAt,
-        synchronized,
-      ];
+    id,
+    username,
+    password,
+    headquarters,
+    createdAt,
+    updatedAt,
+    synchronized,
+  ];
 }
