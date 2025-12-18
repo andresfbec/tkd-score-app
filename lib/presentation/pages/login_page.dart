@@ -26,7 +26,7 @@ class LoginPage extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: const AssetImage('assets/images/background_login.jpeg'),
-                  fit: BoxFit.cover, // ajusta la imagen al tamaño de la pantalla
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -56,13 +56,29 @@ class LoginPage extends StatelessWidget {
                               height: 80,
                             ),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 5),
                           Text(
                             'TKD Tournament Manager',
                             style: TextStyle(
                               fontSize: 21,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : const Color.fromARGB(255, 61, 61, 61),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 16, 45, 83),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          SizedBox(
+                            width: 310, // ancho controlado
+                            child: Divider(
+                              style: DividerThemeData(
+                                thickness: 1,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.3)
+                                      : Colors.black.withOpacity(0.3),
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -70,6 +86,7 @@ class LoginPage extends StatelessWidget {
                             label: 'Usuario',
                             placeholder: 'Ingrese su usuario',
                             controller: userController,
+                            width: 350,
                           ),
                           const SizedBox(height: 20),
                           CustomInput(
@@ -77,10 +94,11 @@ class LoginPage extends StatelessWidget {
                             placeholder: '••••••••',
                             obscureText: true,
                             controller: passwordController,
+                            width: 350,
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 20),
                           SizedBox(
-                            width: double.infinity,
+                            width: 350,
                             height: 40,
                             child: FilledButton(
                               child: const Text(
@@ -119,6 +137,7 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
+
             // Versión en esquina inferior derecha
             Align(
               alignment: Alignment.bottomRight,
