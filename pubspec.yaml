@@ -46,6 +46,12 @@ dependencies:
   # State Management
   provider: ^6.0.5
 
+  # Information about the application package
+  package_info_plus: ^8.0.0
+
+  # Equatable para comparar objetos de forma sencilla
+  equatable: ^2.0.5
+
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +79,7 @@ flutter:
   assets: 
   # image asset used in login page
     - assets/images/logo.png 
+    - assets/images/background_login.jpeg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

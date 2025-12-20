@@ -7,6 +7,7 @@ class CustomInput extends StatelessWidget {
   final String? placeholder;
   final bool obscureText;
   final TextEditingController controller;
+  final double? width; // 👈 nuevo parámetro opcional
 
   const CustomInput({
     super.key,
@@ -14,6 +15,7 @@ class CustomInput extends StatelessWidget {
     this.placeholder,
     this.obscureText = false,
     required this.controller,
+    this.width, // 👈 inicialización
   });
 
   @override
@@ -23,6 +25,27 @@ class CustomInput extends StatelessWidget {
     final labelColor = themeProvider.isDarkMode
         ? Colors.white.withOpacity(0.9)
         : Colors.black.withOpacity(0.8);
+
+    final input = TextBox(
+      placeholder: placeholder ?? '',
+      obscureText: obscureText,
+      controller: controller,
+      decoration: WidgetStateProperty.all(
+        BoxDecoration(
+          // Color translúcido en vez de blanco sólido
+          color: themeProvider.isDarkMode
+              ? Colors.white.withOpacity(0.35)
+              : Colors.white.withOpacity(0.35),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: themeProvider.isDarkMode
+                ? Colors.white.withOpacity(0.15)
+                : Colors.black.withOpacity(0.12),
+            width: 1,
+          ),
+        ),
+      ),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,11 +59,9 @@ class CustomInput extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        TextBox(
-          placeholder: placeholder ?? '',
-          obscureText: obscureText,
-          controller: controller,
-        ),
+        width != null
+            ? SizedBox(width: width, child: input) // 👈 control de ancho
+            : input,
       ],
     );
   }
