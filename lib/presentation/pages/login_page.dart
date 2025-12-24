@@ -4,6 +4,8 @@ import '../controllers/login_controller.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_input.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../app/routes.dart';
+
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -126,6 +128,9 @@ class LoginPage extends StatelessWidget {
                                     ],
                                   ),
                                 );
+                              } else {
+                                Navigator.pushReplacementNamed(
+                                    context, Routes.home); //home page
                               }
                             },
                           ),
