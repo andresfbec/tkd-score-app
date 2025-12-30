@@ -7,7 +7,7 @@ class CustomInput extends StatelessWidget {
   final String? placeholder;
   final bool obscureText;
   final TextEditingController controller;
-  final double? width; // 👈 nuevo parámetro opcional
+  final double? width; // parametro opcional para el ancho 
 
   const CustomInput({
     super.key,
@@ -15,7 +15,7 @@ class CustomInput extends StatelessWidget {
     this.placeholder,
     this.obscureText = false,
     required this.controller,
-    this.width, // 👈 inicialización
+    this.width,
   });
 
   @override
@@ -60,7 +60,7 @@ class CustomInput extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         width != null
-            ? SizedBox(width: width, child: input) // 👈 control de ancho
+            ? SizedBox(width: width, child: input) // control de ancho
             : input,
       ],
     );
