@@ -13,7 +13,7 @@ class Student extends Equatable {
   final int weight;
   final int height;
   final int size;
-  final Headquarters headquarters;
+  // final Headquarters headquarters;
   final Belts belts;
 
   final DateTime? createdAt;
@@ -31,7 +31,7 @@ class Student extends Equatable {
     required this.weight,
     required this.height,
     required this.size,
-    required this.headquarters,
+    // required this.headquarters,
     required this.belts,
     this.createdAt,
     this.updatedAt,
@@ -49,9 +49,9 @@ class Student extends Equatable {
       weight: json['weight'] as int,
       height: json['height'] as int,
       size: json['size'] as int,
-      headquarters: Headquarters.fromJson(
-        json['headquarters'] as Map<String, dynamic>,
-      ),
+      // headquarters: Headquarters.fromJson(
+      //   json['headquarters'] as Map<String, dynamic>,
+      // ),
       belts: Belts.fromJson(json['belts'] as Map<String, dynamic>),
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
@@ -74,7 +74,7 @@ class Student extends Equatable {
       'weight': weight,
       'height': height,
       'size': size,
-      'headquarters': headquarters.toJson(),
+      // 'headquarters': headquarters.toJson(),
       'belts': belts.toJson(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -93,7 +93,7 @@ class Student extends Equatable {
     int? weight,
     int? height,
     int? size,
-    Headquarters? headquarters,
+    // Headquarters? headquarters,
     Belts? belts,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -110,7 +110,7 @@ class Student extends Equatable {
       weight: weight ?? this.weight,
       height: height ?? this.height,
       size: size ?? this.size,
-      headquarters: headquarters ?? this.headquarters,
+      // headquarters: headquarters ?? this.headquarters,
       belts: belts ?? this.belts,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -130,7 +130,7 @@ class Student extends Equatable {
     weight,
     height,
     size,
-    headquarters,
+    // headquarters,
     belts,
     createdAt,
     updatedAt,

@@ -10,6 +10,8 @@ class DatabaseConnection {
       final databasePath = await databaseFactoryFfi.getDatabasesPath();
       final path = join(databasePath, 'tkd_.db');
 
+      print('🗄️ DB REAL PATH: $path'); // verificar donde guarda la db 
+
       _db = await databaseFactoryFfi.openDatabase(
         path,
         options: OpenDatabaseOptions(
