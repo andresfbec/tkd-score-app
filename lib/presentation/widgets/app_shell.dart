@@ -74,46 +74,10 @@ class _AppShellState extends State<AppShell> {
         Icon(FluentIcons.contact, size: 15),
         const SizedBox(width: 6),
         Text(
-          userName,
+          'Usuario: $userName',
           style: const TextStyle(
             fontSize: 14, 
             fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        _separator(),
-
-        Icon(FluentIcons.medal, size: 16),
-        const SizedBox(width: 6),
-        Text(
-          'Torneos Activos: $tournamentsRegistered',
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        const SizedBox(width: 25),
-
-        Icon(FluentIcons.city_next, size: 16),
-        const SizedBox(width: 6),
-        Text(
-          'Sedes Registradas: $registeredCenters',
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        const SizedBox(width: 25),
-
-        Icon(FluentIcons.people, size: 16),
-        const SizedBox(width: 6),
-        Text(
-          'Alumnos registrados: $registeredStudents',
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
           ),
         ),
       ],
@@ -125,7 +89,6 @@ class _AppShellState extends State<AppShell> {
   // ============================================================
   Widget _buildHeaderRight() {
     final Color cloudColor = isCloudSynced ? Colors.blue : Colors.grey;
-    final Color connectionColor = isOnline ? Colors.green : Colors.red;
 
     return Padding(
       padding: const EdgeInsets.only(top: 12, right: 10),

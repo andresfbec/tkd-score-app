@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class Headquarters extends Equatable {
+class HeadquartersModel {
   final int id;
   final String name;
   final String address;
@@ -11,7 +9,7 @@ class Headquarters extends Equatable {
   final DateTime? updatedAt;
   final int synchronized;
 
-  const Headquarters({
+  HeadquartersModel({
     required this.id,
     required this.name,
     required this.address,
@@ -22,67 +20,33 @@ class Headquarters extends Equatable {
     this.synchronized = 0,
   });
 
-  factory Headquarters.fromJson(Map<String, dynamic> json) {
-    return Headquarters(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      address: json['address'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      city: json['city'] as String,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+  factory HeadquartersModel.fromMap(Map<String, dynamic> map) {
+    return HeadquartersModel(
+      id: map['id'] as int,
+      name: map['name'] as String,
+      address: map['address'] as String,
+      phoneNumber: map['phone_number'] as String,
+      city: map['city'] as String,
+      createdAt: map['created_at'] != null
+          ? DateTime.parse(map['created_at'])
           : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+      updatedAt: map['updated_at'] != null
+          ? DateTime.parse(map['updated_at'])
           : null,
-      synchronized: json['synchronized'] as int? ?? 0,
+      synchronized: map['synchronized'] as int? ?? 0,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
       'address': address,
-      'phoneNumber': phoneNumber,
+      'phone_number': phoneNumber,
       'city': city,
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
       'synchronized': synchronized,
     };
   }
-
-  Headquarters copyWith({
-    int? id,
-    String? name,
-    String? address,
-    String? phoneNumber,
-    String? city,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    int? synchronized,
-  }) {
-    return Headquarters(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      address: address ?? this.address,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      city: city ?? this.city,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      synchronized: synchronized ?? this.synchronized,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    id,
-    name,
-    address,
-    phoneNumber,
-    city,
-    createdAt,
-    updatedAt,
-    synchronized,
-  ];
 }

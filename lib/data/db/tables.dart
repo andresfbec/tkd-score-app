@@ -18,7 +18,7 @@ List<String> dbTables = [
   CREATE TABLE IF NOT EXISTS headquarters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    adress TEXT,
+    address TEXT,
     city TEXT,
     phone TEXT,
     last_date TEXT DEFAULT CURRENT_TIMESTAMP,
