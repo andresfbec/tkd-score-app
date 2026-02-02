@@ -1,45 +1,63 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:tkd_score/data/mappers/users_mapper.dart';
+
 import '../../domain/repositories/user_repository.dart';
+import '../datasources/user_dao.dart';
 import '../../domain/entities/user_entity.dart';
-import '../db/database.dart';
 
 class UserRepositoryImpl implements UserRepository {
+  final UserDao dao;
+  UserRepositoryImpl(this.dao);
+
   @override
-  Future<UserEntity> login({
-    required String username,
-    required String password,
-  }) async {
-    try {
-      final Database db = await DatabaseConnection.getDatabase();
+  Future<int> create(String user, String password, int headquartersId) {
+    return dao.insert(
+      username: user,
+      password: password,
+      headquartersId: headquartersId,
+    );
+  }
 
-      final result = await db.query(
-        'users',
-        where: 'username = ? AND is_active = 1',
-        whereArgs: [username],
-        limit: 1,
-      );
+  @override
+  Future<int> update(int id, String user, String password, int headquartersId) {
+    return dao.update(
+      id: id,
+      username: user,
+      password: password,
+      headquartersId: headquartersId,
+    );
+  }
 
-      if (result.isEmpty) {
-        throw LoginFailure.userNotFound;
-      }
+  @override
+  Future<int> delete(int id) {
+    return dao.delete(id);
+  }
 
-      final userRow = result.first;
+  @override
+  Future<List<UserEntity>> getAll() async {
+    final result = await dao.findAll();
+    return result.map(UsersMapper.fromMap).toList();
+  }
 
-      if (userRow['password'] != password) {
-        throw LoginFailure.wrongPassword;
-      }
+  @override
+  Future<UserEntity?> getById(int id) async {
+    final map = await dao.findById(id);
+    return map != null ? UsersMapper.fromMap(map) : null;
+  }
 
-      // ⚠️ headquarters se resuelve después
-      return UserEntity(
-        id: userRow['id'] as int,
-        username: userRow['username'] as String,
-        headquarters: throw UnimplementedError(),
-      );
-    } catch (e) {
-      if (e is LoginFailure) {
-        rethrow;
-      }
-      throw LoginFailure.databaseError;
-    }
+  @override
+  Future<String?> getUsernameById(String username) async {
+    final map = await dao.getByUsername(username);
+    return map != null ? map['password'] as String : null;
+  }
+
+  @override
+  Future<UserEntity?> find({String? username, int? headquartersId}) async {
+    final filters = <String, dynamic>{};
+
+    if (username != null) filters['username'] = username;
+    if (headquartersId != null) filters['headquartersId'] = headquartersId;
+
+    final result = await dao.query(filters: filters);
+    return result != null ? UsersMapper.fromMap(result) : null;
   }
 }

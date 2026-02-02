@@ -1,11 +1,20 @@
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/headquarters_entity.dart';
+import '../../domain/usecases/headquarters/create_headquart.dart';
+import '../../domain/usecases/headquarters/get_headquart.dart';
 import '../../domain/repositories/headquarters_repository.dart';
 
 class HeadquartersController extends ChangeNotifier {
+  final CreateHeadquart createHeadquart;
+  final GetHeadquart getHeadquart;
+
   final HeadquartersRepository repository;
 
-  HeadquartersController(this.repository);
+  HeadquartersController(
+    this.createHeadquart,
+    this.repository,
+    this.getHeadquart,
+  );
 
   List<HeadquartersEntity> headquarters = [];
   int _counter = 0; // testing de botón
@@ -25,7 +34,7 @@ class HeadquartersController extends ChangeNotifier {
       phoneNumber: phone,
     );
 
-    await repository.create(entity);
+    await createHeadquart.call(entity);
     await loadHeadquarters();
   }
 
@@ -34,15 +43,16 @@ class HeadquartersController extends ChangeNotifier {
     _counter++;
 
     await createHeadquarters(
-      name: 'Sede $_counter', 
-      address: 'Calle $_counter', 
-      city: 'Ciudad $_counter', 
-      phone: '3521458$_counter');
-    }
+      name: 'Sede $_counter',
+      address: 'Calle $_counter',
+      city: 'Ciudad $_counter',
+      phone: '3521458$_counter',
+    );
+  }
 
   // READ
   Future<void> loadHeadquarters() async {
-    headquarters = await repository.getAll();
+    headquarters = await getHeadquart.call();
     notifyListeners(); // CLAVE
   }
 

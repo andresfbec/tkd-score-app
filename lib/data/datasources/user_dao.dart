@@ -1,40 +1,36 @@
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../../core/constants/fields.dart';
 
-class HeadquartersDao {
+class UserDao {
   final Database db;
 
-  HeadquartersDao(this.db);
+  UserDao(this.db);
 
   Future<int> insert({
-    required String name,
-    required String address,
-    required String city,
-    required String phone,
+    required String username,
+    required String password,
+    required int headquartersId,
   }) async {
-    return await db.insert('headquarters', {
-      'name': name,
-      'address': address,
-      'city': city,
-      'phone': phone,
+    return await db.insert('users', {
+      'username': username,
+      'password': password,
+      'headquarterId': headquartersId,
       'createdAt': DateTime.now().toIso8601String(),
     });
   }
 
   Future<int> update({
     required int id,
-    required String name,
-    required String address,
-    required String city,
-    required String phone,
+    required String username,
+    required String password,
+    required int headquartersId,
   }) async {
     return await db.update(
-      'headquarters',
+      'users',
       {
-        'name': name,
-        'address': address,
-        'city': city,
-        'phone': phone,
+        'username': username,
+        'password': password,
+        'headquarterId': headquartersId,
         'updatedAt': DateTime.now().toIso8601String(),
       },
       where: 'id = ?',
@@ -43,42 +39,60 @@ class HeadquartersDao {
   }
 
   Future<int> delete(int pk) async {
-    return await db.delete('headquarters', where: 'id = ?', whereArgs: [pk]);
+    return await db.delete('users', where: 'id = ?', whereArgs: [pk]);
   }
 
   Future<List<Map<String, dynamic>>> findAll() async {
-    return await db.query('headquarters');
+    return await db.query('users');
   }
 
-  Future<Map<String, dynamic>?> findById(int id) async {
+  Future<Map<String, dynamic>?> findById(int pk) async {
     final result = await db.query(
-      'headquarters',
+      'users',
       where: 'id = ?',
-      whereArgs: [id],
+      whereArgs: [pk],
       limit: 1,
     );
 
-    return result.isNotEmpty ? result.first : null;
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> getByUsername(String username) async {
+    final result = await db.query(
+      'users',
+      where: 'username = ?',
+      whereArgs: [username],
+      limit: 1,
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
   }
 
   Future<Map<String, dynamic>?> query({
     required Map<String, dynamic> filters,
   }) async {
-    if (filters.isEmpty) return null;
+    if (filters.isEmpty) {
+      return null;
+    }
 
     final whereClauses = <String>[];
     final whereArgs = <dynamic>[];
 
     for (final entry in filters.entries) {
-      if (!fieldsHeadquarters.contains(entry.key)) {
+      if (!fieldsUsers.contains(entry.key)) {
         throw ArgumentError('Campo no permitido: ${entry.key}');
       }
       whereClauses.add('${entry.key} = ?');
       whereArgs.add(entry.value);
     }
-
     final result = await db.query(
-      'headquarters',
+      'users',
       where: whereClauses.join(' AND '),
       whereArgs: whereArgs,
       limit: 1,

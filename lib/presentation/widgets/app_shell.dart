@@ -6,6 +6,7 @@ import '../pages/tournaments_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/judges_page.dart';
 import '../pages/headquarters_page.dart';
+import '../pages/user_pages_t.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -54,6 +55,11 @@ class _AppShellState extends State<AppShell> {
             body: JudgesPage(),
           ),
           PaneItem(
+            icon: Icon(FluentIcons.people),
+            title: Text('Usuarios'),
+            body: UserPage(),
+          ),
+          PaneItem(
             icon: Icon(FluentIcons.settings),
             title: Text('Ajustes'),
             body: SettingsPage(),
@@ -75,10 +81,7 @@ class _AppShellState extends State<AppShell> {
         const SizedBox(width: 6),
         Text(
           'Usuario: $userName',
-          style: const TextStyle(
-            fontSize: 14, 
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
       ],
     );
