@@ -40,7 +40,7 @@ class HeadquartersController extends ChangeNotifier {
       phone: '3521458$_counter');
     }
 
-  // READ
+  // READ obtener todas las sedes
   Future<void> loadHeadquarters() async {
     headquarters = await repository.getAll();
     notifyListeners(); // CLAVE
@@ -48,5 +48,29 @@ class HeadquartersController extends ChangeNotifier {
 
   Future<HeadquartersEntity?> getById(int id) {
     return repository.getById(id);
+  }
+
+  Future<void> deleteById(int id) async {
+    await repository.deleteById(id);
+    await loadHeadquarters();
+  }
+
+  Future<void> updateHeaderquarters({
+    required int id,
+    required String name,
+    required String address,
+    required String city,
+    required String phone,
+  }) async {
+    final entity = HeadquartersEntity(
+      id: id,
+      name: name,
+      address: address,
+      city: city,
+      phoneNumber: phone,
+    );
+
+    await repository.updateById(entity);
+    await loadHeadquarters();
   }
 }
