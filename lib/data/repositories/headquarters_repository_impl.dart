@@ -29,4 +29,20 @@ class HeadquartersRepositoryImpl implements HeadquartersRepository {
     final map = await dao.findById(id);
     return map != null ? HeadquartersMapper.fromMap(map) : null;
   }
+
+  @override
+  Future<int> deleteById(int id) {
+    return dao.deleteById(id);
+  }
+
+  @override
+  Future<int> updateById(HeadquartersEntity headquarters) {
+    return dao.updateById(
+      id: headquarters.id,
+      name: headquarters.name,
+      address: headquarters.address,
+      city: headquarters.city,
+      phone: headquarters.phoneNumber,
+    );
+  }
 }

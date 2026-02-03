@@ -77,7 +77,7 @@ class _AppShellState extends State<AppShell> {
           'Usuario: $userName',
           style: const TextStyle(
             fontSize: 14, 
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
