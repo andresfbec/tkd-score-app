@@ -8,14 +8,14 @@ class LoginController extends ChangeNotifier {
   LoginController(this.loginUser);
 
   Future<bool> login(String user, String password) async {
-    final result = await loginUser.call(user, password);
-    notifyListeners();
-    return result;
+    // final result = await loginUser.call(user, password);
+    // notifyListeners();
+    // return result;
 
-    // if (user == 'usuario123' && password == '12345') {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
+    if (user == 'usuario123' && password == '12345') {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
