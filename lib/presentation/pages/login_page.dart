@@ -4,8 +4,8 @@ import '../controllers/login_controller.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_input.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../domain/usecases/users/login_user.dart';
 import '../../app/routes.dart';
-
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userController = TextEditingController();
     final passwordController = TextEditingController();
-    final loginController = LoginController();
+    final loginController = context.read<LoginController>();
 
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
@@ -45,7 +45,9 @@ class LoginPage extends StatelessWidget {
                   shadowColor: Colors.black.withOpacity(0.18),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 32),
+                      horizontal: 32,
+                      vertical: 32,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -115,22 +117,23 @@ class LoginPage extends StatelessWidget {
                                 showDialog(
                                   context: context,
                                   builder: (context) => ContentDialog(
-                                    title:
-                                        const Text('Error inicio de sesión'),
-                                    content:
-                                        const Text('Credenciales inválidas'),
+                                    title: const Text('Error inicio de sesión'),
+                                    content: const Text(
+                                      'Credenciales inválidas',
+                                    ),
                                     actions: [
                                       FilledButton(
                                         child: const Text('Cerrar'),
-                                        onPressed: () =>
-                                            Navigator.pop(context),
+                                        onPressed: () => Navigator.pop(context),
                                       ),
                                     ],
                                   ),
                                 );
                               } else {
                                 Navigator.pushReplacementNamed(
-                                    context, Routes.home); //home page
+                                  context,
+                                  Routes.home,
+                                ); //home page
                               }
                             },
                           ),

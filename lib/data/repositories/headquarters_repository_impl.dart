@@ -19,6 +19,22 @@ class HeadquartersRepositoryImpl implements HeadquartersRepository {
   }
 
   @override
+  Future<int> update(HeadquartersEntity headquarters) {
+    return dao.update(
+      id: headquarters.id,
+      name: headquarters.name,
+      address: headquarters.address,
+      city: headquarters.city,
+      phone: headquarters.phoneNumber,
+    );
+  }
+
+  @override
+  Future<int> delete(int id) {
+    return dao.delete(id);
+  }
+
+  @override
   Future<List<HeadquartersEntity>> getAll() async {
     final result = await dao.findAll();
     return result.map(HeadquartersMapper.fromMap).toList();
@@ -31,18 +47,21 @@ class HeadquartersRepositoryImpl implements HeadquartersRepository {
   }
 
   @override
-  Future<int> deleteById(int id) {
-    return dao.deleteById(id);
-  }
+  Future<HeadquartersEntity?> find({
+    String? name,
+    String? city,
+    String? phone,
+    String? address,
+  }) async {
+    final filters = <String, dynamic>{};
 
-  @override
-  Future<int> updateById(HeadquartersEntity headquarters) {
-    return dao.updateById(
-      id: headquarters.id,
-      name: headquarters.name,
-      address: headquarters.address,
-      city: headquarters.city,
-      phone: headquarters.phoneNumber,
-    );
+    if (name != null) filters['name'] = name;
+    if (address != null) filters['address'] = address;
+    if (city != null) filters['city'] = city;
+    if (phone != null) filters['phone'] = phone;
+
+    final data = await dao.query(filters: filters);
+
+    return data != null ? HeadquartersMapper.fromMap(data) : null;
   }
 }
