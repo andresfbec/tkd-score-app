@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:io';
+import '../../core/constants/app.dart';
 
 class ConnectionStatus extends StatefulWidget {
   const ConnectionStatus({super.key});
@@ -37,7 +38,9 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
   // Verifica acceso real a Internet
   Future<bool> _hasInternet() async {
     try {
-      final result = await InternetAddress.lookup('google.com'); // ping a Google DNS comprobación 
+      final result = await InternetAddress.lookup(
+        'google.com',
+      ); // ping a Google DNS comprobación
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } catch (_) {
       return false;
@@ -46,16 +49,23 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
 
   @override
   Widget build(BuildContext context) {
-    final Color connectionColor = isOnline ? Colors.green : Colors.red;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(FluentIcons.wifi, size: 16, color: connectionColor),
+            children: [
+        Icon(
+          isOnline ? FluentIcons.wifi : FluentIcons.warning,
+          size: AppTypography.iconMedium, // 16.0
+          color: isOnline ? AppColors.success : AppColors.error,
+        ),
         const SizedBox(width: 4),
         Text(
           isOnline ? 'Conectado' : 'Sin conexión',
-          style: TextStyle(fontSize: 12, color: connectionColor),
+          style: TextStyle(
+            fontSize: AppTypography.caption,
+            color: isOnline ? AppColors.success : AppColors.error,
+            fontWeight: AppTypography.regular,
+          ),
         ),
       ],
     );

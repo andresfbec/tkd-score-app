@@ -1,6 +1,7 @@
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'tables.dart';
+import '../../core/constants/database.dart'; // constantes de la db
 
 class DatabaseConnection {
   static Database? _db;
@@ -8,14 +9,14 @@ class DatabaseConnection {
   static Future<Database> _openDb() async {
     if (_db == null) {
       final databasePath = await databaseFactoryFfi.getDatabasesPath();
-      final path = join(databasePath, 'tkd_.db');
+      final path = join(databasePath, DatabaseConstants.databaseName);
 
-      print('🗄️ DB REAL PATH: $path'); // verificar donde guarda la db 
+      print('🗄️ DB REAL PATH: $path'); // verificar donde guarda la db
 
       _db = await databaseFactoryFfi.openDatabase(
         path,
         options: OpenDatabaseOptions(
-          version: 1,
+          version: DatabaseConstants.databaseVersion,
           onCreate: (db, version) async {
             for (final table in dbTables) {
               print("Ejecutando SQL: $table");

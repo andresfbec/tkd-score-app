@@ -1,5 +1,7 @@
+// lib/presentation/widgets/app_shell.dart
 import 'package:fluent_ui/fluent_ui.dart';
-import './connection_status.dart'; // Estado de conexión a Internet
+import './connection_status.dart';
+import '../../core/constants/app.dart';
 
 // ----- PAGES -----
 import '../pages/tournaments_page.dart';
@@ -18,80 +20,156 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int index = 0;
 
-  // Datos simulados (listos para estado real)
+  // Datos simulados
   final String userName = 'AdminTKD05';
-  final int tournamentsRegistered = 3;
-  final int registeredCenters = 5;
-  final int registeredStudents = 150;
   final bool isCloudSynced = true;
-  final bool isOnline = true;
 
   @override
   Widget build(BuildContext context) {
     return NavigationView(
       appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
-        title: _buildHeaderLeft(), // Usuario + KPIs
-        actions: _buildHeaderRight(), // Estado del sistema
+        title: _buildHeaderLeft(),
+        actions: _buildHeaderRight(),
       ),
       pane: NavigationPane(
         selected: index,
         onChanged: (i) => setState(() => index = i),
         displayMode: PaneDisplayMode.auto,
-        items: [
-          PaneItem(
-            icon: Icon(FluentIcons.trophy2),
-            title: Text('Torneos'),
-            body: TournamentsPage(),
-          ),
-          PaneItem(
-            icon: Icon(FluentIcons.city_next),
-            title: Text('Sedes'),
-            body: HeadquartersPage(),
-          ),
-          PaneItem(
-            icon: Icon(FluentIcons.contact_card),
-            title: Text('Jueces'),
-            body: JudgesPage(),
-          ),
-          PaneItem(
-            icon: Icon(FluentIcons.people),
-            title: Text('Usuarios'),
-            body: UserPage(),
-          ),
-          PaneItem(
-            icon: Icon(FluentIcons.settings),
-            title: Text('Ajustes'),
-            body: SettingsPage(),
-          ),
-        ],
+        items: _buildSidebarItems(),
       ),
     );
   }
 
   // ============================================================
-  // IZQUIERDA — USUARIO + KPIs de información rapida
+  // ITEMS DEL SIDEBAR/MENÚ
   // ============================================================
-  Widget _buildHeaderLeft() {
-    return Row(
+  List<NavigationPaneItem> _buildSidebarItems() {
+    return [
+      PaneItem(
+        icon: Icon(FluentIcons.trophy2, size: AppTypography.iconLarge), // 16.0
+        title: Text(
+          'Torneos',
+          style: TextStyle(
+            fontSize: AppTypography.titleSmall,    // 14.0
+            fontWeight: AppTypography.medium,      // w500
+          ),
+        ),
+        body: const TournamentsPage(),
+      ),
+      PaneItem(
+        icon: Icon(FluentIcons.city_next, size: AppTypography.iconLarge), // 16.0
+        title: Text(
+          'Sedes',
+          style: TextStyle(
+            fontSize: AppTypography.titleSmall,
+            fontWeight: AppTypography.medium,
+          ),
+        ),
+        body: const HeadquartersPage(),
+      ),
+      PaneItem(
+        icon: Icon(FluentIcons.contact_card, size: AppTypography.iconLarge), // 16.0
+        title: Text(
+          'Jueces',
+          style: TextStyle(
+            fontSize: AppTypography.titleSmall,
+            fontWeight: AppTypography.medium,
+          ),
+        ),
+        body: const JudgesPage(),
+      ),
+      PaneItem(
+        icon: Icon(FluentIcons.people, size: AppTypography.iconLarge), // 16.0
+        title: Text(
+          'Usuarios',
+          style: TextStyle(
+            fontSize: AppTypography.titleSmall,
+            fontWeight: AppTypography.medium,
+          ),
+        ),
+        body: const UserPage(),
+      ),
+      PaneItem(
+        icon: Icon(FluentIcons.settings, size: AppTypography.iconLarge), // 16.0
+        title: Text(
+          'Ajustes',
+          style: TextStyle(
+            fontSize: AppTypography.titleSmall,
+            fontWeight: AppTypography.medium,
+          ),
+        ),
+        body: const SettingsPage(),
+      ),
+    ];
+  }
+
+  // ============================================================
+  // IZQUIERDA — USUARIO
+  // ============================================================
+// ============================================================
+// BOTÓN DE USUARIO (HEADER IZQUIERDO) - SOLO ESTO CAMBIA
+// ============================================================
+Widget _buildHeaderLeft() {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: Colors.grey.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(FluentIcons.contact, size: 15),
-        const SizedBox(width: 6),
+        // Avatar con AppColors.info
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: AppColors.info.withOpacity(0.15), // Usando tu constante
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppColors.info.withOpacity(0.4),
+              width: 1.5,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              userName.substring(0, 1).toUpperCase(),
+              style: TextStyle(
+                fontSize: AppTypography.bodySmall,
+                fontWeight: AppTypography.bold,
+                color: AppColors.info, // Azul de constantes
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         Text(
-          'Usuario: $userName',
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          userName,
+          style: TextStyle(
+            fontSize: AppTypography.bodySmall,
+            fontWeight: AppTypography.semiBold,
+            color: Colors.grey[190],
+          ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   // ============================================================
   // DERECHA — ESTADO DEL SISTEMA
   // ============================================================
   Widget _buildHeaderRight() {
-    final Color cloudColor = isCloudSynced ? Colors.blue : Colors.grey;
+    // Usar AppColors en lugar de Colors.blue
+    final Color syncColor = isCloudSynced 
+        ? AppColors.info      // Azul de constantes
+        : AppColors.warning;  // Naranja de constantes
 
     return Padding(
       padding: const EdgeInsets.only(top: 12, right: 10),
@@ -99,39 +177,41 @@ class _AppShellState extends State<AppShell> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(FluentIcons.cloud, size: 16, color: cloudColor),
+          // Estado de sincronización
+          Icon(
+            FluentIcons.cloud,
+            size: AppTypography.iconMedium, // 16.0
+            color: syncColor,
+          ),
           const SizedBox(width: 4),
           Text(
             isCloudSynced ? 'Datos sincronizados' : 'Sin sincronizar',
-            style: TextStyle(fontSize: 12, color: cloudColor),
+            style: TextStyle(
+              fontSize: AppTypography.caption, // 11.0
+              color: syncColor,
+              fontWeight: AppTypography.regular,
+            ),
           ),
 
           const SizedBox(width: 12),
 
+          // Widget de conexión
           const ConnectionStatus(),
 
           const SizedBox(width: 8),
 
+          // Botón de notificaciones
           IconButton(
-            icon: const Icon(FluentIcons.ringer),
+            icon: Icon(
+              FluentIcons.ringer,
+              size: AppTypography.bodyMedium, // 16.0
+            ),
             onPressed: () {
               // TODO: abrir notificaciones
             },
           ),
         ],
       ),
-    );
-  }
-
-  // ============================================================
-  // SEPARADOR VISUAL
-  // ============================================================
-  Widget _separator() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 30),
-      height: 20,
-      width: 1,
-      color: Colors.grey.withOpacity(0.4),
     );
   }
 }
