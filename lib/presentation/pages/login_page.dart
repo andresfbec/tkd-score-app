@@ -35,7 +35,7 @@ class LoginPage extends StatelessWidget {
           // Login Container Premium
           Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
+              constraints: const BoxConstraints(maxWidth: 420, maxHeight: 520),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: Acrylic(

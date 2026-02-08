@@ -166,4 +166,6 @@ class AppColors {
   static Color getBorder(bool isDark) {
     return isDark ? borderDark : borderLight;
   } // Usar: Para texto principal según tema
+
+  
 }
