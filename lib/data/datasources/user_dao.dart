@@ -22,9 +22,22 @@ class UserDao {
   Future<int> update({
     required int id,
     required String username,
-    required String password,
+    String? password,
     required int headquartersId,
   }) async {
+    if (password == null) {
+      return await db.update(
+        'users',
+        {
+          'username': username,
+          'password': password,
+          'headquarterId': headquartersId,
+          'updatedAt': DateTime.now().toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
     return await db.update(
       'users',
       {
