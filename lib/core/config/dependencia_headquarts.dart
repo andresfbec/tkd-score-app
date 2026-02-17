@@ -5,6 +5,7 @@ import '../../domain/usecases/headquarters/create_headquart.dart';
 import '../../domain/usecases/headquarters/delete_headquart.dart';
 import '../../domain/usecases/headquarters/get_headquart.dart';
 import '../../domain/usecases/headquarters/update_headquart.dart';
+import '../../data/db/database.dart';
 
 class InjectionHeadquart {
   static final InjectionHeadquart _instancia = InjectionHeadquart._internal();
@@ -37,6 +38,9 @@ class InjectionHeadquart {
 
   static Future<void> init() async {
     final container = InjectionHeadquart();
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    container._database = await DatabaseConnection.getDatabase();
 
     container._headquartersDao = HeadquartersDao(container._database);
 
