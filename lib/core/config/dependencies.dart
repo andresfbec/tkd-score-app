@@ -1,1 +1,0 @@
-// configuracion para los providers de la aplicacion se usa en main 
