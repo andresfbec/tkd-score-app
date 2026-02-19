@@ -57,6 +57,9 @@ dependencies:
   # Network connectivity checking
   connectivity_plus: ^6.0.3   # versión actual al día de hoy
 
+  # Data table 
+  syncfusion_flutter_datagrid: ^24.1.41 
+
 
 
 dev_dependencies:

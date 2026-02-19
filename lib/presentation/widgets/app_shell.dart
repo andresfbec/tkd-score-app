@@ -1,14 +1,17 @@
 // lib/presentation/widgets/app_shell.dart
 import 'package:fluent_ui/fluent_ui.dart';
-import './connection_status.dart';
 import '../../core/constants/app.dart';
+
+// ----- WIDGETS -----
+import './connection_status.dart';
+import './user_badge.dart';
 
 // ----- PAGES -----
 import '../pages/tournaments_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/judges_page.dart';
 import '../pages/headquarters_page.dart';
-import '../pages/user_pages_t.dart';
+import '../pages/user_page_t.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -29,13 +32,17 @@ class _AppShellState extends State<AppShell> {
     return NavigationView(
       appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
-        title: _buildHeaderLeft(),
+        title: UserBadge(userName: userName), // Usamos el widget UserBadge aquí
         actions: _buildHeaderRight(),
       ),
       pane: NavigationPane(
         selected: index,
         onChanged: (i) => setState(() => index = i),
         displayMode: PaneDisplayMode.auto,
+        size: const NavigationPaneSize(
+          openMaxWidth: 250,
+          openMinWidth: 48,
+        ),
         items: _buildSidebarItems(),
       ),
     );
