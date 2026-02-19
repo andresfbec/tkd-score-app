@@ -18,12 +18,21 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<int> update(int id, String user, String password, int headquartersId) {
+  Future<int> update(UserEntity data) {
     return dao.update(
-      id: id,
-      username: user,
+      id: data.id,
+      username: data.username,
+      headquartersId: data.headquarters,
+    );
+  }
+
+  @override
+  Future<int> updatePassword(UserEntity data, String password) {
+    return dao.update(
+      id: data.id,
+      username: data.username,
       password: password,
-      headquartersId: headquartersId,
+      headquartersId: data.headquarters,
     );
   }
 
@@ -45,9 +54,13 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<String?> getUsernameById(String username) async {
+  Future<Map<String, dynamic>?> getUsernameById(String username) async {
     final map = await dao.getByUsername(username);
-    return map != null ? map['password'] as String : null;
+    return {
+      'username': map != null ? map['username'] as String : null,
+      'password': map != null ? map['password'] as String : null,
+      'headquarter': map != null ? map['headquarterId'] as String : null,
+    };
   }
 
   @override
