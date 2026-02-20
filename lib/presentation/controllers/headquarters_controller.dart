@@ -59,4 +59,30 @@ class HeadquartersController extends ChangeNotifier {
   Future<HeadquartersEntity?> getById(int id) {
     return repository.getById(id);
   }  
+
+  // la q si sirve 
+  Future<void> crearSedeDePrueba() async {
+    try {
+      print('🚀 Creando sede de prueba...');
+      
+      // Usando el caso de uso que ya tienes inyectado
+      final id = await createHeadquart.call(
+        HeadquartersEntity(
+          id: 50, // La BD asigna el ID automáticamente
+          name: 'Mi Sede de Prueba2',
+          address: 'cra 147 a #132-53',
+          phoneNumber: '3252545857',
+          city: 'Bogotá',
+        ),
+      );
+      
+      print('✅ Sede creada con ID: $id');
+      
+      // Recargar la lista para verla
+      await loadHeadquarters();
+      
+    } catch (e) {
+      print('❌ Error: $e');
+    }
+  }
 }

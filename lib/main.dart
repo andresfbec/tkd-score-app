@@ -10,37 +10,21 @@ import 'core/theme/theme_provider.dart';
 import 'core/config/dependencia_user.dart';
 import 'core/config/dependencia_headquarts.dart';
 
+// inyeccion de providers
+import 'app/providers.dart';
+
 // Multiprovider
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await InjectionUser.init(); // 👈 ESTO ES CLAVE
-  await InjectionHeadquart.init(); // 👈 ESTO ES CLAVE
-  final containerUser = InjectionUser();
-  final containerHeadquarts = InjectionHeadquart();
+
+  final providers = await AppProviders.init();
 
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(
-          create: (_) => HeadquartersController(
-            containerHeadquarts.createHeadquart,
-            containerHeadquarts.headquartersRepository,
-            containerHeadquarts.getHeadquart,
-          )..loadHeadquarters(), // Carga inicial de datos para Headquarters
-        ),
-        ChangeNotifierProvider(
-          create: (_) => UserController(
-            containerUser.createUser,
-            containerUser.userRepository,
-          )..loadUsers(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => LoginController(containerUser.loginUser),
-        ),
-      ],
+      providers: providers, 
       child: const App(),
     ),
   );
 }
+

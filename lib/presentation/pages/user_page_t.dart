@@ -1,3 +1,6 @@
+// Este widget table ya no se va a usar, usar el de table_grid en widgets 
+// DESFECTUOSO
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app.dart';
