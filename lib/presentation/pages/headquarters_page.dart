@@ -35,13 +35,13 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
       {'key': 'phoneNumber', 'label': 'Teléfono'},
     ];
 
-    final rows = MockHeadquartersData.headquarters.map((hq) {
+        // ✅ AHORA USA LOS DATOS REALES DEL CONTROLLER
+    final rows = controller.headquarters.map((hq) {
       return [
-        hq['name'].toString(),
-        hq['address'].toString(),
-        hq['city'].toString(),
-        hq['phoneNumber'].toString(),
-        hq['status'].toString(),
+        hq.name,
+        hq.address,
+        hq.city,
+        hq.phoneNumber,
       ];
     }).toList();
 
@@ -77,7 +77,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
             Button(
               child: const Text('➕ Agregar sede (test)'),
               onPressed: () {
-                context.read<HeadquartersController>().createTestHeadquarters();
+                context.read<HeadquartersController>().crearSedeDePrueba();
               },
             ),
             const SizedBox(height: 16),
@@ -90,7 +90,14 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                     flex: showDetail ? 5 : 1, // se expande si el panel está oculto
                     child: CustomTable(
                       columns: columns,
-                      data: MockHeadquartersData.headquarters,
+                      // ✅ AHORA PASA LOS DATOS REALES
+                      data: controller.headquarters.map((hq) => {
+                        'name': hq.name,
+                        'address': hq.address,
+                        'city': hq.city,
+                        'phoneNumber': hq.phoneNumber,
+                        'status': 'Activo',
+                      }).toList(),
                       onRowSelected: (selectedRow) {
                         print('Selected row data: $selectedRow');
                       },

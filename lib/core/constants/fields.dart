@@ -1,3 +1,13 @@
-const fieldsHeadquarters = {'id', 'name', 'address', 'city', 'phone'};
+const Set<String> fieldsHeadquarters = {
+  'id',
+  'name',
+  'address',
+  'city',
+  'phone',
+};
 
-const fieldsUsers = {'id', 'username', 'headquartersId'};
+const Set<String> fieldsUsers = {
+  'id',
+  'username',
+  'headquartersId'
+};
