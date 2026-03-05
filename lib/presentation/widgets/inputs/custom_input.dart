@@ -1,7 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+
 import 'package:tkd_score/core/theme/theme_provider.dart';
-import '../../core/constants/app.dart';
+import '../../../core/constants/app.dart';
+import './input_type.dart';
+import './input_rules.dart';
 
 class CustomInput extends StatelessWidget {
   final String label;
@@ -10,16 +14,40 @@ class CustomInput extends StatelessWidget {
   final TextEditingController controller;
   final double? width;
   final Widget? prefixIcon;
+  final InputType type;
+
+  final String? errorText; // opcional: para mostrar mensajes de error
+  final Function(String)? onChanged;
 
   const CustomInput({
     super.key,
     required this.label,
+    required this.type,
     this.placeholder,
     this.obscureText = false,
     required this.controller,
     this.width,
     this.prefixIcon,
+    this.errorText,
+    this.onChanged,
   });
+
+  /// 🔹 Define el tipo de teclado
+  TextInputType _getKeyboardType() {
+    switch (type) {
+      case InputType.email:
+        return TextInputType.emailAddress;
+
+      case InputType.number:
+        return TextInputType.number;
+
+      case InputType.phone:
+        return TextInputType.phone;
+
+      default:
+        return TextInputType.text;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +64,15 @@ class CustomInput extends StatelessWidget {
 
     final input = TextBox(
       controller: controller,
+
       placeholder: placeholder ?? '',
       obscureText: obscureText,
+
+      /// 🔹 NUEVO
+      keyboardType: _getKeyboardType(),
+      inputFormatters: InputRules.getFormatters(type),
+      
+      onChanged: onChanged,
 
       // 🔹 ESTILO TEXTO ESCRITO
       style: TextStyle(
@@ -85,14 +120,13 @@ class CustomInput extends StatelessWidget {
             color: isFocused
                 ? FluentTheme.of(context).accentColor
                 : isHovering
-                    ? borderColor.withOpacity(0.8)
-                    : borderColor,
+                ? borderColor.withOpacity(0.8)
+                : borderColor,
             width: isFocused ? 1.4 : 1,
           ),
         );
       }),
     );
-
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,8 +139,19 @@ class CustomInput extends StatelessWidget {
             fontWeight: AppTypography.semiBold,
           ),
         ),
+
         const SizedBox(height: 8),
+
         width != null ? SizedBox(width: width, child: input) : input,
+
+        /// 🔹 MOSTRAR ERROR
+        if (errorText != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            errorText!,
+            style: const TextStyle(color: AppColors.error, fontSize: 12),
+          ),
+        ],
       ],
     );
   }

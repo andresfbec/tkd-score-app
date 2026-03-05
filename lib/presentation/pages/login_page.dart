@@ -2,10 +2,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:tkd_score/core/theme/theme_provider.dart';
 import '../controllers/login_controller.dart';
 import 'package:provider/provider.dart';
-import '../widgets/custom_input.dart';
+import '../widgets/inputs/custom_input.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../app/routes.dart';
 import '../../core/constants/app.dart';
+import '../widgets/inputs/input_type.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -14,7 +15,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userController = TextEditingController();
     final passwordController = TextEditingController();
-    final loginController = context.read<LoginController>();
+    final loginController = context.watch<LoginController>();
 
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
@@ -39,12 +40,15 @@ class LoginPage extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: Acrylic(
-                  blurAmount: 30, 
+                  blurAmount: 30,
                   luminosityAlpha: 0.25,
                   tint: isDark ? Colors.black : Colors.white,
                   tintAlpha: 0.55,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 40,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
@@ -56,7 +60,6 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-
                         // Línea superior decorativa
                         Container(
                           width: 50,
@@ -108,9 +111,13 @@ class LoginPage extends StatelessWidget {
                         // Usuario
                         CustomInput(
                           label: 'Usuario',
+                          type: InputType.text,
                           placeholder: 'Ingrese su usuario',
                           controller: userController,
-                          prefixIcon: const Icon(FluentIcons.contact, size: AppTypography.iconMedium), // 16.0
+                          prefixIcon: const Icon(
+                            FluentIcons.contact,
+                            size: AppTypography.iconMedium,
+                          ), // 16.0
                         ),
 
                         const SizedBox(height: 20),
@@ -118,10 +125,14 @@ class LoginPage extends StatelessWidget {
                         // Password
                         CustomInput(
                           label: 'Contraseña',
+                          type: InputType.password,
                           placeholder: '••••••••',
                           obscureText: true,
                           controller: passwordController,
-                          prefixIcon: const Icon(FluentIcons.lock, size: AppTypography.iconMedium), // 16.0
+                          prefixIcon: const Icon(
+                            FluentIcons.lock,
+                            size: AppTypography.iconMedium,
+                          ), // 16.0
                         ),
 
                         const SizedBox(height: 30),
@@ -144,15 +155,14 @@ class LoginPage extends StatelessWidget {
                                 showDialog(
                                   context: context,
                                   builder: (context) => ContentDialog(
-                                    title:
-                                        const Text('Error inicio de sesión'),
-                                    content:
-                                        const Text('Credenciales inválidas'),
+                                    title: const Text('Error inicio de sesión'),
+                                    content: const Text(
+                                      'Credenciales inválidas',
+                                    ),
                                     actions: [
                                       FilledButton(
                                         child: const Text('Cerrar'),
-                                        onPressed: () =>
-                                            Navigator.pop(context),
+                                        onPressed: () => Navigator.pop(context),
                                       ),
                                     ],
                                   ),

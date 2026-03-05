@@ -4,9 +4,14 @@ import '../../core/constants/app.dart';
 import '../../core/theme/theme_provider.dart';
 
 class UserBadge extends StatefulWidget {
-  final String userName;
+  final String firstName;
+  final String lastName;
 
-  const UserBadge({super.key, required this.userName});
+  const UserBadge({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+  });
 
   @override
   State<UserBadge> createState() => _UserBadgeState();
@@ -15,61 +20,74 @@ class UserBadge extends StatefulWidget {
 class _UserBadgeState extends State<UserBadge> {
   bool _isHovered = false;
 
+  String get initials {
+    final firstInitial =
+        widget.firstName.isNotEmpty ? widget.firstName[0].toUpperCase() : '';
+    final lastInitial =
+        widget.lastName.isNotEmpty ? widget.lastName[0].toUpperCase() : '';
+    return '$firstInitial$lastInitial';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context).currentTheme;
+
+    final accent = theme.accentColor;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        duration: const Duration(milliseconds: 120),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: _isHovered
-              ? theme.accentColor.light.withOpacity(0.1) // fondo al hover
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+              ? accent.withOpacity(0.08)
+              : theme.resources.cardBackgroundFillColorSecondary,
+          borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: _isHovered
-                ? theme.accentColor // borde más marcado al hover
-                : theme.inactiveColor.withOpacity(0.3),
+                ? accent.withOpacity(0.6)
+                : theme.resources.controlStrokeColorDefault.withOpacity(0.4),
             width: 1,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Avatar circular
+
+            // Avatar
             Container(
-              width: 28,
-              height: 28,
+              width: 24,
+              height: 24,
               decoration: BoxDecoration(
-                color: theme.accentColor.light.withOpacity(0.15),
+                color: accent.withOpacity(0.15),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: theme.accentColor.light.withOpacity(0.4),
-                  width: 1.5,
+                  color: accent.withOpacity(0.35),
+                  width: 1,
                 ),
               ),
               child: Center(
                 child: Text(
-                  widget.userName.substring(0, 1).toUpperCase(),
+                  initials,
                   style: TextStyle(
-                    fontSize: AppTypography.bodySmall,
-                    fontWeight: AppTypography.bold,
-                    color: theme.accentColor,
-                    height: 1, // Para centrar verticalmente el texto dentro del círculo
+                    fontSize: 11,
+                    fontWeight: AppTypography.semiBold,
+                    color: accent,
+                    height: 1,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+
+            const SizedBox(width: 6),
+
             // Nombre
             Text(
-              widget.userName,
+              '${widget.firstName} ${widget.lastName}',
               style: theme.typography.body?.copyWith(
-                fontSize: AppTypography.bodySmall,
+                fontSize: 13,
                 fontWeight: AppTypography.semiBold,
               ),
             ),

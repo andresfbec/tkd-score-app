@@ -95,7 +95,7 @@ class AppColors {
   static const Color accent = Color(
     0xFFFFC107,
   ); // Usar: Destacar elementos, acciones secundarias
-
+  static const Color wifiIcon = Color.fromARGB(255, 18, 190, 18);
   // === ESTADOS DEL SISTEMA - Feedback visual para el usuario ===
   static const Color success = Color(
     0xFF107C10,

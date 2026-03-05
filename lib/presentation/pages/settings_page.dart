@@ -14,14 +14,18 @@ class SettingsPage extends StatelessWidget {
     return ScaffoldPage(
       header: PageHeader(
         title: Text(
-          'Ajustes',
+          'Ajustes', 
           style: TextStyle(
-            fontSize: AppTypography.titleLarge,
-            fontWeight: AppTypography.semiBold,
-            fontFamily: AppTypography.fontFamily,
-            color: AppColors.getTextPrimary(isDark),
+            fontSize: AppTypography
+                .titleView, 
+            fontWeight:
+                AppTypography.semiBold, 
+            fontFamily: AppTypography.fontFamily, 
+            color: AppColors.getTextPrimary(
+              isDark,
+            ), 
           ),
-        ),
+        )
       ),
       content: Padding(
         padding: const EdgeInsets.all(20.0),

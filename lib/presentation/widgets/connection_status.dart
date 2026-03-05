@@ -56,14 +56,14 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
         Icon(
           isOnline ? FluentIcons.wifi : FluentIcons.warning,
           size: AppTypography.iconMedium, // 16.0
-          color: isOnline ? AppColors.success : AppColors.error,
+          color: isOnline ? AppColors.wifiIcon : AppColors.error,
         ),
         const SizedBox(width: 4),
         Text(
           isOnline ? 'Conectado' : 'Sin conexión',
           style: TextStyle(
             fontSize: AppTypography.caption,
-            color: isOnline ? AppColors.success : AppColors.error,
+            color: isOnline ? AppColors.wifiIcon : AppColors.error,
             fontWeight: AppTypography.regular,
           ),
         ),
