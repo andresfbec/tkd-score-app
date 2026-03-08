@@ -2,12 +2,11 @@ import '../entities/headquarters_entity.dart';
 
 abstract class HeadquartersRepository {
   Future<int> create(HeadquartersEntity headquarters);
-  Future<int> update(HeadquartersEntity headquarters);
-  Future<HeadquartersEntity?> find({
+  Future<bool> update(HeadquartersEntity headquarters);
+  Future<List<HeadquartersEntity>?> find({
     String? name,
-    String? address,
     String? city,
-    String? phone,
+    String? address,
   });
   Future<List<HeadquartersEntity>> getAll();
   Future<HeadquartersEntity?> getById(int id);

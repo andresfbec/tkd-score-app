@@ -21,10 +21,11 @@ class UserController extends ChangeNotifier {
     final entity = UserEntity(
       id: 0,
       username: username,
-      headquarters: headquartersId,
+      password: password,
+      headquarterId: headquartersId,
     );
 
-    await createUser.call(username, password, headquartersId);
+    await createUser.call(entity);
     await loadUsers();
   }
 

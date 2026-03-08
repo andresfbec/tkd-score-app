@@ -8,22 +8,27 @@ class UpdateUser {
 
   UpdateUser(this.repository, this.headquartersRepository);
 
-  Future<int> call(int pk, String? username, int? headquartId) async {
+  Future<bool> call(int pk, String? username, int? headquarterId) async {
     final existing = await repository.getById(pk);
+
     if (existing == null) {
-      throw Exception('Usuario no Existe');
+      throw Exception('Usuario no existe');
     }
-    if (headquartId != null) {
-      final headquarters = await headquartersRepository.getById(headquartId);
+
+    if (headquarterId != null) {
+      final headquarters = await headquartersRepository.getById(headquarterId);
       if (headquarters == null) {
         throw Exception('La sede no existe');
       }
     }
-    final newUser = UserEntity(
+
+    final updatedUser = UserEntity(
       id: existing.id,
       username: username ?? existing.username,
-      headquarters: headquartId ?? existing.headquarters,
+      headquarterId: headquarterId ?? existing.headquarterId,
+      password: null, // se ignora en el update
     );
-    return await repository.update(newUser);
+
+    return repository.update(updatedUser);
   }
 }

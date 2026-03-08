@@ -1,12 +1,13 @@
+import 'package:drift/drift.dart';
+import 'package:tkd_score/domain/entities/headquarters_entity.dart';
 import '../../repositories/headquarters_repository.dart';
-import '../../entities/headquarters_entity.dart';
 
 class UpdateHeadquart {
   final HeadquartersRepository repository;
 
   UpdateHeadquart(this.repository);
 
-  Future<int> call(
+  Future<bool> call(
     int pk, {
     String? name,
     String? address,
@@ -18,9 +19,8 @@ class UpdateHeadquart {
     if (existing == null) {
       throw Exception('Sede a actualizar no existe');
     }
-
     final updatedHeadquarters = HeadquartersEntity(
-      id: existing.id,
+      id: pk,
       name: name ?? existing.name,
       address: address ?? existing.address,
       city: city ?? existing.city,

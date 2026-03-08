@@ -1,7 +1,10 @@
+import 'package:drift/drift.dart';
 import '../../domain/entities/headquarters_entity.dart';
+import '../../core/config/db/database.dart';
 import '../../domain/repositories/headquarters_repository.dart';
 import '../datasources/headquarters_dao.dart';
 import '../mappers/headquarters_mapper.dart';
+import '../../core/constants/fields.dart';
 
 class HeadquartersRepositoryImpl implements HeadquartersRepository {
   final HeadquartersDao dao;
@@ -10,23 +13,29 @@ class HeadquartersRepositoryImpl implements HeadquartersRepository {
 
   @override
   Future<int> create(HeadquartersEntity headquarters) {
-    return dao.insert(
-      name: headquarters.name,
-      address: headquarters.address,
-      city: headquarters.city,
-      phone: headquarters.phoneNumber,
+    final comp = HeadquartersCompanion(
+      address: Value(headquarters.address),
+      name: Value(headquarters.name),
+      city: Value(headquarters.city),
+      phone: Value(headquarters.phoneNumber),
+      synchronized: Value(0),
+      createdAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
     );
+    return dao.insert(comp);
   }
 
   @override
-  Future<int> update(HeadquartersEntity headquarters) {
-    return dao.update(
-      id: headquarters.id,
-      name: headquarters.name,
-      address: headquarters.address,
-      city: headquarters.city,
-      phone: headquarters.phoneNumber,
+  Future<bool> update(HeadquartersEntity headquarters) {
+    final comp = HeadquartersCompanion(
+      id: Value(headquarters.id!),
+      address: Value(headquarters.address),
+      name: Value(headquarters.name),
+      city: Value(headquarters.city),
+      phone: Value(headquarters.phoneNumber),
+      updatedAt: Value(DateTime.now()),
     );
+    return dao.update(comp);
   }
 
   @override
@@ -47,21 +56,15 @@ class HeadquartersRepositoryImpl implements HeadquartersRepository {
   }
 
   @override
-  Future<HeadquartersEntity?> find({
+  Future<List<HeadquartersEntity>> find({
     String? name,
     String? city,
-    String? phone,
     String? address,
   }) async {
-    final filters = <String, dynamic>{};
+    final data = await dao.query(
+      filter: HeadquarterFilter(name: name, address: address, city: city),
+    );
 
-    if (name != null) filters['name'] = name;
-    if (address != null) filters['address'] = address;
-    if (city != null) filters['city'] = city;
-    if (phone != null) filters['phone'] = phone;
-
-    final data = await dao.query(filters: filters);
-
-    return data != null ? HeadquartersMapper.fromMap(data) : null;
+    return data.map(HeadquartersMapper.fromMap).toList();
   }
 }

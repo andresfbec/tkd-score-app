@@ -1,19 +1,18 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../../data/datasources/headquarters_dao.dart';
-import '../../data/repositories/headquarters_repository_impl.dart';
-import '../../domain/usecases/headquarters/create_headquart.dart';
-import '../../domain/usecases/headquarters/delete_headquart.dart';
-import '../../domain/usecases/headquarters/get_headquart.dart';
-import '../../domain/usecases/headquarters/update_headquart.dart';
-import '../../data/db/database.dart';
+import '../db/database.dart';
+import '../../../data/datasources/headquarters_dao.dart';
+import '../../../data/repositories/headquarters_repository_impl.dart';
+import '../../../domain/usecases/headquarters/create_headquart.dart';
+import '../../../domain/usecases/headquarters/delete_headquart.dart';
+import '../../../domain/usecases/headquarters/get_headquart.dart';
+import '../../../domain/usecases/headquarters/update_headquart.dart';
 
 class InjectionHeadquart {
   static final InjectionHeadquart _instancia = InjectionHeadquart._internal();
   factory InjectionHeadquart() => _instancia;
   InjectionHeadquart._internal();
 
-  late Database _database;
-  Database get database => _database;
+  late AppDatabase _database;
+  AppDatabase get database => _database;
   //DAOS
   late HeadquartersDao _headquartersDao;
 
@@ -38,9 +37,9 @@ class InjectionHeadquart {
 
   static Future<void> init() async {
     final container = InjectionHeadquart();
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    container._database = await DatabaseConnection.getDatabase();
+    // Drift maneja internamente la creación de la base de datos;
+    // solo necesitamos instanciar nuestra clase.
+    container._database = AppDatabase();
 
     container._headquartersDao = HeadquartersDao(container._database);
 

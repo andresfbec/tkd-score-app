@@ -1,89 +1,88 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:drift/drift.dart';
 import '../../core/constants/fields.dart';
+import '../../core/config/db/database.dart';
 
 class HeadquartersDao {
-  final Database db;
+  final AppDatabase _db;
 
-  HeadquartersDao(this.db);
+  HeadquartersDao(this._db);
 
-  Future<int> insert({
-    required String name,
-    required String address,
-    required String city,
-    required String phone,
-  }) async {
-    return await db.insert('headquarters', {
-      'name': name,
-      'address': address,
-      'city': city,
-      'phone': phone,
-      'createdAt': DateTime.now().toIso8601String(),
-    });
+  Future<int> insert(HeadquartersCompanion hq) async {
+    return _db.into(_db.headquarters).insert(hq);
   }
 
-  Future<int> update({
-    required int id,
-    required String name,
-    required String address,
-    required String city,
-    required String phone,
-  }) async {
-    return await db.update(
-      'headquarters',
-      {
-        'name': name,
-        'address': address,
-        'city': city,
-        'phone': phone,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+  Future<bool> update(HeadquartersCompanion hq) async {
+    return _db
+        .update(_db.headquarters)
+        .replace(hq.copyWith(id: Value(hq.id.value)));
   }
 
   Future<int> delete(int pk) async {
-    return await db.delete('headquarters', where: 'id = ?', whereArgs: [pk]);
+    return await (_db.update(_db.headquarters)
+          ..where((tbl) => tbl.id.equals(pk)))
+        .write(const HeadquartersCompanion(isActive: Value(0)));
   }
 
-  Future<List<Map<String, dynamic>>> findAll() async {
-    return await db.query('headquarters');
+  Future<List<Headquarter>> findAll() async {
+    // Versión simplificada sin .where primero para probar
+    final all = await _db.select(_db.headquarters).get();
+
+    // Filtrar manualmente (solo para prueba)
+    final active = all.where((hq) => hq.isActive == 1).toList();
+
+    return active;
   }
 
-  Future<Map<String, dynamic>?> findById(int id) async {
-    final result = await db.query(
-      'headquarters',
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
+  Future<Headquarter?> findById(int pk) async {
+    final result =
+        await (_db.select(_db.headquarters)
+              ..where((tbl) => tbl.id.equals(pk) & tbl.isActive.equals(1)))
+            .getSingleOrNull();
 
-    return result.isNotEmpty ? result.first : null;
+    return result; // Devolvemos el objeto Headquarter o null si no existe
   }
 
-  Future<Map<String, dynamic>?> query({
-    required Map<String, dynamic> filters,
-  }) async {
-    if (filters.isEmpty) return null;
-
-    final whereClauses = <String>[];
-    final whereArgs = <dynamic>[];
-
-    for (final entry in filters.entries) {
-      if (!fieldsHeadquarters.contains(entry.key)) {
-        throw ArgumentError('Campo no permitido: ${entry.key}');
-      }
-      whereClauses.add('${entry.key} = ?');
-      whereArgs.add(entry.value);
+  Future<List<Headquarter>> query({required HeadquarterFilter filter}) async {
+    if (filter.id == null &&
+        filter.name == null &&
+        filter.city == null &&
+        filter.address == null) {
+      throw ArgumentError('Debe proporcionar al menos un filtro');
     }
 
-    final result = await db.query(
-      'headquarters',
-      where: whereClauses.join(' AND '),
-      whereArgs: whereArgs,
-      limit: 1,
-    );
+    final query = _db.select(_db.headquarters);
 
-    return result.isNotEmpty ? result.first : null;
+    query.where((tbl) {
+      Expression<bool>? predicate;
+
+      if (filter.id != null) {
+        predicate = tbl.id.equals(filter.id!);
+      }
+
+      if (filter.name != null) {
+        final condition = tbl.name.equals(filter.name!);
+        predicate = predicate == null ? condition : predicate & condition;
+      }
+
+      if (filter.city != null) {
+        final condition = tbl.city.equals(filter.city!);
+        predicate = predicate == null ? condition : predicate & condition;
+      }
+
+      if (filter.address != null) {
+        final condition = tbl.address.equals(filter.address!);
+        predicate = predicate == null ? condition : predicate & condition;
+      }
+
+      // agregar condición de activo
+      final activeCondition = tbl.isActive.equals(1);
+      predicate = predicate == null
+          ? activeCondition
+          : predicate & activeCondition;
+
+      return predicate;
+    });
+
+    return await query.get();
   }
 }

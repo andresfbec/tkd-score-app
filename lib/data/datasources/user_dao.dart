@@ -1,116 +1,57 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../../core/constants/fields.dart';
+import 'package:drift/drift.dart';
+import '../../core/config/db/database.dart';
 
 class UserDao {
-  final Database db;
+  final AppDatabase _db;
 
-  UserDao(this.db);
+  UserDao(this._db);
 
-  Future<int> insert({
-    required String username,
-    required String password,
-    required int headquartersId,
-  }) async {
-    return await db.insert('users', {
-      'username': username,
-      'password': password,
-      'headquarterId': headquartersId,
-      'createdAt': DateTime.now().toIso8601String(),
-    });
+  Future<int> insert(UsersCompanion user) async {
+    return _db.into(_db.users).insert(user);
   }
 
-  Future<int> update({
-    required int id,
-    required String username,
-    String? password,
-    required int headquartersId,
-  }) async {
-    if (password == null) {
-      return await db.update(
-        'users',
-        {
-          'username': username,
-          'password': password,
-          'headquarterId': headquartersId,
-          'updatedAt': DateTime.now().toIso8601String(),
-        },
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-    }
-    return await db.update(
-      'users',
-      {
-        'username': username,
-        'password': password,
-        'headquarterId': headquartersId,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+  Future<bool> update(UsersCompanion user) async {
+    return _db
+        .update(_db.users)
+        .replace(user.copyWith(id: Value(user.id.value)));
   }
 
   Future<int> delete(int pk) async {
-    return await db.delete('users', where: 'id = ?', whereArgs: [pk]);
+    return await (_db.update(_db.users)..where((tbl) => tbl.id.equals(pk)))
+        .write(const UsersCompanion(isActive: Value(0)));
   }
 
-  Future<List<Map<String, dynamic>>> findAll() async {
-    return await db.query('users');
+  Future<List<User>> findAll() async {
+    // Versión simplificada sin .where primero para probar
+    final all = await _db.select(_db.users).get();
+
+    // Filtrar manualmente (solo para prueba)
+    final active = all.where((us) => us.isActive == 1).toList();
+
+    return active;
   }
 
-  Future<Map<String, dynamic>?> findById(int pk) async {
-    final result = await db.query(
-      'users',
-      where: 'id = ?',
-      whereArgs: [pk],
-      limit: 1,
-    );
+  Future<User?> findById(int pk) async {
+    final result =
+        await (_db.select(_db.users)
+              ..where((tbl) => tbl.id.equals(pk) & tbl.isActive.equals(1)))
+            .getSingleOrNull();
 
-    if (result.isNotEmpty) {
-      return result.first;
-    }
-    return null;
+    return result; // Devolvemos el objeto Headquarter o null si no existe
   }
 
-  Future<Map<String, dynamic>?> getByUsername(String username) async {
-    final result = await db.query(
-      'users',
-      where: 'username = ?',
-      whereArgs: [username],
-      limit: 1,
-    );
-
-    if (result.isNotEmpty) {
-      return result.first;
-    }
-    return null;
+  Future<User?> getByUsername(String username) async {
+    final result = await (_db.select(
+      _db.users,
+    )..where((tbl) => tbl.username.equals(username))).getSingleOrNull();
+    return result;
   }
 
-  Future<Map<String, dynamic>?> query({
-    required Map<String, dynamic> filters,
-  }) async {
-    if (filters.isEmpty) {
-      return null;
-    }
+  Future<List<User>> getByheadquater(int idHeadquarte) async {
+    final result = await (_db.select(
+      _db.users,
+    )..where((tbl) => tbl.headquarterId.equals(idHeadquarte))).get();
 
-    final whereClauses = <String>[];
-    final whereArgs = <dynamic>[];
-
-    for (final entry in filters.entries) {
-      if (!fieldsUsers.contains(entry.key)) {
-        throw ArgumentError('Campo no permitido: ${entry.key}');
-      }
-      whereClauses.add('${entry.key} = ?');
-      whereArgs.add(entry.value);
-    }
-    final result = await db.query(
-      'users',
-      where: whereClauses.join(' AND '),
-      whereArgs: whereArgs,
-      limit: 1,
-    );
-
-    return result.isNotEmpty ? result.first : null;
+    return result;
   }
 }

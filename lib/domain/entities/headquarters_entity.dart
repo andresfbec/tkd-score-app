@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class HeadquartersEntity extends Equatable {
-  final int id;
+  final int? id;
   final String name;
   final String address;
   final String phoneNumber;
@@ -16,11 +16,5 @@ class HeadquartersEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-        id,
-        name,
-        address,
-        phoneNumber,
-        city,
-      ];
+  List<Object?> get props => [id, name, address, phoneNumber, city];
 }

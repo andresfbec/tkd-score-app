@@ -4,7 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 class AppConstants {
   // Info app - Valores globales de la aplicación
   static const String appName =
-      'TKD App'; // Usar: En título de ventana, diálogos "Acerca de"
+      'TKD_App'; // Usar: En título de ventana, diálogos "Acerca de"
   static const bool debugBanner =
       false; // Usar: Solo en main.dart para FlutterApp
 
@@ -54,12 +54,16 @@ class AppTypography {
       12.0; // Usar: Fechas, horas, estados, notificaciones
   static const double overline = 10.0; // Usar: Etiquetas, categorías, tags
 
-    // ===== TAMAÑOS DE ICONOS =====
-  static const double iconExtraSmall = 12.0;  // Para iconos muy pequeños (estados)
-  static const double iconSmall = 14.0;       // Para iconos pequeños (sidebar podría usar este)
-  static const double iconMedium = 16.0;      // Para iconos estándar (sidebar actual)
-  static const double iconLarge = 18.0;       // Para iconos destacados (usuario en header)
-  static const double iconExtraLarge = 20.0;  // Para iconos muy importantes
+  // ===== TAMAÑOS DE ICONOS =====
+  static const double iconExtraSmall =
+      12.0; // Para iconos muy pequeños (estados)
+  static const double iconSmall =
+      14.0; // Para iconos pequeños (sidebar podría usar este)
+  static const double iconMedium =
+      16.0; // Para iconos estándar (sidebar actual)
+  static const double iconLarge =
+      18.0; // Para iconos destacados (usuario en header)
+  static const double iconExtraLarge = 20.0; // Para iconos muy importantes
 
   // === PESOS DE FUENTE ===
   // Usar según jerarquía: títulos más pesados, cuerpo normal
@@ -166,6 +170,4 @@ class AppColors {
   static Color getBorder(bool isDark) {
     return isDark ? borderDark : borderLight;
   } // Usar: Para texto principal según tema
-
-  
 }

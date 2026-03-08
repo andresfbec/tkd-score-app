@@ -1,5 +1,6 @@
+import 'package:drift/drift.dart';
 import 'package:tkd_score/data/mappers/users_mapper.dart';
-
+import '../../core/config/db/database.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../datasources/user_dao.dart';
 import '../../domain/entities/user_entity.dart';
@@ -9,31 +10,27 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this.dao);
 
   @override
-  Future<int> create(String user, String password, int headquartersId) {
-    return dao.insert(
-      username: user,
-      password: password,
-      headquartersId: headquartersId,
+  Future<int> create(UserEntity user) {
+    final comp = UsersCompanion(
+      username: Value(user.username),
+      password: Value(user.password!),
+      headquarterId: Value(user.headquarterId),
+      synchronized: Value(0),
+      createdAt: Value(DateTime.now()),
+      updatedAt: Value(DateTime.now()),
     );
+    return dao.insert(comp);
   }
 
   @override
-  Future<int> update(UserEntity data) {
-    return dao.update(
-      id: data.id,
-      username: data.username,
-      headquartersId: data.headquarters,
+  Future<bool> update(UserEntity data) {
+    final comp = UsersCompanion(
+      id: Value(data.id!),
+      username: Value(data.username),
+      headquarterId: Value(data.headquarterId),
+      updatedAt: Value(DateTime.now()),
     );
-  }
-
-  @override
-  Future<int> updatePassword(UserEntity data, String password) {
-    return dao.update(
-      id: data.id,
-      username: data.username,
-      password: password,
-      headquartersId: data.headquarters,
-    );
+    return dao.update(comp);
   }
 
   @override
@@ -54,23 +51,14 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Map<String, dynamic>?> getUsernameById(String username) async {
+  Future<UserEntity?> getUsernameById(String username) async {
     final map = await dao.getByUsername(username);
-    return {
-      'username': map != null ? map['username'] as String : null,
-      'password': map != null ? map['password'] as String : null,
-      'headquarter': map != null ? map['headquarterId'] as String : null,
-    };
+    return map != null ? UsersMapper.fromMap(map) : null;
   }
 
   @override
-  Future<UserEntity?> find({String? username, int? headquartersId}) async {
-    final filters = <String, dynamic>{};
-
-    if (username != null) filters['username'] = username;
-    if (headquartersId != null) filters['headquartersId'] = headquartersId;
-
-    final result = await dao.query(filters: filters);
-    return result != null ? UsersMapper.fromMap(result) : null;
+  Future<List<UserEntity>> getUserheadquarter(int pkHeadquarter) async {
+    final result = await dao.getByheadquater(pkHeadquarter);
+    return result.map(UsersMapper.fromMap).toList();
   }
 }
