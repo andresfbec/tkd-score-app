@@ -1,4 +1,4 @@
-// Este widget table ya no se va a usar, usar el de table_grid en widgets 
+// Este widget table ya no se va a usar, usar el de table_grid en widgets
 // DESFECTUOSO
 
 import 'package:fluent_ui/fluent_ui.dart';
@@ -23,23 +23,21 @@ class UserPage extends StatelessWidget {
     final headers = ['ID', 'Usuario', 'Sede'];
 
     final rows = controller.users.map((user) {
-      return [user.id.toString(), user.username, user.headquarters.toString()];
+      return [user.id.toString(), user.username, user.headquarterId.toString()];
     }).toList();
 
     return ScaffoldPage(
-      header: PageHeader(title: Text(
-          'Usuarios', 
+      header: PageHeader(
+        title: Text(
+          'Usuarios',
           style: TextStyle(
-            fontSize: AppTypography
-                .titleView, 
-            fontWeight:
-                AppTypography.semiBold, 
-            fontFamily: AppTypography.fontFamily, 
-            color: AppColors.getTextPrimary(
-              isDark,
-            ), 
+            fontSize: AppTypography.titleView,
+            fontWeight: AppTypography.semiBold,
+            fontFamily: AppTypography.fontFamily,
+            color: AppColors.getTextPrimary(isDark),
           ),
-        )),
+        ),
+      ),
       content: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

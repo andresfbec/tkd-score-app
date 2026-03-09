@@ -77,7 +77,7 @@ List<String> dbTables = [
     type_identify TEXT,
     number_id TEXT,
     age INTEGER,
-    genere TEXT,
+    gender TEXT,
     weight REAL,
     size REAL,
     headquarterId INTEGER,

@@ -9,12 +9,12 @@ class LoginUser {
   Future<Map<String, dynamic>?> call(String username, String password) async {
     final dataUser = await repository.getUsernameById(username);
 
-    if (dataUser == null || dataUser['username'] == null) {
+    if (dataUser == null) {
       return null;
     }
-    final hashedPassword = await verifyPassword(password, dataUser['password']);
+    final hashedPassword = await verifyPassword(password, dataUser.password!);
     if (hashedPassword) {
-      return {'username': username, 'headquart': dataUser['headquarter']};
+      return {'username': username, 'headquart': dataUser.headquarterId};
     }
 
     return null;

@@ -73,97 +73,101 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
       content: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(width: 8),
-            // ➕ Botón crear (siempre primero a la izquierda)
-            FluentActionButton(
-              icon: FluentIcons.add,
-              label: 'Agregar sede',
-              onPressed: () {
-                context.read<HeadquartersController>().crearSedeDePrueba();
-              },
-              filled: true,
-            ),
-            const SizedBox(width: 16),
-
-            // 🔍 Search con ancho controlado
-            SizedBox(
-              width: 250, // ancho fijo más compacto
-              child: FluentSearchBox(
-                placeholder: 'Buscar sede...',
-                onChanged: (value) {
-                  print('Buscando: $value');
-                  // aquí podrías filtrar controller.headquarters
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-
-            // // ⬇️ Dropdown filtro con ancho controlado
-            // SizedBox(
-            //   width: 180, // ancho fijo más compacto
-            //   child: FluentDropdownFilter(
-            //     label: 'Estado',
-            //     options: ['Activo', 'Inactivo', 'Pendiente'],
-            //     selected: 'Activo',
-            //     onChanged: (value) {
-            //       print('Filtro seleccionado: $value');
-            //       // aquí podrías aplicar el filtro al dataset
-            //     },
-            //   ),
-            // ),
-          ],
-        ),
-          const SizedBox(height: 16),
-
-          // 📊 Tabla + Panel derecho
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                Expanded(
-                  flex: showDetail ? 5 : 1,
-                  child: CustomTable(
-                    columns: columns,
-                    data: controller.headquarters.map((hq) => {
-                      'name': hq.name,
-                      'address': hq.address,
-                      'city': hq.city,
-                      'phoneNumber': hq.phoneNumber,
-                      'status': 'Activo',
-                    }).toList(),
-                    onRowSelected: (selectedRow) {
-                      print('Selected row data: $selectedRow');
+                const SizedBox(width: 8),
+                // ➕ Botón crear (siempre primero a la izquierda)
+                FluentActionButton(
+                  icon: FluentIcons.add,
+                  label: 'Agregar sede',
+                  onPressed: () {
+                    context.read<HeadquartersController>().crearSedeDePrueba();
+                  },
+                  filled: true,
+                ),
+                const SizedBox(width: 16),
+
+                // 🔍 Search con ancho controlado
+                SizedBox(
+                  width: 250, // ancho fijo más compacto
+                  child: FluentSearchBox(
+                    placeholder: 'Buscar sede...',
+                    onChanged: (value) {
+                      print('Buscando: $value');
+                      // aquí podrías filtrar controller.headquarters
                     },
                   ),
                 ),
+                const SizedBox(width: 16),
 
-                if (showDetail) ...[
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: isDark
-                            ? const Color(0xFF2B2B2B)
-                            : const Color(0xFFF3F3F3),
-                      ),
-                      child: const Center(
-                        child: Text('Selecciona una sede para ver detalles'),
-                      ),
-                    ),
-                  ),
-                ],
+                // // ⬇️ Dropdown filtro con ancho controlado
+                // SizedBox(
+                //   width: 180, // ancho fijo más compacto
+                //   child: FluentDropdownFilter(
+                //     label: 'Estado',
+                //     options: ['Activo', 'Inactivo', 'Pendiente'],
+                //     selected: 'Activo',
+                //     onChanged: (value) {
+                //       print('Filtro seleccionado: $value');
+                //       // aquí podrías aplicar el filtro al dataset
+                //     },
+                //   ),
+                // ),
               ],
             ),
-          ),
-        ],
-      ),
+            const SizedBox(height: 16),
+
+            // 📊 Tabla + Panel derecho
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: showDetail ? 5 : 1,
+                    child: CustomTable(
+                      columns: columns,
+                      data: controller.headquarters
+                          .map(
+                            (hq) => {
+                              'name': hq.name,
+                              'address': hq.address,
+                              'city': hq.city,
+                              'phoneNumber': hq.phoneNumber,
+                              'status': 'Activo',
+                            },
+                          )
+                          .toList(),
+                      onRowSelected: (selectedRow) {
+                        print('Selected row data: $selectedRow');
+                      },
+                    ),
+                  ),
+
+                  if (showDetail) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: isDark
+                              ? const Color(0xFF2B2B2B)
+                              : const Color(0xFFF3F3F3),
+                        ),
+                        child: const Center(
+                          child: Text('Selecciona una sede para ver detalles'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

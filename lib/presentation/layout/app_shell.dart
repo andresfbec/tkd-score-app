@@ -36,39 +36,40 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     return NavigationView(
       appBar: NavigationAppBar(
-      automaticallyImplyLeading: false,
-      title: Row(
-        children: [
-          // Izquierda: UserBadge
-          UserBadge(firstName: nombres, lastName: apellidos),
-          
-          const SizedBox(width: 20),
-          
-          // Centro: DateBadge (expandido y centrado)
-          Expanded(
-            child: Center(
-              child: TournamentCalendar( // Para cuando la pagina de crear el torneo exista pasarle el date
-              //   onDateSelected: (date) {
-              //   Navigator.push(
-              //     context,
-              //     FluentPageRoute(
-              //       builder: (_) => CreateTournamentPage(
-              //         startDate: date,
-              //       ),
-              //     ),
-              //   );
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            // Izquierda: UserBadge
+            UserBadge(firstName: nombres, lastName: apellidos),
 
-              // },
+            const SizedBox(width: 20),
+
+            // Centro: DateBadge (expandido y centrado)
+            Expanded(
+              child: Center(
+                child: TournamentCalendar(
+                  // Para cuando la pagina de crear el torneo exista pasarle el date
+                  //   onDateSelected: (date) {
+                  //   Navigator.push(
+                  //     context,
+                  //     FluentPageRoute(
+                  //       builder: (_) => CreateTournamentPage(
+                  //         startDate: date,
+                  //       ),
+                  //     ),
+                  //   );
+
+                  // },
+                ),
               ),
             ),
-          ),
-          
-          // Derecha: Estado del sistema
-          _buildHeaderRight(),
-        ],
+
+            // Derecha: Estado del sistema
+            _buildHeaderRight(),
+          ],
+        ),
+        actions: null, // Importante: poner actions en null
       ),
-      actions: null, // Importante: poner actions en null
-    ),
       pane: NavigationPane(
         selected: index,
         onChanged: (i) => setState(() => index = i),

@@ -1,11 +1,13 @@
 import '../../domain/entities/user_entity.dart';
+import '../../core/config/db/database.dart';
 
 class UsersMapper {
-  static UserEntity fromMap(Map<String, dynamic> map) {
+  static UserEntity fromMap(User map) {
     return UserEntity(
-      id: map['id'] as int,
-      username: map['username'],
-      headquarters: map['headquarterId'] as int,
+      id: map.id,
+      username: map.username,
+      password: null,
+      headquarterId: map.headquarterId,
     );
   }
 }

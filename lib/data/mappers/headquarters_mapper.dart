@@ -1,13 +1,14 @@
 import '../../domain/entities/headquarters_entity.dart';
+import '../../core/config/db/database.dart';
 
 class HeadquartersMapper {
-  static HeadquartersEntity fromMap(Map<String, dynamic> map) {
+  static HeadquartersEntity fromMap(Headquarter data) {
     return HeadquartersEntity(
-      id: map['id'] as int,
-      name: map['name'],
-      address: map['address'],
-      city: map['city'],
-      phoneNumber: map['phone'],
+      id: data.id,
+      name: data.name,
+      address: data.address,
+      city: data.city,
+      phoneNumber: data.phone,
     );
   }
 }
