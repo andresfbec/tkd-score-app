@@ -49,6 +49,9 @@ class AppTypography {
       16.0; // Usar: Texto normal, contenido principal
   static const double bodySmall = 14.0; // Usar: Texto secundario, descripciones
 
+  static const double bodyExtraSmall =
+      13.0; // Usar: Texto de ayuda, notas al pie, disclaimers
+
   // LABEL - Para textos pequeños y etiquetas
   static const double caption =
       12.0; // Usar: Fechas, horas, estados, notificaciones

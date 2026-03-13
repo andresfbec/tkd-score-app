@@ -33,10 +33,10 @@ class LoginPage extends StatelessWidget {
             ),
           ),
 
-          // Login Container Premium
+          // Login Container Premium - SIN altura fija
           Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420, maxHeight: 520),
+              constraints: const BoxConstraints(maxWidth: 420), // Solo ancho máximo
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: Acrylic(
@@ -57,126 +57,131 @@ class LoginPage extends StatelessWidget {
                             : Colors.black.withOpacity(0.08),
                       ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Línea superior decorativa
-                        Container(
-                          width: 50,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: FluentTheme.of(context).accentColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        // Logo
-                        Image.asset(
-                          'assets/images/logo.png',
-                          width: 85,
-                          height: 85,
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        Text(
-                          'TKD Tournament Manager',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: AppTypography.displaySmall,
-                            fontWeight: AppTypography.bold,
-                            color: isDark
-                                ? Colors.white
-                                : const Color.fromARGB(255, 16, 45, 83),
-                          ),
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          'Accede a tu panel de gestión',
-                          style: TextStyle(
-                            fontSize: AppTypography.caption,
-                            fontWeight: AppTypography.regular,
-                            color: isDark
-                                ? Colors.white.withOpacity(0.7)
-                                : Colors.black.withOpacity(0.6),
-                          ),
-                        ),
-
-                        const SizedBox(height: 25),
-
-                        // Usuario
-                        CustomInput(
-                          label: 'Usuario',
-                          type: InputType.text,
-                          placeholder: 'Ingrese su usuario',
-                          controller: userController,
-                          prefixIcon: const Icon(
-                            FluentIcons.contact,
-                            size: AppTypography.iconMedium,
-                          ), // 16.0
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Password
-                        CustomInput(
-                          label: 'Contraseña',
-                          type: InputType.password,
-                          placeholder: '••••••••',
-                          obscureText: true,
-                          controller: passwordController,
-                          prefixIcon: const Icon(
-                            FluentIcons.lock,
-                            size: AppTypography.iconMedium,
-                          ), // 16.0
-                        ),
-
-                        const SizedBox(height: 30),
-
-                        SizedBox(
-                          width: double.infinity,
-                          height: 42,
-                          child: FilledButton(
-                            child: const Text(
-                              'Ingresar',
-                              style: TextStyle(fontSize: 15),
+                    // CAMBIO IMPORTANTE: SingleChildScrollView en lugar de Column
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Línea superior decorativa
+                          Container(
+                            width: 50,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: FluentTheme.of(context).accentColor,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            onPressed: () async {
-                              final succes = await loginController.login(
-                                userController.text,
-                                passwordController.text,
-                              );
-
-                              if (!succes) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => ContentDialog(
-                                    title: const Text('Error inicio de sesión'),
-                                    content: const Text(
-                                      'Credenciales inválidas',
-                                    ),
-                                    actions: [
-                                      FilledButton(
-                                        child: const Text('Cerrar'),
-                                        onPressed: () => Navigator.pop(context),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  Routes.home,
-                                );
-                              }
-                            },
                           ),
-                        ),
-                      ],
+
+                          const SizedBox(height: 25),
+
+                          // Logo
+                          Image.asset(
+                            'assets/images/logo.png',
+                            width: 85,
+                            height: 85,
+                          ),
+
+                          const SizedBox(height: 18),
+
+                          Text(
+                            'TKD Tournament Manager',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: AppTypography.displaySmall,
+                              fontWeight: AppTypography.bold,
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 16, 45, 83),
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          Text(
+                            'Accede a tu panel de gestión',
+                            style: TextStyle(
+                              fontSize: AppTypography.caption,
+                              fontWeight: AppTypography.regular,
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.7)
+                                  : Colors.black.withOpacity(0.6),
+                            ),
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          // Usuario
+                          CustomInput(
+                            label: 'Usuario',
+                            type: InputType.text,
+                            placeholder: 'Ingrese su usuario',
+                            controller: userController,
+                            errorText: loginController.userError,
+                            prefixIcon: const Icon(
+                              FluentIcons.contact,
+                              size: AppTypography.iconMedium,
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Password
+                          CustomInput(
+                            label: 'Contraseña',
+                            type: InputType.password,
+                            placeholder: '••••••••',
+                            obscureText: true,
+                            controller: passwordController,
+                            errorText: loginController.passwordError,
+                            prefixIcon: const Icon(
+                              FluentIcons.lock,
+                              size: AppTypography.iconMedium,
+                            ),
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: 42,
+                            child: FilledButton(
+                              child: const Text(
+                                'Ingresar',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              onPressed: () async {
+                                final succes = await loginController.login(
+                                  userController.text,
+                                  passwordController.text,
+                                );
+
+                                if (!succes) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => ContentDialog(
+                                      title: const Text('Error inicio de sesión'),
+                                      content: const Text(
+                                        'Credenciales inválidas',
+                                      ),
+                                      actions: [
+                                        FilledButton(
+                                          child: const Text('Cerrar'),
+                                          onPressed: () => Navigator.pop(context),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    Routes.home,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

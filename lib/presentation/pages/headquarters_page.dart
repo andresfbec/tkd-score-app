@@ -3,13 +3,16 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app.dart';
 import '../../core/theme/theme_provider.dart';
 
+// Mockers
 import '../mockers/headquarters_mock.dart';
+import '../mockers/students_mock.dart';
 
 // Widgets
 import '../widgets/table_grid/custom_table.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_search.dart';
 import '../widgets/dropdown_filter.dart';
+import '../widgets/student_card.dart';
 
 // Controller
 import '../controllers/headquarters_controller.dart';
@@ -39,9 +42,12 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
     ];
 
     // ✅ AHORA USA LOS DATOS REALES DEL CONTROLLER
-    final rows = controller.headquarters.map((hq) {
-      return [hq.name, hq.address, hq.city, hq.phoneNumber];
-    }).toList();
+    // final rows = controller.headquarters.map((hq) {
+    //   return [hq.name, hq.address, hq.city, hq.phoneNumber];
+    // }).toList();
+
+    final headquartersData = MockHeadquartersData.headquarters;
+
 
     return ScaffoldPage(
       header: PageHeader(
@@ -128,17 +134,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                     flex: showDetail ? 5 : 1,
                     child: CustomTable(
                       columns: columns,
-                      data: controller.headquarters
-                          .map(
-                            (hq) => {
-                              'name': hq.name,
-                              'address': hq.address,
-                              'city': hq.city,
-                              'phoneNumber': hq.phoneNumber,
-                              'status': 'Activo',
-                            },
-                          )
-                          .toList(),
+                      data: headquartersData,
                       onRowSelected: (selectedRow) {
                         print('Selected row data: $selectedRow');
                       },
@@ -146,23 +142,56 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                   ),
 
                   if (showDetail) ...[
-                    const SizedBox(width: 16),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: isDark
-                              ? const Color(0xFF2B2B2B)
-                              : const Color(0xFFF3F3F3),
-                        ),
-                        child: const Center(
-                          child: Text('Selecciona una sede para ver detalles'),
-                        ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: isDark
+                            ? const Color(0xFF1E1E1E) // Un tono más oscuro para resaltar las cards
+                            : const Color(0xFFF9F9F9),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // // Encabezado del panel
+                          // Text(
+                          //   'Alumnos de la Sede',
+                          //   style: TextStyle(
+                          //     fontSize: 18,
+                          //     fontWeight: FontWeight.bold,
+                          //     color: AppColors.getTextPrimary(isDark),
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 16),
+                          
+                          // Lista de Alumnos
+                          Expanded(
+                            child: ListView.separated(
+                              padding: const EdgeInsets.only(right: 8), // espacio para scrollbar
+                              itemCount: mockStudents.length,
+                              separatorBuilder: (context, index) => const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final student = mockStudents[index];
+                                return StudentCard(
+                                  fullName: student.fullName,
+                                  age: student.age,
+                                  idNumber: student.idNumber,
+                                  leftBeltColor: student.leftBelt,
+                                  rightBeltColor: student.rightBelt,
+                                  onEdit: () => print("Editar: ${student.fullName}"),
+                                  onDelete: () => print("Borrar: ${student.fullName}"),
+                                  onCopy: () => print("Copiar ID: ${student.idNumber}"),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
+                ],
                 ],
               ),
             ),

@@ -55,8 +55,9 @@ class AppDatabase extends _$AppDatabase {
 // Función para abrir la conexión (equivalente a _openDb)
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    // Obtener la ruta del directorio de documentos
-    final dir = await getApplicationDocumentsDirectory();
+    // Obtener la ruta del directorio de soporte
+    // la ruta para encontrar la bd es: C:\Users\user\AppData\Roaming\com.example\tkd_score
+    final dir = await getApplicationSupportDirectory();
     final path = p.join(dir.path, DatabaseConstants.databaseName);
 
     print('🗄️ DB REAL PATH: $path'); // verificar donde guarda la db

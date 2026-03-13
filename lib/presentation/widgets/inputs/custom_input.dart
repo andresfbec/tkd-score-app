@@ -149,7 +149,7 @@ class CustomInput extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             errorText!,
-            style: const TextStyle(color: AppColors.error, fontSize: 12),
+            style: const TextStyle(color: AppColors.error, fontSize: AppTypography.caption),
           ),
         ],
       ],

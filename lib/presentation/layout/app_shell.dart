@@ -74,7 +74,7 @@ class _AppShellState extends State<AppShell> {
         selected: index,
         onChanged: (i) => setState(() => index = i),
         displayMode: PaneDisplayMode.auto,
-        size: const NavigationPaneSize(openMaxWidth: 250, openMinWidth: 48),
+        size: const NavigationPaneSize(openMaxWidth: 220, openMinWidth: 48),
         items: _buildSidebarItems(),
       ),
     );

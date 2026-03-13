@@ -83,6 +83,8 @@ class HeadquartersDao {
       return predicate;
     });
 
-    return await query.get();
+    return await query.getSingleOrNull() != null
+        ? await query.get()
+        : [];
   }
 }
