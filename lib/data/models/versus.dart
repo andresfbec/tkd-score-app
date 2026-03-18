@@ -1,89 +1,34 @@
-import 'package:equatable/equatable.dart';
-import 'package:tkd_score/data/models/inscription.dart';
-import 'grub.dart';
+import 'package:drift/drift.dart';
+import 'package:tkd_score/data/models/grup.dart';
+import 'inscription.dart';
 
-class Versus extends Equatable {
-  final int id;
-  final Inscription inscription1;
-  final Inscription inscription2;
-  final Grub grub;
+class Versus extends Table {
+  IntColumn get id => integer().autoIncrement()();
 
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final int synchronized;
+  @ReferenceName('inscription1')
+  IntColumn get inscription1Id => integer().references(
+    Inscription,
+    #id,
+    onDelete: KeyAction.setNull,
+    onUpdate: KeyAction.cascade,
+  )();
+  @ReferenceName('inscription2')
+  IntColumn get inscription2Id => integer().references(
+    Inscription,
+    #id,
+    onDelete: KeyAction.setNull,
+    onUpdate: KeyAction.cascade,
+  )();
 
-  const Versus({
-    required this.id,
-    required this.inscription1,
-    required this.inscription2,
-    required this.grub,
-    this.createdAt,
-    this.updatedAt,
-    this.synchronized = 0,
-  });
+  IntColumn get grupid => integer().references(
+    Grup,
+    #id,
+    onDelete: KeyAction.setNull,
+    onUpdate: KeyAction.cascade,
+  )();
 
-  factory Versus.fromJson(Map<String, dynamic> json) {
-    return Versus(
-      id: json['id'] as int,
-      inscription1: Inscription.fromJson(
-        json['inscription1'] as Map<String, dynamic>,
-      ),
-      inscription2: Inscription.fromJson(
-        json['inscription2'] as Map<String, dynamic>,
-      ),
-      grub: Grub.fromJson(
-        json['grub'] as Map<String, dynamic>,
-      ),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : null,
-      synchronized: json['synchronized'] as int? ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'inscription1': inscription1.toJson(),
-      'inscription2': inscription2.toJson(),
-      'grub': grub.toJson(),
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'synchronized': synchronized,
-    };
-  }
-
-  Versus copyWith({
-    int? id,
-    Inscription? inscription1,
-    Inscription? inscription2,
-    Grub? grub,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    int? synchronized,
-  }) {
-    return Versus(
-      id: id ?? this.id,
-      inscription1: inscription1 ?? this.inscription1,
-      inscription2: inscription2 ?? this.inscription2,
-      grub: grub ?? this.grub,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      synchronized: synchronized ?? this.synchronized,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-        id,
-        inscription1,
-        inscription2,
-        grub,
-        createdAt,
-        updatedAt,
-        synchronized,
-      ];
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  IntColumn get synchronized => integer().withDefault(const Constant(0))();
+  IntColumn get isActive => integer().withDefault(const Constant(1))();
 }

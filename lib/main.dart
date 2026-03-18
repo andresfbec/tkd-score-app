@@ -1,20 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'app/app.dart';
-import 'core/theme/theme_provider.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+// inyeccion de providers
+import 'app/providers.dart';
 
-void main() { // start app
+// Multiprovider
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializar SQLite FFI
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  final providers = await AppProviders.init();
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(), 
-      child: const App()
-    ),
-  );
+  runApp(MultiProvider(providers: providers, child: const App()));
 }
