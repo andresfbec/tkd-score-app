@@ -12,14 +12,14 @@ class CustomDataSource extends DataGridSource {
         cells: columns.map((column) {
           return DataGridCell(
             columnName: column['key']!,
-            value: row[column['key']],
+            value: row[column['key']] ?? '',
           );
         }).toList(),
       );
     }).toList();
   }
 
-  final List<Map<String, String>> columns;
+  final List<Map<String, dynamic>> columns;
   final Function(Map<String, dynamic>) onRowSelected;
 
   late List<DataGridRow> _dataGridRows;
@@ -32,12 +32,26 @@ class CustomDataSource extends DataGridSource {
     return DataGridRowAdapter(
       cells: [
         ...row.getCells().map<Widget>((cell) {
-          return Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(cell.value.toString()),
-          );
-        }),
+        final columnConfig = columns.firstWhere(
+          (col) => col['key'] == cell.columnName,
+        );
+
+        final renderer = columnConfig['renderer'] as Widget Function(dynamic)?;
+
+        Widget content;
+
+        if (renderer != null) {
+          content = renderer(cell.value);
+        } else {
+          content = Text(cell.value.toString());
+        }
+
+        return Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: content,
+        );
+      }),
 
         /// ACCIONES
         Container(

@@ -8,7 +8,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import '../../../core/constants/app.dart';
 
 class CustomTable extends StatefulWidget {
-  final List<Map<String, String>> columns;
+  final List<Map<String, dynamic>> columns;
   final List<Map<String, dynamic>> data;
   final Function(Map<String, dynamic>) onRowSelected;
 
@@ -108,6 +108,9 @@ class _CustomTableState extends State<CustomTable> {
           ...widget.columns.map(
             (column) => GridColumn(
               columnName: column['key']!,
+              width: column['width'] != null
+                ? column['width'] as double
+                : double.nan,
               label: Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -115,7 +118,7 @@ class _CustomTableState extends State<CustomTable> {
                 column['label']!,
                 style: fluentTheme.typography.title?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize: AppTypography.bodyMedium,
+                  fontSize: AppTypography.bodySmall,
                   color: headerTextColor,
                 ),
               ),
@@ -132,7 +135,7 @@ class _CustomTableState extends State<CustomTable> {
             'Acciones',
             style: fluentTheme.typography.title?.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: AppTypography.bodyMedium,
+              fontSize: AppTypography.bodySmall,
               color: headerTextColor,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import '../../core/constants/app.dart';
+import './belt_indicator.dart';
 
 class StudentCard extends StatelessWidget {
   final String fullName;
@@ -42,11 +43,13 @@ class StudentCard extends StatelessWidget {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final mutedText =
-        isDark ? Colors.white.withOpacity(0.6) : Colors.black.withOpacity(0.6);
+    final mutedText = isDark
+        ? Colors.white.withOpacity(0.6)
+        : Colors.black.withOpacity(0.6);
 
-    final borderColor =
-        isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.08);
+    final borderColor = isDark
+        ? Colors.white.withOpacity(0.08)
+        : Colors.black.withOpacity(0.08);
 
     /// Color base de la card
     final baseColor = isDark
@@ -55,7 +58,7 @@ class StudentCard extends StatelessWidget {
 
     final hoverColor = isDark
         ? const Color(0xFF2A2A2A)
-        : const Color.fromARGB(255, 226, 223, 223);
+        : const Color.fromARGB(255, 235, 232, 232);
 
     final FlyoutController controller = FlyoutController();
 
@@ -74,7 +77,6 @@ class StudentCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// FILA SUPERIOR
               Row(
                 children: [
@@ -84,8 +86,9 @@ class StudentCard extends StatelessWidget {
                     height: 34,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: theme.accentColor
-                          .defaultBrushFor(theme.brightness),
+                      color: theme.accentColor.defaultBrushFor(
+                        theme.brightness,
+                      ),
                     ),
                     alignment: Alignment.center,
                     child: Text(
@@ -108,7 +111,7 @@ class StudentCard extends StatelessWidget {
                         Text(
                           fullName,
                           style: const TextStyle(
-                            fontSize: AppTypography.bodyMedium,
+                            fontSize: AppTypography.bodySmall,
                             fontWeight: AppTypography.semiBold,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -119,6 +122,7 @@ class StudentCard extends StatelessWidget {
                           style: TextStyle(
                             color: mutedText,
                             fontSize: AppTypography.bodySmall,
+                            fontWeight: AppTypography.semiBold,
                           ),
                         ),
                       ],
@@ -178,33 +182,14 @@ class StudentCard extends StatelessWidget {
               /// FILA INFERIOR
               Row(
                 children: [
-
+                  const SizedBox(
+                    width: 2,
+                  ), // espacio para alinear con el texto de arriba
                   /// Etiqueta cinturón
-                  Container(
-                  width: 70,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.15)
-                          : Colors.black.withOpacity(0.15),
-                    ),
+                  BeltIndicator(
+                    leftColor: leftBeltColor,
+                    rightColor: rightBeltColor,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(color: leftBeltColor),
-                        ),
-                        Expanded(
-                          child: Container(color: rightBeltColor),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
 
                   const Spacer(),
                 ],

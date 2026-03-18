@@ -1,6 +1,6 @@
 
 class MockHeadquartersData {
-  static final List<Map<String, dynamic>> headquarters = List.generate(4, (index) {
+  static final List<Map<String, dynamic>> headquarters = List.generate(10, (index) {
     return {
       'name': 'Buchido Paloblanco ${index + 1}',
       'address': 'Calle ${10 + index} #${index + 1}-00',
