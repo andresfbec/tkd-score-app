@@ -8,6 +8,7 @@ import '../widgets/table_grid/custom_table.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_search.dart';
 import '../widgets/belt_indicator.dart';
+import '../widgets/student_record.dart';
 
 // Mocker
 import '../mockers/students_mock.dart';
@@ -62,7 +63,7 @@ class _StudentsPageState extends State<StudentsPage> {
     return ScaffoldPage(
       header: PageHeader(
         title: Text(
-          'Estudiantes',
+          'Alumnos',
           style: TextStyle(
             fontSize: AppTypography.titleView,
             fontWeight: AppTypography.semiBold,
@@ -74,7 +75,7 @@ class _StudentsPageState extends State<StudentsPage> {
           children: [
             const Spacer(),
             FluentActionButton(
-              icon: FluentIcons.user_window,
+              icon: FluentIcons.contact_info,
               label: 'Detalles',
               onPressed: () {
                 setState(() {
@@ -94,6 +95,8 @@ class _StudentsPageState extends State<StudentsPage> {
             /// 🔹 TOP BAR
             Row(
               children: [
+                const SizedBox(width: 8),
+
                 /// ➕ Crear
                 FluentActionButton(
                   icon: FluentIcons.add,
@@ -108,7 +111,7 @@ class _StudentsPageState extends State<StudentsPage> {
                 SizedBox(
                   width: 250,
                   child: FluentSearchBox(
-                    placeholder: 'Buscar...',
+                    placeholder: 'Buscar alumno...',
                     onChanged: (value) {},
                   ),
                 ),
@@ -116,41 +119,40 @@ class _StudentsPageState extends State<StudentsPage> {
                 const Spacer(),
 
                 /// 🔹 Acciones lado derecho
-                // if (showDetail) ...[
-                //   const SizedBox(width: 12),
+                if (showDetail) ...[
+                  const SizedBox(width: 12),
 
-                //   /// Info compacta
-                //   Container(
-                //     padding: const EdgeInsets.symmetric(
-                //       horizontal: 10,
-                //       vertical: 6,
-                //     ),
-                //     decoration: BoxDecoration(
-                //       color: isDark
-                //           ? Colors.white.withOpacity(0.04)
-                //           : Colors.black.withOpacity(0.04),
-                //       borderRadius: BorderRadius.circular(6),
-                //     ),
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: const [
-                //         Icon(FluentIcons.info, size: 14),
-                //         SizedBox(width: 6),
-                //         Text('0'),
-                //       ],
-                //     ),
-                //   ),
+                  /// Info compacta
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 10,
+                  //     vertical: 6,
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     color: isDark
+                  //         ? Colors.white.withOpacity(0.04)
+                  //         : Colors.black.withOpacity(0.04),
+                  //     borderRadius: BorderRadius.circular(6),
+                  //   ),
+                  //   child: Row(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     children: const [
+                  //       Icon(FluentIcons.info, size: 14),
+                  //       SizedBox(width: 6),
+                  //       Text('0'),
+                  //     ],
+                  //   ),
+                  // ),
+                  const SizedBox(width: 16),
 
-                //   const SizedBox(width: 16),
-
-                //   /// Botón acción
-                //   FluentActionButton(
-                //     icon: FluentIcons.add_friend,
-                //     label: "Añadir",
-                //     onPressed: () {},
-                //     filled: true,
-                //   ),
-                // ],
+                  /// Botón para llevar a estadísticas del alumno
+                  FluentActionButton(
+                    icon: FluentIcons.chart_series,
+                    label: "Estadisticas",
+                    onPressed: () {},
+                    filled: true,
+                  ),
+                ],
               ],
             ),
 
@@ -166,7 +168,9 @@ class _StudentsPageState extends State<StudentsPage> {
                     child: CustomTable(
                       columns: columns,
                       data: data,
-                      onRowSelected: (row) {},
+                      onRowSelected: (selectedRow) {
+                        print('Selected row data: $selectedRow');
+                      },
                     ),
                   ),
 
@@ -177,15 +181,40 @@ class _StudentsPageState extends State<StudentsPage> {
                     Expanded(
                       flex: 2,
                       child: Container(
+
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: isDark
                               ? const Color(0xFF1E1E1E)
                               : const Color(0xFFF9F9F9),
                         ),
-                        child: const Center(child: Text('Detalle / contenido')),
+
+                        child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: 12, // separación del scroll
+                          ),
+                          child: StudentCard(
+                            initials: "AB",
+                            fullName: "Andres Becerra",
+                            firstName: "Andres Felipe",
+                            lastName: "Becerra Malaver",
+                            documentType: "C.C",
+                            documentId: "1028483682",
+                            age: 19,
+                            gender: "Masculino",
+                            weight: 70,
+                            height: 1.75,
+                            tournaments: 5,
+                            headquarters: "Buchido Paloblanco",
+                            beltColor: Colors.yellow,
+                            participations: "5",
+                          ),
+                        ),
+                      ),
                       ),
                     ),
+
                   ],
                 ],
               ),

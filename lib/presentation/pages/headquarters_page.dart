@@ -86,7 +86,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                 // ➕ Botón crear (siempre primero a la izquierda)
                 FluentActionButton(
                   icon: FluentIcons.add,
-                  label: 'Agregar sede',
+                  label: 'Añadir sede',
                   onPressed: () {
                     context.read<HeadquartersController>().crearSedeDePrueba();
                   },
