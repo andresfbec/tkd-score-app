@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// clase de modelo para simular la representacion de un estudiante
 class StudentMock {
   final int id;
   final String names;
@@ -10,13 +9,12 @@ class StudentMock {
   final int age;
   final String gender;
   final double weight;
-  final double size;
+  final double height;
   final int headquarterId;
   final int beltId;
 
-  /// UI helpers (para no perder tu diseño actual)
-  final Color leftBelt;
-  final Color rightBelt;
+  /// 🔥 NUEVO
+  final int participations; // torneos / participaciones
 
   StudentMock({
     required this.id,
@@ -27,18 +25,64 @@ class StudentMock {
     required this.age,
     required this.gender,
     required this.weight,
-    required this.size,
+    required this.height,
     required this.headquarterId,
     required this.beltId,
-    required this.leftBelt,
-    required this.rightBelt,
+    required this.participations,
   });
 
-  /// 🔥 útil para UI
+  // ======================
+  // UI HELPERS
+  // ======================
+
   String get fullName => "$names $surnames";
+
+  String get initials =>
+      "${names.isNotEmpty ? names[0] : ''}${surnames.isNotEmpty ? surnames[0] : ''}";
+
+  Color get leftBelt => beltColorMap[beltId]!.$1;
+  Color get rightBelt => beltColorMap[beltId]!.$2;
+
+  // ======================
+  // BACKEND READY
+  // ======================
+
+  factory StudentMock.fromJson(Map<String, dynamic> json) {
+    return StudentMock(
+      id: json['id'],
+      names: json['names'],
+      surnames: json['surnames'],
+      typeIdentify: json['type_identify'],
+      numberId: json['number_id'],
+      age: json['age'],
+      gender: json['gender'],
+      weight: (json['weight'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+      headquarterId: json['headquarter_id'],
+      beltId: json['belt_id'],
+      participations: json['participations'] ?? 0, // 🔥 importante
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'names': names,
+      'surnames': surnames,
+      'type_identify': typeIdentify,
+      'number_id': numberId,
+      'age': age,
+      'gender': gender,
+      'weight': weight,
+      'height': height,
+      'headquarter_id': headquarterId,
+      'belt_id': beltId,
+      'participations': participations,
+    };
+  }
 }
 
-// helper de los colores de los cinturones
+
 Map<int, (Color, Color)> beltColorMap = {
   1: (Colors.white, Colors.white),
   2: (Colors.white, Colors.yellow),
@@ -53,9 +97,9 @@ Map<int, (Color, Color)> beltColorMap = {
   11: (Colors.black, Colors.black),
 };
 
-final List<StudentMock> mockStudents = List.generate(20, (index) {
+
+final List<StudentMock> mockStudents = List.generate(4, (index) {
   final beltId = (index % 11) + 1;
-  final belt = beltColorMap[beltId]!;
 
   return StudentMock(
     id: index + 1,
@@ -86,12 +130,13 @@ final List<StudentMock> mockStudents = List.generate(20, (index) {
     typeIdentify: "CC",
     numberId: "10${10000000 + index}",
     age: 12 + (index % 15),
-    gender: index % 2 == 0 ? "M" : "F",
+    gender: index % 2 == 0 ? "Masculino" : "Femenino",
     weight: 40 + (index * 1.5),
-    size: 1.40 + (index * 0.02),
+    height: double.parse((1.40 + (index * 0.02)).toStringAsFixed(2)),
     headquarterId: (index % 3) + 1,
     beltId: beltId,
-    leftBelt: belt.$1,
-    rightBelt: belt.$2,
+
+    /// 🔥 participaciones random tipo backend
+    participations: (index * 3) % 10,
   );
 });

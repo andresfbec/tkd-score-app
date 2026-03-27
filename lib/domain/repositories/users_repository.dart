@@ -1,4 +1,4 @@
-import '../entities/user_entity.dart';
+import '../entities/users_entity.dart';
 
 enum LoginFailure { userNotFound, wrongPassword, databaseError }
 

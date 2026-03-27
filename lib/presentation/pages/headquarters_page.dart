@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app.dart';
 import '../../core/theme/theme_provider.dart';
 
+// provider ui
+import '../../app/ui_state_provider.dart';
+
 // Mockers
 import '../mockers/headquarters_mock.dart';
 import '../mockers/students_card_mock.dart';
@@ -25,14 +28,35 @@ class HeadquartersPage extends StatefulWidget {
 }
 
 class _HeadquartersPageState extends State<HeadquartersPage> {
-  bool showDetail = false; // estado para mostrar/ocultar panel derecho
-
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final bool isDark = themeProvider.isDarkMode;
-
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    ); // provider del tema
+    final bool isDark = themeProvider.isDarkMode; // tema oscuro o claro
+    final ui = context.watch<UIStateProvider>();
     final controller = context.watch<HeadquartersController>();
+    final error = controller.errorMessage;
+
+    if (error != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (_) => ContentDialog(
+            title: const Text('Error'),
+            content: Text(error),
+            actions: [
+              Button(
+                child: const Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+
+        controller.clearError(); // limpiar error
+      });
+    }
 
     final columns = [
       {'key': 'name', 'label': 'Nombre'},
@@ -41,12 +65,16 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
       {'key': 'phoneNumber', 'label': 'Teléfono'},
     ];
 
-    // ✅ AHORA USA LOS DATOS REALES DEL CONTROLLER
-    // final rows = controller.headquarters.map((hq) {
-    //   return [hq.name, hq.address, hq.city, hq.phoneNumber];
-    // }).toList();
-
-    final headquartersData = MockHeadquartersData.headquarters;
+    final headquartersData = controller.headquarters.map((hq) {
+      return {
+        'id': hq.id,
+        'name': hq.name,
+        'address': hq.address,
+        'city': hq.city,
+        'phoneNumber': hq.phoneNumber,
+        'headquarter': hq,
+      };
+    }).toList();
 
     return ScaffoldPage(
       header: PageHeader(
@@ -66,9 +94,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
               icon: FluentIcons.p_b_i_home_layout_expanded,
               label: 'Alumnos',
               onPressed: () {
-                setState(() {
-                  showDetail = !showDetail;
-                });
+                context.read<UIStateProvider>().toggleHeadquartersDetail();
               },
               filled: false,
             ),
@@ -83,24 +109,33 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
             Row(
               children: [
                 const SizedBox(width: 8),
-                // ➕ Botón crear (siempre primero a la izquierda)
+                //  Botón crear (siempre primero a la izquierda)
                 FluentActionButton(
                   icon: FluentIcons.add,
-                  label: 'Añadir sede',
+                  label: 'Crear sede',
                   onPressed: () {
-                    context.read<HeadquartersController>().crearSedeDePrueba();
+                    context.read<HeadquartersController>().createHeadquarter(
+                      name: 'Red Bulls',
+                      address: 'Cra 4 #1-7',
+                      city: 'Bogotá',
+                      phone: '3252141258',
+                    );
                   },
                   filled: true,
                 ),
                 const SizedBox(width: 16),
 
-                // 🔍 Search con ancho controlado
+                //  Search con ancho controlado
                 SizedBox(
                   width: 250, // ancho fijo más compacto
                   child: FluentSearchBox(
                     placeholder: 'Buscar sede...',
                     onChanged: (value) {
-                      print('Buscando: $value');
+                      if (value.isEmpty) {
+                        controller.reset();
+                      } else {
+                        controller.search(name: value);
+                      }
                       // aquí podrías filtrar controller.headquarters
                     },
                   ),
@@ -108,45 +143,49 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
 
                 const Spacer(), // empuja el dropdown hacia la derecha
 
-               if (showDetail) ...[
+                if (ui.showHeadquartersDetail) ...[
+                  const SizedBox(width: 12),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.04)
+                          : Colors.black.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          FluentIcons.info,
+                          size: 14,
+                          color: isDark
+                              ? Colors.white.withOpacity(0.6)
+                              : Colors.black.withOpacity(0.6),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '24', // numero de alumnos en la sede seleccionada (ponerlo mas adelante dinámico)
+                          style: FluentTheme.of(context).typography.body
+                              ?.copyWith(
+                                fontSize: 13,
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.7)
+                                    : Colors.black.withOpacity(0.7),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
                 const SizedBox(width: 12),
 
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.04)
-                        : Colors.black.withOpacity(0.04),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        FluentIcons.info,
-                        size: 14,
-                        color: isDark
-                            ? Colors.white.withOpacity(0.6)
-                            : Colors.black.withOpacity(0.6),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '24', // numero de alumnos en la sede seleccionada (ponerlo mas adelante dinámico)
-                        style: FluentTheme.of(context).typography.body?.copyWith(
-                          fontSize: 13,
-                          color: isDark
-                              ? Colors.white.withOpacity(0.7)
-                              : Colors.black.withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-
-              const SizedBox(width: 12),
-
-                if (showDetail)
+                if (ui.showHeadquartersDetail)
                   FluentActionButton(
                     icon: FluentIcons.people_add,
                     label: "Añadir alumno",
@@ -154,7 +193,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                     filled: true,
                   ),
 
-                  const SizedBox(width: 12),
+                const SizedBox(width: 12),
 
                 // // ⬇️ Dropdown filtro con ancho controlado
                 // SizedBox(
@@ -173,23 +212,32 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
             ),
             const SizedBox(height: 12),
 
-            // 📊 Tabla + Panel derecho
+            // Tabla + Panel derecho
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: showDetail ? 5 : 1,
-                    child: CustomTable(
-                      columns: columns,
-                      data: headquartersData,
-                      onRowSelected: (selectedRow) {
-                        print('Selected row data: $selectedRow');
-                      },
-                    ),
-                  ),
+                  if (controller.isLoading)
+                    Expanded(child: Center(child: ProgressRing()))
+                  else
+                    Expanded(
+                      flex: ui.showHeadquartersDetail ? 5 : 1,
+                      child: CustomTable(
+                        columns: columns,
+                        data: headquartersData,
+                        selectedRow: ui.selectedHeadquarterRow,
+                        onRowSelected: (selectedRow) {
+                          final hq = selectedRow['headquarter'];
 
-                  if (showDetail) ...[
+                          context.read<UIStateProvider>().selectHeadquarter(
+                            hq,
+                            selectedRow,
+                          );
+                        },
+                      ),
+                    ),
+
+                  if (ui.showHeadquartersDetail) ...[
                     const SizedBox(width: 12),
                     Expanded(
                       flex: 2,

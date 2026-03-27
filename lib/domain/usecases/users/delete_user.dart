@@ -1,4 +1,4 @@
-import '../../repositories/user_repository.dart';
+import '../../repositories/users_repository.dart';
 
 class DeleteUser {
   final UserRepository repository;

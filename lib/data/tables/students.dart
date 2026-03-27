@@ -1,27 +1,26 @@
 import 'package:drift/drift.dart';
-import 'package:tkd_score/data/models/grup.dart';
-import 'inscription.dart';
+import 'headquarters.dart';
+import 'belts.dart';
 
-class Versus extends Table {
+class Students extends Table {
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get names => text()();
+  TextColumn get surnames => text()();
+  TextColumn get typeIdentify => text()();
+  TextColumn get identify => text()();
+  IntColumn get age => integer()();
+  TextColumn get gender => text()();
+  RealColumn get weight => real()();
+  RealColumn get size => real()();
 
-  @ReferenceName('inscription1')
-  IntColumn get inscription1Id => integer().references(
-    Inscription,
+  IntColumn get headquarterId => integer().references(
+    Headquarters,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,
   )();
-  @ReferenceName('inscription2')
-  IntColumn get inscription2Id => integer().references(
-    Inscription,
-    #id,
-    onDelete: KeyAction.setNull,
-    onUpdate: KeyAction.cascade,
-  )();
-
-  IntColumn get grupid => integer().references(
-    Grup,
+  IntColumn get beltId => integer().references(
+    Belts,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

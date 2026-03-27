@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'sogis.dart';
 
-class Belsts extends Table {
+class Belts extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -20,7 +20,7 @@ class SogiBelts extends Table {
     onUpdate: KeyAction.cascade,
   )();
   IntColumn get beltsId => integer().references(
-    Belsts,
+    Belts,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

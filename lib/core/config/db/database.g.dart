@@ -1448,11 +1448,11 @@ class SogisCompanion extends UpdateCompanion<Sogi> {
   }
 }
 
-class $BelstsTable extends Belsts with TableInfo<$BelstsTable, Belst> {
+class $BeltsTable extends Belts with TableInfo<$BeltsTable, Belt> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $BelstsTable(this.attachedDatabase, [this._alias]);
+  $BeltsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1536,10 +1536,10 @@ class $BelstsTable extends Belsts with TableInfo<$BelstsTable, Belst> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'belsts';
+  static const String $name = 'belts';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Belst> instance, {
+    Insertable<Belt> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1588,9 +1588,9 @@ class $BelstsTable extends Belsts with TableInfo<$BelstsTable, Belst> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Belst map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Belt map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Belst(
+    return Belt(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1619,19 +1619,19 @@ class $BelstsTable extends Belsts with TableInfo<$BelstsTable, Belst> {
   }
 
   @override
-  $BelstsTable createAlias(String alias) {
-    return $BelstsTable(attachedDatabase, alias);
+  $BeltsTable createAlias(String alias) {
+    return $BeltsTable(attachedDatabase, alias);
   }
 }
 
-class Belst extends DataClass implements Insertable<Belst> {
+class Belt extends DataClass implements Insertable<Belt> {
   final int id;
   final String name;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int synchronized;
   final int isActive;
-  const Belst({
+  const Belt({
     required this.id,
     required this.name,
     required this.createdAt,
@@ -1651,8 +1651,8 @@ class Belst extends DataClass implements Insertable<Belst> {
     return map;
   }
 
-  BelstsCompanion toCompanion(bool nullToAbsent) {
-    return BelstsCompanion(
+  BeltsCompanion toCompanion(bool nullToAbsent) {
+    return BeltsCompanion(
       id: Value(id),
       name: Value(name),
       createdAt: Value(createdAt),
@@ -1662,12 +1662,12 @@ class Belst extends DataClass implements Insertable<Belst> {
     );
   }
 
-  factory Belst.fromJson(
+  factory Belt.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Belst(
+    return Belt(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -1689,14 +1689,14 @@ class Belst extends DataClass implements Insertable<Belst> {
     };
   }
 
-  Belst copyWith({
+  Belt copyWith({
     int? id,
     String? name,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? synchronized,
     int? isActive,
-  }) => Belst(
+  }) => Belt(
     id: id ?? this.id,
     name: name ?? this.name,
     createdAt: createdAt ?? this.createdAt,
@@ -1704,8 +1704,8 @@ class Belst extends DataClass implements Insertable<Belst> {
     synchronized: synchronized ?? this.synchronized,
     isActive: isActive ?? this.isActive,
   );
-  Belst copyWithCompanion(BelstsCompanion data) {
-    return Belst(
+  Belt copyWithCompanion(BeltsCompanion data) {
+    return Belt(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -1719,7 +1719,7 @@ class Belst extends DataClass implements Insertable<Belst> {
 
   @override
   String toString() {
-    return (StringBuffer('Belst(')
+    return (StringBuffer('Belt(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('createdAt: $createdAt, ')
@@ -1736,7 +1736,7 @@ class Belst extends DataClass implements Insertable<Belst> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Belst &&
+      (other is Belt &&
           other.id == this.id &&
           other.name == this.name &&
           other.createdAt == this.createdAt &&
@@ -1745,14 +1745,14 @@ class Belst extends DataClass implements Insertable<Belst> {
           other.isActive == this.isActive);
 }
 
-class BelstsCompanion extends UpdateCompanion<Belst> {
+class BeltsCompanion extends UpdateCompanion<Belt> {
   final Value<int> id;
   final Value<String> name;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
   final Value<int> isActive;
-  const BelstsCompanion({
+  const BeltsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1760,7 +1760,7 @@ class BelstsCompanion extends UpdateCompanion<Belst> {
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   });
-  BelstsCompanion.insert({
+  BeltsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     this.createdAt = const Value.absent(),
@@ -1768,7 +1768,7 @@ class BelstsCompanion extends UpdateCompanion<Belst> {
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   }) : name = Value(name);
-  static Insertable<Belst> custom({
+  static Insertable<Belt> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<DateTime>? createdAt,
@@ -1786,7 +1786,7 @@ class BelstsCompanion extends UpdateCompanion<Belst> {
     });
   }
 
-  BelstsCompanion copyWith({
+  BeltsCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
     Value<DateTime>? createdAt,
@@ -1794,7 +1794,7 @@ class BelstsCompanion extends UpdateCompanion<Belst> {
     Value<int>? synchronized,
     Value<int>? isActive,
   }) {
-    return BelstsCompanion(
+    return BeltsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
@@ -1830,7 +1830,7 @@ class BelstsCompanion extends UpdateCompanion<Belst> {
 
   @override
   String toString() {
-    return (StringBuffer('BelstsCompanion(')
+    return (StringBuffer('BeltsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('createdAt: $createdAt, ')
@@ -1884,7 +1884,7 @@ class $SogiBeltsTable extends SogiBelts
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES belsts (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES belts (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -2416,7 +2416,7 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES belsts (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES belts (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -4685,11 +4685,11 @@ class JudgeTournamentCompanion extends UpdateCompanion<JudgeTournamentData> {
   }
 }
 
-class $GrupTable extends Grup with TableInfo<$GrupTable, GrupData> {
+class $GroupTable extends Group with TableInfo<$GroupTable, GroupData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $GrupTable(this.attachedDatabase, [this._alias]);
+  $GroupTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -4785,10 +4785,10 @@ class $GrupTable extends Grup with TableInfo<$GrupTable, GrupData> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'grup';
+  static const String $name = 'group';
   @override
   VerificationContext validateIntegrity(
-    Insertable<GrupData> instance, {
+    Insertable<GroupData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -4848,9 +4848,9 @@ class $GrupTable extends Grup with TableInfo<$GrupTable, GrupData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  GrupData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  GroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return GrupData(
+    return GroupData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -4883,12 +4883,12 @@ class $GrupTable extends Grup with TableInfo<$GrupTable, GrupData> {
   }
 
   @override
-  $GrupTable createAlias(String alias) {
-    return $GrupTable(attachedDatabase, alias);
+  $GroupTable createAlias(String alias) {
+    return $GroupTable(attachedDatabase, alias);
   }
 }
 
-class GrupData extends DataClass implements Insertable<GrupData> {
+class GroupData extends DataClass implements Insertable<GroupData> {
   final int id;
   final String name;
   final String description;
@@ -4896,7 +4896,7 @@ class GrupData extends DataClass implements Insertable<GrupData> {
   final DateTime updatedAt;
   final int synchronized;
   final int isActive;
-  const GrupData({
+  const GroupData({
     required this.id,
     required this.name,
     required this.description,
@@ -4918,8 +4918,8 @@ class GrupData extends DataClass implements Insertable<GrupData> {
     return map;
   }
 
-  GrupCompanion toCompanion(bool nullToAbsent) {
-    return GrupCompanion(
+  GroupCompanion toCompanion(bool nullToAbsent) {
+    return GroupCompanion(
       id: Value(id),
       name: Value(name),
       description: Value(description),
@@ -4930,12 +4930,12 @@ class GrupData extends DataClass implements Insertable<GrupData> {
     );
   }
 
-  factory GrupData.fromJson(
+  factory GroupData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return GrupData(
+    return GroupData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
@@ -4959,7 +4959,7 @@ class GrupData extends DataClass implements Insertable<GrupData> {
     };
   }
 
-  GrupData copyWith({
+  GroupData copyWith({
     int? id,
     String? name,
     String? description,
@@ -4967,7 +4967,7 @@ class GrupData extends DataClass implements Insertable<GrupData> {
     DateTime? updatedAt,
     int? synchronized,
     int? isActive,
-  }) => GrupData(
+  }) => GroupData(
     id: id ?? this.id,
     name: name ?? this.name,
     description: description ?? this.description,
@@ -4976,8 +4976,8 @@ class GrupData extends DataClass implements Insertable<GrupData> {
     synchronized: synchronized ?? this.synchronized,
     isActive: isActive ?? this.isActive,
   );
-  GrupData copyWithCompanion(GrupCompanion data) {
-    return GrupData(
+  GroupData copyWithCompanion(GroupCompanion data) {
+    return GroupData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       description: data.description.present
@@ -4994,7 +4994,7 @@ class GrupData extends DataClass implements Insertable<GrupData> {
 
   @override
   String toString() {
-    return (StringBuffer('GrupData(')
+    return (StringBuffer('GroupData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
@@ -5019,7 +5019,7 @@ class GrupData extends DataClass implements Insertable<GrupData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is GrupData &&
+      (other is GroupData &&
           other.id == this.id &&
           other.name == this.name &&
           other.description == this.description &&
@@ -5029,7 +5029,7 @@ class GrupData extends DataClass implements Insertable<GrupData> {
           other.isActive == this.isActive);
 }
 
-class GrupCompanion extends UpdateCompanion<GrupData> {
+class GroupCompanion extends UpdateCompanion<GroupData> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> description;
@@ -5037,7 +5037,7 @@ class GrupCompanion extends UpdateCompanion<GrupData> {
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
   final Value<int> isActive;
-  const GrupCompanion({
+  const GroupCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
@@ -5046,7 +5046,7 @@ class GrupCompanion extends UpdateCompanion<GrupData> {
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   });
-  GrupCompanion.insert({
+  GroupCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String description,
@@ -5056,7 +5056,7 @@ class GrupCompanion extends UpdateCompanion<GrupData> {
     this.isActive = const Value.absent(),
   }) : name = Value(name),
        description = Value(description);
-  static Insertable<GrupData> custom({
+  static Insertable<GroupData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? description,
@@ -5076,7 +5076,7 @@ class GrupCompanion extends UpdateCompanion<GrupData> {
     });
   }
 
-  GrupCompanion copyWith({
+  GroupCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
     Value<String>? description,
@@ -5085,7 +5085,7 @@ class GrupCompanion extends UpdateCompanion<GrupData> {
     Value<int>? synchronized,
     Value<int>? isActive,
   }) {
-    return GrupCompanion(
+    return GroupCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -5125,7 +5125,7 @@ class GrupCompanion extends UpdateCompanion<GrupData> {
 
   @override
   String toString() {
-    return (StringBuffer('GrupCompanion(')
+    return (StringBuffer('GroupCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
@@ -5204,7 +5204,7 @@ class $InscriptionTable extends Inscription
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES grup (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES "group" (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -5748,7 +5748,7 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES grup (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES "group" (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -7329,7 +7329,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $HeadquartersTable headquarters = $HeadquartersTable(this);
   late final $UsersTable users = $UsersTable(this);
   late final $SogisTable sogis = $SogisTable(this);
-  late final $BelstsTable belsts = $BelstsTable(this);
+  late final $BeltsTable belts = $BeltsTable(this);
   late final $SogiBeltsTable sogiBelts = $SogiBeltsTable(this);
   late final $StudentsTable students = $StudentsTable(this);
   late final $TournamentTable tournament = $TournamentTable(this);
@@ -7337,7 +7337,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $JudgeTournamentTable judgeTournament = $JudgeTournamentTable(
     this,
   );
-  late final $GrupTable grup = $GrupTable(this);
+  late final $GroupTable group = $GroupTable(this);
   late final $InscriptionTable inscription = $InscriptionTable(this);
   late final $VersusTable versus = $VersusTable(this);
   late final $ScoreTable score = $ScoreTable(this);
@@ -7350,13 +7350,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     headquarters,
     users,
     sogis,
-    belsts,
+    belts,
     sogiBelts,
     students,
     tournament,
     judge,
     judgeTournament,
-    grup,
+    group,
     inscription,
     versus,
     score,
@@ -7394,14 +7394,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'belsts',
+        'belts',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('sogi_belts', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'belsts',
+        'belts',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('sogi_belts', kind: UpdateKind.update)],
@@ -7422,14 +7422,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'belsts',
+        'belts',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('students', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'belsts',
+        'belts',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('students', kind: UpdateKind.update)],
@@ -7492,14 +7492,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'grup',
+        'group',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('inscription', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'grup',
+        'group',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('inscription', kind: UpdateKind.update)],
@@ -7534,14 +7534,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'grup',
+        'group',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('versus', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'grup',
+        'group',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('versus', kind: UpdateKind.update)],
@@ -8958,8 +8958,8 @@ typedef $$SogisTableProcessedTableManager =
       Sogi,
       PrefetchHooks Function({bool sogiBeltsRefs, bool sogisOne, bool sogisTwo})
     >;
-typedef $$BelstsTableCreateCompanionBuilder =
-    BelstsCompanion Function({
+typedef $$BeltsTableCreateCompanionBuilder =
+    BeltsCompanion Function({
       Value<int> id,
       required String name,
       Value<DateTime> createdAt,
@@ -8967,8 +8967,8 @@ typedef $$BelstsTableCreateCompanionBuilder =
       Value<int> synchronized,
       Value<int> isActive,
     });
-typedef $$BelstsTableUpdateCompanionBuilder =
-    BelstsCompanion Function({
+typedef $$BeltsTableUpdateCompanionBuilder =
+    BeltsCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<DateTime> createdAt,
@@ -8977,14 +8977,14 @@ typedef $$BelstsTableUpdateCompanionBuilder =
       Value<int> isActive,
     });
 
-final class $$BelstsTableReferences
-    extends BaseReferences<_$AppDatabase, $BelstsTable, Belst> {
-  $$BelstsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$BeltsTableReferences
+    extends BaseReferences<_$AppDatabase, $BeltsTable, Belt> {
+  $$BeltsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$SogiBeltsTable, List<SogiBelt>>
   _sogiBeltsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.sogiBelts,
-    aliasName: $_aliasNameGenerator(db.belsts.id, db.sogiBelts.beltsId),
+    aliasName: $_aliasNameGenerator(db.belts.id, db.sogiBelts.beltsId),
   );
 
   $$SogiBeltsTableProcessedTableManager get sogiBeltsRefs {
@@ -9003,7 +9003,7 @@ final class $$BelstsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.students,
-    aliasName: $_aliasNameGenerator(db.belsts.id, db.students.beltId),
+    aliasName: $_aliasNameGenerator(db.belts.id, db.students.beltId),
   );
 
   $$StudentsTableProcessedTableManager get studentsRefs {
@@ -9019,9 +9019,8 @@ final class $$BelstsTableReferences
   }
 }
 
-class $$BelstsTableFilterComposer
-    extends Composer<_$AppDatabase, $BelstsTable> {
-  $$BelstsTableFilterComposer({
+class $$BeltsTableFilterComposer extends Composer<_$AppDatabase, $BeltsTable> {
+  $$BeltsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -9109,9 +9108,9 @@ class $$BelstsTableFilterComposer
   }
 }
 
-class $$BelstsTableOrderingComposer
-    extends Composer<_$AppDatabase, $BelstsTable> {
-  $$BelstsTableOrderingComposer({
+class $$BeltsTableOrderingComposer
+    extends Composer<_$AppDatabase, $BeltsTable> {
+  $$BeltsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -9149,9 +9148,9 @@ class $$BelstsTableOrderingComposer
   );
 }
 
-class $$BelstsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $BelstsTable> {
-  $$BelstsTableAnnotationComposer({
+class $$BeltsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BeltsTable> {
+  $$BeltsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -9229,32 +9228,32 @@ class $$BelstsTableAnnotationComposer
   }
 }
 
-class $$BelstsTableTableManager
+class $$BeltsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $BelstsTable,
-          Belst,
-          $$BelstsTableFilterComposer,
-          $$BelstsTableOrderingComposer,
-          $$BelstsTableAnnotationComposer,
-          $$BelstsTableCreateCompanionBuilder,
-          $$BelstsTableUpdateCompanionBuilder,
-          (Belst, $$BelstsTableReferences),
-          Belst,
+          $BeltsTable,
+          Belt,
+          $$BeltsTableFilterComposer,
+          $$BeltsTableOrderingComposer,
+          $$BeltsTableAnnotationComposer,
+          $$BeltsTableCreateCompanionBuilder,
+          $$BeltsTableUpdateCompanionBuilder,
+          (Belt, $$BeltsTableReferences),
+          Belt,
           PrefetchHooks Function({bool sogiBeltsRefs, bool studentsRefs})
         > {
-  $$BelstsTableTableManager(_$AppDatabase db, $BelstsTable table)
+  $$BeltsTableTableManager(_$AppDatabase db, $BeltsTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$BelstsTableFilterComposer($db: db, $table: table),
+              $$BeltsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$BelstsTableOrderingComposer($db: db, $table: table),
+              $$BeltsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$BelstsTableAnnotationComposer($db: db, $table: table),
+              $$BeltsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -9263,7 +9262,7 @@ class $$BelstsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
                 Value<int> isActive = const Value.absent(),
-              }) => BelstsCompanion(
+              }) => BeltsCompanion(
                 id: id,
                 name: name,
                 createdAt: createdAt,
@@ -9279,7 +9278,7 @@ class $$BelstsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
                 Value<int> isActive = const Value.absent(),
-              }) => BelstsCompanion.insert(
+              }) => BeltsCompanion.insert(
                 id: id,
                 name: name,
                 createdAt: createdAt,
@@ -9290,7 +9289,7 @@ class $$BelstsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) =>
-                    (e.readTable(table), $$BelstsTableReferences(db, table, e)),
+                    (e.readTable(table), $$BeltsTableReferences(db, table, e)),
               )
               .toList(),
           prefetchHooksCallback:
@@ -9305,16 +9304,12 @@ class $$BelstsTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (sogiBeltsRefs)
-                        await $_getPrefetchedData<
-                          Belst,
-                          $BelstsTable,
-                          SogiBelt
-                        >(
+                        await $_getPrefetchedData<Belt, $BeltsTable, SogiBelt>(
                           currentTable: table,
-                          referencedTable: $$BelstsTableReferences
+                          referencedTable: $$BeltsTableReferences
                               ._sogiBeltsRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$BelstsTableReferences(
+                              $$BeltsTableReferences(
                                 db,
                                 table,
                                 p0,
@@ -9326,12 +9321,12 @@ class $$BelstsTableTableManager
                           typedResults: items,
                         ),
                       if (studentsRefs)
-                        await $_getPrefetchedData<Belst, $BelstsTable, Student>(
+                        await $_getPrefetchedData<Belt, $BeltsTable, Student>(
                           currentTable: table,
-                          referencedTable: $$BelstsTableReferences
+                          referencedTable: $$BeltsTableReferences
                               ._studentsRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$BelstsTableReferences(
+                              $$BeltsTableReferences(
                                 db,
                                 table,
                                 p0,
@@ -9350,18 +9345,18 @@ class $$BelstsTableTableManager
       );
 }
 
-typedef $$BelstsTableProcessedTableManager =
+typedef $$BeltsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $BelstsTable,
-      Belst,
-      $$BelstsTableFilterComposer,
-      $$BelstsTableOrderingComposer,
-      $$BelstsTableAnnotationComposer,
-      $$BelstsTableCreateCompanionBuilder,
-      $$BelstsTableUpdateCompanionBuilder,
-      (Belst, $$BelstsTableReferences),
-      Belst,
+      $BeltsTable,
+      Belt,
+      $$BeltsTableFilterComposer,
+      $$BeltsTableOrderingComposer,
+      $$BeltsTableAnnotationComposer,
+      $$BeltsTableCreateCompanionBuilder,
+      $$BeltsTableUpdateCompanionBuilder,
+      (Belt, $$BeltsTableReferences),
+      Belt,
       PrefetchHooks Function({bool sogiBeltsRefs, bool studentsRefs})
     >;
 typedef $$SogiBeltsTableCreateCompanionBuilder =
@@ -9407,16 +9402,16 @@ final class $$SogiBeltsTableReferences
     );
   }
 
-  static $BelstsTable _beltsIdTable(_$AppDatabase db) => db.belsts.createAlias(
-    $_aliasNameGenerator(db.sogiBelts.beltsId, db.belsts.id),
+  static $BeltsTable _beltsIdTable(_$AppDatabase db) => db.belts.createAlias(
+    $_aliasNameGenerator(db.sogiBelts.beltsId, db.belts.id),
   );
 
-  $$BelstsTableProcessedTableManager get beltsId {
+  $$BeltsTableProcessedTableManager get beltsId {
     final $_column = $_itemColumn<int>('belts_id')!;
 
-    final manager = $$BelstsTableTableManager(
+    final manager = $$BeltsTableTableManager(
       $_db,
-      $_db.belsts,
+      $_db.belts,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_beltsIdTable($_db));
     if (item == null) return manager;
@@ -9483,20 +9478,20 @@ class $$SogiBeltsTableFilterComposer
     return composer;
   }
 
-  $$BelstsTableFilterComposer get beltsId {
-    final $$BelstsTableFilterComposer composer = $composerBuilder(
+  $$BeltsTableFilterComposer get beltsId {
+    final $$BeltsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.beltsId,
-      referencedTable: $db.belsts,
+      referencedTable: $db.belts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$BelstsTableFilterComposer(
+          }) => $$BeltsTableFilterComposer(
             $db: $db,
-            $table: $db.belsts,
+            $table: $db.belts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9564,20 +9559,20 @@ class $$SogiBeltsTableOrderingComposer
     return composer;
   }
 
-  $$BelstsTableOrderingComposer get beltsId {
-    final $$BelstsTableOrderingComposer composer = $composerBuilder(
+  $$BeltsTableOrderingComposer get beltsId {
+    final $$BeltsTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.beltsId,
-      referencedTable: $db.belsts,
+      referencedTable: $db.belts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$BelstsTableOrderingComposer(
+          }) => $$BeltsTableOrderingComposer(
             $db: $db,
-            $table: $db.belsts,
+            $table: $db.belts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9637,20 +9632,20 @@ class $$SogiBeltsTableAnnotationComposer
     return composer;
   }
 
-  $$BelstsTableAnnotationComposer get beltsId {
-    final $$BelstsTableAnnotationComposer composer = $composerBuilder(
+  $$BeltsTableAnnotationComposer get beltsId {
+    final $$BeltsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.beltsId,
-      referencedTable: $db.belsts,
+      referencedTable: $db.belts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$BelstsTableAnnotationComposer(
+          }) => $$BeltsTableAnnotationComposer(
             $db: $db,
-            $table: $db.belsts,
+            $table: $db.belts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9863,16 +9858,16 @@ final class $$StudentsTableReferences
     );
   }
 
-  static $BelstsTable _beltIdTable(_$AppDatabase db) => db.belsts.createAlias(
-    $_aliasNameGenerator(db.students.beltId, db.belsts.id),
+  static $BeltsTable _beltIdTable(_$AppDatabase db) => db.belts.createAlias(
+    $_aliasNameGenerator(db.students.beltId, db.belts.id),
   );
 
-  $$BelstsTableProcessedTableManager get beltId {
+  $$BeltsTableProcessedTableManager get beltId {
     final $_column = $_itemColumn<int>('belt_id')!;
 
-    final manager = $$BelstsTableTableManager(
+    final manager = $$BeltsTableTableManager(
       $_db,
-      $_db.belsts,
+      $_db.belts,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_beltIdTable($_db));
     if (item == null) return manager;
@@ -9997,20 +9992,20 @@ class $$StudentsTableFilterComposer
     return composer;
   }
 
-  $$BelstsTableFilterComposer get beltId {
-    final $$BelstsTableFilterComposer composer = $composerBuilder(
+  $$BeltsTableFilterComposer get beltId {
+    final $$BeltsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.beltId,
-      referencedTable: $db.belsts,
+      referencedTable: $db.belts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$BelstsTableFilterComposer(
+          }) => $$BeltsTableFilterComposer(
             $db: $db,
-            $table: $db.belsts,
+            $table: $db.belts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10143,20 +10138,20 @@ class $$StudentsTableOrderingComposer
     return composer;
   }
 
-  $$BelstsTableOrderingComposer get beltId {
-    final $$BelstsTableOrderingComposer composer = $composerBuilder(
+  $$BeltsTableOrderingComposer get beltId {
+    final $$BeltsTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.beltId,
-      referencedTable: $db.belsts,
+      referencedTable: $db.belts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$BelstsTableOrderingComposer(
+          }) => $$BeltsTableOrderingComposer(
             $db: $db,
-            $table: $db.belsts,
+            $table: $db.belts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10242,20 +10237,20 @@ class $$StudentsTableAnnotationComposer
     return composer;
   }
 
-  $$BelstsTableAnnotationComposer get beltId {
-    final $$BelstsTableAnnotationComposer composer = $composerBuilder(
+  $$BeltsTableAnnotationComposer get beltId {
+    final $$BeltsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.beltId,
-      referencedTable: $db.belsts,
+      referencedTable: $db.belts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$BelstsTableAnnotationComposer(
+          }) => $$BeltsTableAnnotationComposer(
             $db: $db,
-            $table: $db.belsts,
+            $table: $db.belts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -11900,8 +11895,8 @@ typedef $$JudgeTournamentTableProcessedTableManager =
       JudgeTournamentData,
       PrefetchHooks Function({bool judgeId, bool tournamentId})
     >;
-typedef $$GrupTableCreateCompanionBuilder =
-    GrupCompanion Function({
+typedef $$GroupTableCreateCompanionBuilder =
+    GroupCompanion Function({
       Value<int> id,
       required String name,
       required String description,
@@ -11910,8 +11905,8 @@ typedef $$GrupTableCreateCompanionBuilder =
       Value<int> synchronized,
       Value<int> isActive,
     });
-typedef $$GrupTableUpdateCompanionBuilder =
-    GrupCompanion Function({
+typedef $$GroupTableUpdateCompanionBuilder =
+    GroupCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<String> description,
@@ -11921,14 +11916,14 @@ typedef $$GrupTableUpdateCompanionBuilder =
       Value<int> isActive,
     });
 
-final class $$GrupTableReferences
-    extends BaseReferences<_$AppDatabase, $GrupTable, GrupData> {
-  $$GrupTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$GroupTableReferences
+    extends BaseReferences<_$AppDatabase, $GroupTable, GroupData> {
+  $$GroupTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$InscriptionTable, List<InscriptionData>>
   _inscriptionRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.inscription,
-    aliasName: $_aliasNameGenerator(db.grup.id, db.inscription.grupId),
+    aliasName: $_aliasNameGenerator(db.group.id, db.inscription.grupId),
   );
 
   $$InscriptionTableProcessedTableManager get inscriptionRefs {
@@ -11947,7 +11942,7 @@ final class $$GrupTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.versus,
-    aliasName: $_aliasNameGenerator(db.grup.id, db.versus.grupid),
+    aliasName: $_aliasNameGenerator(db.group.id, db.versus.grupid),
   );
 
   $$VersusTableProcessedTableManager get versusRefs {
@@ -11963,8 +11958,8 @@ final class $$GrupTableReferences
   }
 }
 
-class $$GrupTableFilterComposer extends Composer<_$AppDatabase, $GrupTable> {
-  $$GrupTableFilterComposer({
+class $$GroupTableFilterComposer extends Composer<_$AppDatabase, $GroupTable> {
+  $$GroupTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -12057,8 +12052,9 @@ class $$GrupTableFilterComposer extends Composer<_$AppDatabase, $GrupTable> {
   }
 }
 
-class $$GrupTableOrderingComposer extends Composer<_$AppDatabase, $GrupTable> {
-  $$GrupTableOrderingComposer({
+class $$GroupTableOrderingComposer
+    extends Composer<_$AppDatabase, $GroupTable> {
+  $$GroupTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -12101,9 +12097,9 @@ class $$GrupTableOrderingComposer extends Composer<_$AppDatabase, $GrupTable> {
   );
 }
 
-class $$GrupTableAnnotationComposer
-    extends Composer<_$AppDatabase, $GrupTable> {
-  $$GrupTableAnnotationComposer({
+class $$GroupTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GroupTable> {
+  $$GroupTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -12186,32 +12182,32 @@ class $$GrupTableAnnotationComposer
   }
 }
 
-class $$GrupTableTableManager
+class $$GroupTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $GrupTable,
-          GrupData,
-          $$GrupTableFilterComposer,
-          $$GrupTableOrderingComposer,
-          $$GrupTableAnnotationComposer,
-          $$GrupTableCreateCompanionBuilder,
-          $$GrupTableUpdateCompanionBuilder,
-          (GrupData, $$GrupTableReferences),
-          GrupData,
+          $GroupTable,
+          GroupData,
+          $$GroupTableFilterComposer,
+          $$GroupTableOrderingComposer,
+          $$GroupTableAnnotationComposer,
+          $$GroupTableCreateCompanionBuilder,
+          $$GroupTableUpdateCompanionBuilder,
+          (GroupData, $$GroupTableReferences),
+          GroupData,
           PrefetchHooks Function({bool inscriptionRefs, bool versusRefs})
         > {
-  $$GrupTableTableManager(_$AppDatabase db, $GrupTable table)
+  $$GroupTableTableManager(_$AppDatabase db, $GroupTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$GrupTableFilterComposer($db: db, $table: table),
+              $$GroupTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$GrupTableOrderingComposer($db: db, $table: table),
+              $$GroupTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$GrupTableAnnotationComposer($db: db, $table: table),
+              $$GroupTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -12221,7 +12217,7 @@ class $$GrupTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
                 Value<int> isActive = const Value.absent(),
-              }) => GrupCompanion(
+              }) => GroupCompanion(
                 id: id,
                 name: name,
                 description: description,
@@ -12239,7 +12235,7 @@ class $$GrupTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
                 Value<int> isActive = const Value.absent(),
-              }) => GrupCompanion.insert(
+              }) => GroupCompanion.insert(
                 id: id,
                 name: name,
                 description: description,
@@ -12251,7 +12247,7 @@ class $$GrupTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) =>
-                    (e.readTable(table), $$GrupTableReferences(db, table, e)),
+                    (e.readTable(table), $$GroupTableReferences(db, table, e)),
               )
               .toList(),
           prefetchHooksCallback:
@@ -12267,18 +12263,19 @@ class $$GrupTableTableManager
                     return [
                       if (inscriptionRefs)
                         await $_getPrefetchedData<
-                          GrupData,
-                          $GrupTable,
+                          GroupData,
+                          $GroupTable,
                           InscriptionData
                         >(
                           currentTable: table,
-                          referencedTable: $$GrupTableReferences
+                          referencedTable: $$GroupTableReferences
                               ._inscriptionRefsTable(db),
-                          managerFromTypedResult: (p0) => $$GrupTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).inscriptionRefs,
+                          managerFromTypedResult: (p0) =>
+                              $$GroupTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).inscriptionRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.grupId == item.id,
@@ -12287,15 +12284,15 @@ class $$GrupTableTableManager
                         ),
                       if (versusRefs)
                         await $_getPrefetchedData<
-                          GrupData,
-                          $GrupTable,
+                          GroupData,
+                          $GroupTable,
                           VersusData
                         >(
                           currentTable: table,
-                          referencedTable: $$GrupTableReferences
+                          referencedTable: $$GroupTableReferences
                               ._versusRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$GrupTableReferences(db, table, p0).versusRefs,
+                              $$GroupTableReferences(db, table, p0).versusRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.grupid == item.id,
@@ -12310,18 +12307,18 @@ class $$GrupTableTableManager
       );
 }
 
-typedef $$GrupTableProcessedTableManager =
+typedef $$GroupTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $GrupTable,
-      GrupData,
-      $$GrupTableFilterComposer,
-      $$GrupTableOrderingComposer,
-      $$GrupTableAnnotationComposer,
-      $$GrupTableCreateCompanionBuilder,
-      $$GrupTableUpdateCompanionBuilder,
-      (GrupData, $$GrupTableReferences),
-      GrupData,
+      $GroupTable,
+      GroupData,
+      $$GroupTableFilterComposer,
+      $$GroupTableOrderingComposer,
+      $$GroupTableAnnotationComposer,
+      $$GroupTableCreateCompanionBuilder,
+      $$GroupTableUpdateCompanionBuilder,
+      (GroupData, $$GroupTableReferences),
+      GroupData,
       PrefetchHooks Function({bool inscriptionRefs, bool versusRefs})
     >;
 typedef $$InscriptionTableCreateCompanionBuilder =
@@ -12391,16 +12388,16 @@ final class $$InscriptionTableReferences
     );
   }
 
-  static $GrupTable _grupIdTable(_$AppDatabase db) => db.grup.createAlias(
-    $_aliasNameGenerator(db.inscription.grupId, db.grup.id),
+  static $GroupTable _grupIdTable(_$AppDatabase db) => db.group.createAlias(
+    $_aliasNameGenerator(db.inscription.grupId, db.group.id),
   );
 
-  $$GrupTableProcessedTableManager get grupId {
+  $$GroupTableProcessedTableManager get grupId {
     final $_column = $_itemColumn<int>('grup_id')!;
 
-    final manager = $$GrupTableTableManager(
+    final manager = $$GroupTableTableManager(
       $_db,
-      $_db.grup,
+      $_db.group,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_grupIdTable($_db));
     if (item == null) return manager;
@@ -12558,20 +12555,20 @@ class $$InscriptionTableFilterComposer
     return composer;
   }
 
-  $$GrupTableFilterComposer get grupId {
-    final $$GrupTableFilterComposer composer = $composerBuilder(
+  $$GroupTableFilterComposer get grupId {
+    final $$GroupTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupId,
-      referencedTable: $db.grup,
+      referencedTable: $db.group,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GrupTableFilterComposer(
+          }) => $$GroupTableFilterComposer(
             $db: $db,
-            $table: $db.grup,
+            $table: $db.group,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -12742,20 +12739,20 @@ class $$InscriptionTableOrderingComposer
     return composer;
   }
 
-  $$GrupTableOrderingComposer get grupId {
-    final $$GrupTableOrderingComposer composer = $composerBuilder(
+  $$GroupTableOrderingComposer get grupId {
+    final $$GroupTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupId,
-      referencedTable: $db.grup,
+      referencedTable: $db.group,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GrupTableOrderingComposer(
+          }) => $$GroupTableOrderingComposer(
             $db: $db,
-            $table: $db.grup,
+            $table: $db.group,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -12841,20 +12838,20 @@ class $$InscriptionTableAnnotationComposer
     return composer;
   }
 
-  $$GrupTableAnnotationComposer get grupId {
-    final $$GrupTableAnnotationComposer composer = $composerBuilder(
+  $$GroupTableAnnotationComposer get grupId {
+    final $$GroupTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupId,
-      referencedTable: $db.grup,
+      referencedTable: $db.group,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GrupTableAnnotationComposer(
+          }) => $$GroupTableAnnotationComposer(
             $db: $db,
-            $table: $db.grup,
+            $table: $db.group,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -13264,15 +13261,15 @@ final class $$VersusTableReferences
     );
   }
 
-  static $GrupTable _grupidTable(_$AppDatabase db) =>
-      db.grup.createAlias($_aliasNameGenerator(db.versus.grupid, db.grup.id));
+  static $GroupTable _grupidTable(_$AppDatabase db) =>
+      db.group.createAlias($_aliasNameGenerator(db.versus.grupid, db.group.id));
 
-  $$GrupTableProcessedTableManager get grupid {
+  $$GroupTableProcessedTableManager get grupid {
     final $_column = $_itemColumn<int>('grupid')!;
 
-    final manager = $$GrupTableTableManager(
+    final manager = $$GroupTableTableManager(
       $_db,
-      $_db.grup,
+      $_db.group,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_grupidTable($_db));
     if (item == null) return manager;
@@ -13381,20 +13378,20 @@ class $$VersusTableFilterComposer
     return composer;
   }
 
-  $$GrupTableFilterComposer get grupid {
-    final $$GrupTableFilterComposer composer = $composerBuilder(
+  $$GroupTableFilterComposer get grupid {
+    final $$GroupTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupid,
-      referencedTable: $db.grup,
+      referencedTable: $db.group,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GrupTableFilterComposer(
+          }) => $$GroupTableFilterComposer(
             $db: $db,
-            $table: $db.grup,
+            $table: $db.group,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -13510,20 +13507,20 @@ class $$VersusTableOrderingComposer
     return composer;
   }
 
-  $$GrupTableOrderingComposer get grupid {
-    final $$GrupTableOrderingComposer composer = $composerBuilder(
+  $$GroupTableOrderingComposer get grupid {
+    final $$GroupTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupid,
-      referencedTable: $db.grup,
+      referencedTable: $db.group,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GrupTableOrderingComposer(
+          }) => $$GroupTableOrderingComposer(
             $db: $db,
-            $table: $db.grup,
+            $table: $db.group,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -13606,20 +13603,20 @@ class $$VersusTableAnnotationComposer
     return composer;
   }
 
-  $$GrupTableAnnotationComposer get grupid {
-    final $$GrupTableAnnotationComposer composer = $composerBuilder(
+  $$GroupTableAnnotationComposer get grupid {
+    final $$GroupTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupid,
-      referencedTable: $db.grup,
+      referencedTable: $db.group,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GrupTableAnnotationComposer(
+          }) => $$GroupTableAnnotationComposer(
             $db: $db,
-            $table: $db.grup,
+            $table: $db.group,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15085,8 +15082,8 @@ class $AppDatabaseManager {
       $$UsersTableTableManager(_db, _db.users);
   $$SogisTableTableManager get sogis =>
       $$SogisTableTableManager(_db, _db.sogis);
-  $$BelstsTableTableManager get belsts =>
-      $$BelstsTableTableManager(_db, _db.belsts);
+  $$BeltsTableTableManager get belts =>
+      $$BeltsTableTableManager(_db, _db.belts);
   $$SogiBeltsTableTableManager get sogiBelts =>
       $$SogiBeltsTableTableManager(_db, _db.sogiBelts);
   $$StudentsTableTableManager get students =>
@@ -15097,7 +15094,8 @@ class $AppDatabaseManager {
       $$JudgeTableTableManager(_db, _db.judge);
   $$JudgeTournamentTableTableManager get judgeTournament =>
       $$JudgeTournamentTableTableManager(_db, _db.judgeTournament);
-  $$GrupTableTableManager get grup => $$GrupTableTableManager(_db, _db.grup);
+  $$GroupTableTableManager get group =>
+      $$GroupTableTableManager(_db, _db.group);
   $$InscriptionTableTableManager get inscription =>
       $$InscriptionTableTableManager(_db, _db.inscription);
   $$VersusTableTableManager get versus =>

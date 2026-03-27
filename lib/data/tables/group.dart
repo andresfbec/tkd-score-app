@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-class Grup extends Table {
+class Group extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
   TextColumn get description => text()();

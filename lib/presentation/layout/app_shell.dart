@@ -96,7 +96,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium, // w500
           ),
         ),
-        body: const TournamentsPage(),
+        body: Builder(
+          builder: (_) => const TournamentsPage(),
+        ),
       ),
       PaneItem(
         icon: Icon(
@@ -110,7 +112,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const HeadquartersPage(),
+        body: Builder(
+          builder: (_) => const HeadquartersPage(),
+        ),
       ),
       PaneItem(
         icon: Icon(
@@ -125,7 +129,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const StudentsPage(),
+        body: Builder(
+          builder: (_) => const StudentsPage(),
+        ),
       ),
             PaneItem(
         icon: Icon(
@@ -139,7 +145,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const JudgesPage(),
+        body: Builder(
+          builder: (context) => const JudgesPage(),
+          ),
       ),
       PaneItem(
         icon: Icon(FluentIcons.people, size: AppTypography.iconLarge), // 16.0
@@ -150,7 +158,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const UserPage(),
+        body: Builder(
+          builder: (_) => const UserPage(),
+        ),
       ),
       PaneItem(
         icon: Icon(FluentIcons.settings, size: AppTypography.iconLarge), // 16.0
@@ -161,7 +171,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const SettingsPage(),
+        body: Builder(
+          builder: (_) => const SettingsPage(),
+        ),
       ),
     ];
   }

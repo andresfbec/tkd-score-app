@@ -1,28 +1,27 @@
 import 'package:drift/drift.dart';
-import 'grup.dart';
-import 'tournament.dart';
-import 'students.dart';
+import 'package:tkd_score/data/tables/group.dart';
+import 'inscription.dart';
 
-class Inscription extends Table {
+class Versus extends Table {
   IntColumn get id => integer().autoIncrement()();
-  DateTimeColumn get date => dateTime().withDefault(currentDateAndTime)();
 
-  IntColumn get studentId => integer().references(
-    Students,
+  @ReferenceName('inscription1')
+  IntColumn get inscription1Id => integer().references(
+    Inscription,
+    #id,
+    onDelete: KeyAction.setNull,
+    onUpdate: KeyAction.cascade,
+  )();
+  @ReferenceName('inscription2')
+  IntColumn get inscription2Id => integer().references(
+    Inscription,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,
   )();
 
-  IntColumn get tournamentId => integer().references(
-    Tournament,
-    #id,
-    onDelete: KeyAction.setNull,
-    onUpdate: KeyAction.cascade,
-  )();
-
-  IntColumn get grupId => integer().references(
-    Grup,
+  IntColumn get grupid => integer().references(
+    Group,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

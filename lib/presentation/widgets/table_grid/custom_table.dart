@@ -11,12 +11,14 @@ class CustomTable extends StatefulWidget {
   final List<Map<String, dynamic>> columns;
   final List<Map<String, dynamic>> data;
   final Function(Map<String, dynamic>) onRowSelected;
+  final Map<String, dynamic>? selectedRow;
 
   const CustomTable({
     super.key,
     required this.columns,
     required this.data,
     required this.onRowSelected,
+    this.selectedRow,
   });
 
   @override
@@ -25,6 +27,7 @@ class CustomTable extends StatefulWidget {
 
 class _CustomTableState extends State<CustomTable> {
   late CustomDataSource _dataSource;
+  final DataGridController _controller = DataGridController();
 
   @override
   void initState() {
@@ -34,6 +37,10 @@ class _CustomTableState extends State<CustomTable> {
       columns: widget.columns,
       onRowSelected: widget.onRowSelected,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncSelection();
+    });
   }
 
   @override
@@ -46,6 +53,43 @@ class _CustomTableState extends State<CustomTable> {
         columns: widget.columns,
         onRowSelected: widget.onRowSelected,
       );
+    }
+
+    /// 🔥 CLAVE: cuando cambia selectedRow → actualizamos selección
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncSelection();
+    });
+  }
+
+  /// 🔥 Encuentra la fila que corresponde al selectedRow del provider
+  DataGridRow? _getSelectedDataGridRow() {
+    if (widget.selectedRow == null) return null;
+
+    try {
+      return _dataSource.rows.firstWhere((row) {
+        final original =
+            row.getCells().firstWhere((c) => c.columnName == '_original').value
+                as Map<String, dynamic>;
+
+        return original['student'].id == widget.selectedRow!['student'].id;
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Aplica la selección al DataGrid
+  void _syncSelection() {
+    final selected = _getSelectedDataGridRow();
+
+    if (selected != null) {
+      final index = _dataSource.rows.indexOf(selected);
+      _controller.selectedIndex = index;
+
+      // Scroll automatico
+      _controller.scrollToRow(index.toDouble());
+    } else {
+      _controller.selectedIndex = -1;
     }
   }
 
@@ -78,9 +122,7 @@ class _CustomTableState extends State<CustomTable> {
                 ? fluentTheme.resources.controlFillColorSecondary
                 : fluentTheme.cardColor,
             headerHoverColor: accent.withOpacity(0.08),
-            selectionColor: accent.withOpacity(
-              isDark ? 0.25 : 0.15,
-            ), // color de selección con opacidad
+            selectionColor: accent.withOpacity(isDark ? 0.25 : 0.15),
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -91,72 +133,90 @@ class _CustomTableState extends State<CustomTable> {
                   rowHeight; // altura total de filas + header
               final maxHeight = constraints.maxHeight;
 
+              if (widget.data.isEmpty) {
+                return SizedBox(
+                  height: 100,
+                  child: Center(child: Text('No hay datos disponibles',
+                  style: fluentTheme.typography.body?.copyWith(
+                    fontSize: 16,
+                    color: isDark ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.8)
+                  ),
+                  )
+                  ),
+                );
+              }
+
               return SizedBox(
                 height: totalHeight > maxHeight ? maxHeight : totalHeight,
                 child: SfDataGrid(
-        source: _dataSource,
-        selectionMode: SelectionMode.single,
-        navigationMode: GridNavigationMode.row,
-        columnWidthMode: ColumnWidthMode.fill,
-        allowSorting: true,
-        highlightRowOnHover: true,
-        headerRowHeight: 52,
-        rowHeight: 48,
-        gridLinesVisibility: GridLinesVisibility.horizontal,
-        headerGridLinesVisibility: GridLinesVisibility.horizontal,
-        columns: [
-          ...widget.columns.map(
-            (column) => GridColumn(
-              columnName: column['key']!,
-              width: column['width'] != null
-                ? column['width'] as double
-                : double.nan,
-              label: Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                column['label']!,
-                style: fluentTheme.typography.title?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: AppTypography.bodySmall,
-                  color: headerTextColor,
+                  controller: _controller, // IMPORTANTE
+                  source: _dataSource,
+                  selectionMode: SelectionMode.single,
+                  navigationMode: GridNavigationMode.row,
+                  columnWidthMode: ColumnWidthMode.fill,
+                  allowSorting: true,
+                  highlightRowOnHover: true,
+                  headerRowHeight: 52,
+                  rowHeight: 48,
+                  gridLinesVisibility: GridLinesVisibility.horizontal,
+                  headerGridLinesVisibility: GridLinesVisibility.horizontal,
+
+                  columns: [
+                    ...widget.columns.map(
+                      (column) => GridColumn(
+                        columnName: column['key']!,
+                        width: column['width'] != null
+                            ? column['width'] as double
+                            : double.nan,
+                        label: Container(
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            column['label']!,
+                            style: fluentTheme.typography.title?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: AppTypography.bodySmall,
+                              color: headerTextColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GridColumn(
+                      columnName: 'actions',
+                      width: 130,
+                      label: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Acciones',
+                          style: fluentTheme.typography.title?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: AppTypography.bodySmall,
+                            color: headerTextColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  onSelectionChanged: (addedRows, removedRows) {
+                    if (addedRows.isNotEmpty) {
+                      final row = addedRows.first;
+
+                      final original =
+                          row
+                                  .getCells()
+                                  .firstWhere(
+                                    (c) => c.columnName == '_original',
+                                  )
+                                  .value
+                              as Map<String, dynamic>;
+
+                      widget.onRowSelected(original);
+                    }
+                  },
                 ),
-              ),
-            ),
-            ),
-          ),
-          GridColumn(
-          columnName: 'actions',
-          width: 130,
-          label: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Acciones',
-            style: fluentTheme.typography.title?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: AppTypography.bodySmall,
-              color: headerTextColor,
-            ),
-          ),
-        ),
-
-        ),
-
-        ],
-        onSelectionChanged: (addedRows, removedRows) {
-          if (addedRows.isNotEmpty) {
-            final row = addedRows.first;
-            final data = <String, dynamic>{};
-
-            for (var cell in row.getCells()) {
-              data[cell.columnName] = cell.value;
-            }
-
-            widget.onRowSelected(data);
-          }
-        },
-      ),
               );
             },
           ),

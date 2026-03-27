@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import '../../domain/entities/user_entity.dart';
+import '../../domain/entities/users_entity.dart';
 import '../../domain/usecases/users/create_user.dart';
-import '../../domain/repositories/user_repository.dart';
+import '../../domain/repositories/users_repository.dart';
 
 class UserController extends ChangeNotifier {
   final CreateUser createUser;

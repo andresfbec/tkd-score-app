@@ -1,7 +1,7 @@
-import '../../entities/user_entity.dart';
+import '../../entities/users_entity.dart';
 import '../../../core/utils/hash_text.dart';
 
-import '../../repositories/user_repository.dart';
+import '../../repositories/users_repository.dart';
 
 class NewPassword {
   final UserRepository repository;
