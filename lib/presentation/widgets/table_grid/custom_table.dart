@@ -12,12 +12,14 @@ class CustomTable extends StatefulWidget {
   final List<Map<String, dynamic>> data;
   final Function(Map<String, dynamic>) onRowSelected;
   final Map<String, dynamic>? selectedRow;
+  final bool Function(Map<String, dynamic>, Map<String, dynamic>) isSameRow;
 
   const CustomTable({
     super.key,
     required this.columns,
     required this.data,
     required this.onRowSelected,
+    required this.isSameRow,
     this.selectedRow,
   });
 
@@ -55,13 +57,13 @@ class _CustomTableState extends State<CustomTable> {
       );
     }
 
-    /// 🔥 CLAVE: cuando cambia selectedRow → actualizamos selección
+    /// CLAVE: cuando cambia selectedRow → actualizamos selección
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _syncSelection();
     });
   }
 
-  /// 🔥 Encuentra la fila que corresponde al selectedRow del provider
+  /// Encuentra la fila que corresponde al selectedRow del provider
   DataGridRow? _getSelectedDataGridRow() {
     if (widget.selectedRow == null) return null;
 
@@ -71,7 +73,9 @@ class _CustomTableState extends State<CustomTable> {
             row.getCells().firstWhere((c) => c.columnName == '_original').value
                 as Map<String, dynamic>;
 
-        return original['student'].id == widget.selectedRow!['student'].id;
+        // Usamos la funcion isSameRow para comparar la fila original con la fila seleccionada del provider
+        // ya que al hacer (rebuild, filtros, etc) ya  no son la misma referencia en memoria, aunque representen el mismo dato por eso comparamos por id o campos unicos
+        return widget.isSameRow(original, widget.selectedRow!);
       });
     } catch (e) {
       return null;
@@ -86,8 +90,16 @@ class _CustomTableState extends State<CustomTable> {
       final index = _dataSource.rows.indexOf(selected);
       _controller.selectedIndex = index;
 
+      /// FIX delay para esperar a que el DataGrid actualice su estado interno antes de hacer scroll
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (mounted && _controller.selectedIndex != -1) {
+          try {
+            _controller.scrollToRow(index.toDouble());
+          } catch (_) {}
+        }
+      });
+
       // Scroll automatico
-      _controller.scrollToRow(index.toDouble());
     } else {
       _controller.selectedIndex = -1;
     }
@@ -136,12 +148,16 @@ class _CustomTableState extends State<CustomTable> {
               if (widget.data.isEmpty) {
                 return SizedBox(
                   height: 100,
-                  child: Center(child: Text('No hay datos disponibles',
-                  style: fluentTheme.typography.body?.copyWith(
-                    fontSize: 16,
-                    color: isDark ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.8)
-                  ),
-                  )
+                  child: Center(
+                    child: Text(
+                      'No hay datos disponibles',
+                      style: fluentTheme.typography.body?.copyWith(
+                        fontSize: 16,
+                        color: isDark
+                            ? Colors.white.withOpacity(0.7)
+                            : Colors.black.withOpacity(0.8),
+                      ),
+                    ),
                   ),
                 );
               }

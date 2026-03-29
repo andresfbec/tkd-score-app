@@ -35,8 +35,8 @@ class UIStateProvider extends ChangeNotifier {
 
   // SELECTOR STUNDENT
   void selectStudent(dynamic student, Map<String, dynamic> row) {
-    _selectedStudent = student;
-    _selectedStudentRow = row;
+    _selectedStudent = student; // Es el modelo limpio obtenido
+    _selectedStudentRow = row; //  Es todo lo que viene en la fila de la tabla 
     notifyListeners();
   }
 

@@ -103,7 +103,7 @@ class _StudentsPageState extends State<StudentsPage> {
                 /// Crear
                 FluentActionButton(
                   icon: FluentIcons.add,
-                  label: 'Crear estudiante',
+                  label: 'Crear alumno',
                   onPressed: () {},
                   filled: true,
                 ),
@@ -174,6 +174,7 @@ class _StudentsPageState extends State<StudentsPage> {
                       columns: columns,
                       data: data,
                       selectedRow: ui.selectedStudentRow,
+                      isSameRow: (row1, row2) => row1['student'].id == row2['student'].id,
                       onRowSelected: (selectedRow) {
                         final student = selectedRow['student'];
 

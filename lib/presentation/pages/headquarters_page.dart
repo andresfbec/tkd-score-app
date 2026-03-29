@@ -115,10 +115,10 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                   label: 'Crear sede',
                   onPressed: () {
                     context.read<HeadquartersController>().createHeadquarter(
-                      name: 'Red Bulls',
-                      address: 'Cra 4 #1-7',
+                      name: 'Buchido PaloBlanco',
+                      address: 'Cra 174 9na 50',
                       city: 'Bogotá',
-                      phone: '3252141258',
+                      phone: '32521452',
                     );
                   },
                   filled: true,
@@ -226,6 +226,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                         columns: columns,
                         data: headquartersData,
                         selectedRow: ui.selectedHeadquarterRow,
+                        isSameRow: (row1, row2) => row1['headquarter'].id == row2['headquarter'].id,
                         onRowSelected: (selectedRow) {
                           final hq = selectedRow['headquarter'];
 
