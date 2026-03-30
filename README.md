@@ -49,7 +49,7 @@ El ejecutable para Windows aún no está disponible públicamente, ya que el pro
 
 ## Comandos técnicos
 
-Para iniciar el proyecto(desarrollo)
+Para iniciar el proyecto (desarrollo)
 
     flutter run -d windows 
 
@@ -61,7 +61,7 @@ Para regenerar los archivos de base de datos (.g.dart):
 
     flutter pub run build_runner build --delete-conflicting-outputs
 
-Para generar el ejecutable (!producción¡)
+Para generar el ejecutable ¡PRODUCCIÓN!
 
     flutter build windows
 ---
