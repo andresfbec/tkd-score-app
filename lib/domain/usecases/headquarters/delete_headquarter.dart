@@ -1,14 +1,15 @@
 import '../../repositories/headquarters_repository.dart';
+import '../../errors/exceptions.dart';
 
-class DeleteHeadquart {
+class DeleteHeadquarter {
   final HeadquartersRepository repository;
 
-  DeleteHeadquart(this.repository);
+  DeleteHeadquarter(this.repository);
 
   Future<int> call(int pk) async {
     final validate = await repository.getById(pk);
     if (validate == null) {
-      throw Exception('El elemento a eliminar no exite');
+      throw HeadquarterNotFoundException();
     }
     return repository.delete(pk);
   }

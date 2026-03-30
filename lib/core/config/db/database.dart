@@ -4,19 +4,19 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:tkd_score/data/models/users.dart';
-import 'package:tkd_score/data/models/headquarters.dart';
-import 'package:tkd_score/data/models/sogis.dart';
-import 'package:tkd_score/data/models/belsts.dart';
-import 'package:tkd_score/data/models/students.dart';
-import 'package:tkd_score/data/models/tournament.dart';
-import 'package:tkd_score/data/models/judge.dart';
-import 'package:tkd_score/data/models/grup.dart';
+import 'package:tkd_score/data/tables/users.dart';
+import 'package:tkd_score/data/tables/headquarters.dart';
+import 'package:tkd_score/data/tables/sogis.dart';
+import 'package:tkd_score/data/tables/belts.dart';
+import 'package:tkd_score/data/tables/students.dart';
+import 'package:tkd_score/data/tables/tournament.dart';
+import 'package:tkd_score/data/tables/judge.dart';
+import 'package:tkd_score/data/tables/group.dart';
 import '../../../core/constants/database.dart';
-import 'package:tkd_score/data/models/inscription.dart';
-import 'package:tkd_score/data/models/versus.dart';
-import 'package:tkd_score/data/models/score.dart';
-import 'package:tkd_score/data/models/winner.dart';
+import 'package:tkd_score/data/tables/inscription.dart';
+import 'package:tkd_score/data/tables/versus.dart';
+import 'package:tkd_score/data/tables/score.dart';
+import 'package:tkd_score/data/tables/winner.dart';
 
 part 'database.g.dart'; // se generará automáticamente
 
@@ -25,13 +25,13 @@ part 'database.g.dart'; // se generará automáticamente
     Headquarters,
     Users,
     Sogis,
-    Belsts,
+    Belts,
     SogiBelts,
     Students,
     Tournament,
     Judge,
     JudgeTournament,
-    Grup,
+    Group,
     Inscription,
     Versus,
     Score,

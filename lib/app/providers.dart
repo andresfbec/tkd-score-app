@@ -2,25 +2,31 @@
 import 'package:provider/provider.dart';
 
 import '../../presentation/controllers/headquarters_controller.dart';
-import '../../presentation/controllers/user_controller.dart';
+import '../presentation/controllers/users_controller.dart';
 import '../../presentation/controllers/login_controller.dart';
 import '../../core/theme/theme_provider.dart';
-import '../core/config/containers/dependencia_headquarts.dart';
-import '../core/config/containers/dependencia_user.dart';
+import '../core/config/containers/dependency_headquarters.dart';
+import '../core/config/containers/dependency_user.dart';
 import '../presentation/controllers/session_controller.dart';
+import 'ui_state_provider.dart';
 
 class AppProviders {
   static Future<List<ChangeNotifierProvider>> init() async {
     // Inicializaciones necesarias
     await InjectionUser.init();
-    await InjectionHeadquart.init();
+    await InjectionHeadquarters.init();
 
     final containerUser = InjectionUser();
-    final containerHeadquarts = InjectionHeadquart();
+    final containerHeadquarters = InjectionHeadquarters();
 
     return [
       // ThemeProvider
       ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()),
+
+      // UIStateProvider (para manejar estados de UI como modales, paneles, etc.)
+      ChangeNotifierProvider<UIStateProvider>(
+        create: (_) => UIStateProvider(),
+      ),
 
       // LoginController
       ChangeNotifierProvider<LoginController>(
@@ -32,13 +38,13 @@ class AppProviders {
 
       ChangeNotifierProvider<HeadquartersController>(
         create: (_) => HeadquartersController(
-          containerHeadquarts.createHeadquart, // 1. CreateHeadquart
-          containerHeadquarts.updateHeadquart, // 2. UpdateHeadquart
-          containerHeadquarts.deleteHeadquart, // 3. DeleteHeadquart
-          containerHeadquarts
-              .headquartersRepository, // 4. HeadquartersRepository
-          containerHeadquarts.getHeadquart, // 5. GetHeadquart
-        )..loadHeadquarters(),
+          containerHeadquarters.createHeadquarter, 
+          containerHeadquarters.updateHeadquarter, 
+          containerHeadquarters.deleteHeadquarter, 
+          containerHeadquarters.getAllHeadquarters, 
+          containerHeadquarters.findHeadquarters,
+          containerHeadquarters.watchHeadquarters,
+        )..startListening(), // empieza a escuchar el stream al crear el controller
       ),
       ChangeNotifierProvider<UserController>(
         create: (_) => UserController(

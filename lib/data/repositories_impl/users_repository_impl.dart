@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:tkd_score/data/mappers/users_mapper.dart';
 import '../../core/config/db/database.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../datasources/user_dao.dart';
-import '../../domain/entities/user_entity.dart';
+import '../../domain/repositories/users_repository.dart';
+import '../datasources/users_dao.dart';
+import '../../domain/entities/users_entity.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserDao dao;

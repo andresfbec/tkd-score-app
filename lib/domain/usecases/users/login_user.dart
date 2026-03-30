@@ -1,4 +1,4 @@
-import '../../repositories/user_repository.dart';
+import '../../repositories/users_repository.dart';
 import '../../../core/utils/hash_text.dart';
 
 class LoginUser {

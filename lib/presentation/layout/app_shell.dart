@@ -73,8 +73,10 @@ class _AppShellState extends State<AppShell> {
       pane: NavigationPane(
         selected: index,
         onChanged: (i) => setState(() => index = i),
-        displayMode: PaneDisplayMode.auto,
-        size: const NavigationPaneSize(openMaxWidth: 220, openMinWidth: 48),
+        displayMode: MediaQuery.of(context).size.width < 1200
+      ? PaneDisplayMode.top      // cuando la ventana es angosta
+      : PaneDisplayMode.auto,
+        size: const NavigationPaneSize(openMaxWidth: 200, openMinWidth: 48),
         items: _buildSidebarItems(),
       ),
     );
@@ -94,11 +96,13 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium, // w500
           ),
         ),
-        body: const TournamentsPage(),
+        body: Builder(
+          builder: (_) => const TournamentsPage(),
+        ),
       ),
       PaneItem(
         icon: Icon(
-          FluentIcons.city_next,
+          FluentIcons.city_next2,
           size: AppTypography.iconLarge,
         ), // 16.0
         title: Text(
@@ -108,9 +112,28 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const HeadquartersPage(),
+        body: Builder(
+          builder: (_) => const HeadquartersPage(),
+        ),
       ),
       PaneItem(
+        icon: Icon(
+          // FluentIcons.fabric_user_folder,
+          FluentIcons.education,
+          size: AppTypography.iconLarge,
+        ), // 16.0
+        title: Text(
+          'Alumnos',
+          style: TextStyle(
+            fontSize: AppTypography.titleSmall,
+            fontWeight: AppTypography.medium,
+          ),
+        ),
+        body: Builder(
+          builder: (_) => const StudentsPage(),
+        ),
+      ),
+            PaneItem(
         icon: Icon(
           FluentIcons.contact_card,
           size: AppTypography.iconLarge,
@@ -122,21 +145,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const JudgesPage(),
-      ),
-      PaneItem(
-        icon: Icon(
-          FluentIcons.external_user,
-          size: AppTypography.iconLarge,
-        ), // 16.0
-        title: Text(
-          'Alumnos',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall,
-            fontWeight: AppTypography.medium,
+        body: Builder(
+          builder: (context) => const JudgesPage(),
           ),
-        ),
-        body: const StudentsPage(),
       ),
       PaneItem(
         icon: Icon(FluentIcons.people, size: AppTypography.iconLarge), // 16.0
@@ -147,7 +158,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const UserPage(),
+        body: Builder(
+          builder: (_) => const UserPage(),
+        ),
       ),
       PaneItem(
         icon: Icon(FluentIcons.settings, size: AppTypography.iconLarge), // 16.0
@@ -158,7 +171,9 @@ class _AppShellState extends State<AppShell> {
             fontWeight: AppTypography.medium,
           ),
         ),
-        body: const SettingsPage(),
+        body: Builder(
+          builder: (_) => const SettingsPage(),
+        ),
       ),
     ];
   }

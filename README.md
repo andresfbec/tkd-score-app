@@ -1,22 +1,77 @@
-# tkd_score
 
-A new Flutter project.
+# TKD Score App
 
-## Getting Started
+![Flutter](https://img.shields.io/badge/Flutter-Framework-blue?logo=flutter)
+![Platform](https://img.shields.io/badge/Platform-Windows-blue)
+![Status](https://img.shields.io/badge/Status-En%20Desarrollo-orange)
+![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-green)
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## Descripción
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+TKD Score es una aplicación desarrollada en Flutter para la gestión, desarrollo, ejecución y auditoría de torneos de Taekwondo, enfocada en las modalidades de Poomsae y Combate.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Su objetivo es ofrecer una solución integral para la organización de eventos deportivos, con un enfoque en flexibilidad, análisis de datos y manejo de escenarios reales.
 
+---
 
-Comando para Crear DB
+## Funcionalidades principales
 
+- Personalización de torneos según modalidad y reglas
+- Gestión de alumnos y sedes
+- Estadísticas detalladas por alumno y sede
+- Recolección y graficación de mediciones en combate
+- Organización automática y sugerida de llaves
+- Administración de grupos y categorías
+- Manejo de escenarios reales (ausencias, retiros, imprevistos)
+- Funcionamiento 100% offline
+- Distribución como ejecutable (.exe) para Windows
 
-flutter pub run build_runner build --delete-conflicting-outputs
+---
+
+## Tecnologías utilizadas
+
+- Flutter + Dart
+- Drift ORM (persistencia y generación de código)
+- Clean Architecture
+- SQLite (base de datos local)
+
+---
+
+## Estado del proyecto
+
+Actualmente en fase inicial de desarrollo.
+
+El ejecutable para Windows aún no está disponible públicamente, ya que el proyecto está orientado a una futura distribución bajo licencia comercial.
+
+---
+
+## Comando técnico
+
+Para regenerar los archivos de base de datos (.g.dart):
+
+    flutter pub run build_runner build --delete-conflicting-outputs
+
+---
+
+## Equipo de desarrollo
+
+- Andrés Felipe Malaver
+- Ever Giraldo
+
+---
+
+## Roadmap
+
+- Finalización del ejecutable para Windows
+- Integración de más modalidades de Taekwondo
+- Exportación de resultados en PDF
+- Panel de administración avanzado para árbitros y jueces
+
+---
+
+## Licencia
+
+Este proyecto se encuentra en desarrollo y será distribuido bajo licencia comercial.  
+Los detalles de costos y licenciamiento aún están en definición.

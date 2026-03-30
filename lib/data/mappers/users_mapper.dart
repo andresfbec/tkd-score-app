@@ -1,4 +1,4 @@
-import '../../domain/entities/user_entity.dart';
+import '../../domain/entities/users_entity.dart';
 import '../../core/config/db/database.dart';
 
 class UsersMapper {

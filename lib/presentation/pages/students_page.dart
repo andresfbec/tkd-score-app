@@ -3,11 +3,15 @@ import '../../core/constants/app.dart';
 import '../../core/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
+// provider ui
+import '../../app/ui_state_provider.dart';
+
 // Widgets
 import '../widgets/table_grid/custom_table.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_search.dart';
 import '../widgets/belt_indicator.dart';
+import '../widgets/student_detail_card.dart';
 
 // Mocker
 import '../mockers/students_mock.dart';
@@ -20,11 +24,12 @@ class StudentsPage extends StatefulWidget {
 }
 
 class _StudentsPageState extends State<StudentsPage> {
-  bool showDetail = false;
+
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = FluentTheme.of(context).brightness == Brightness.dark;
+    final ui = context.watch<UIStateProvider>();
 
     /// 🔹 Columnas base (puedes cambiarlas luego)
     final columns = [
@@ -55,14 +60,15 @@ class _StudentsPageState extends State<StudentsPage> {
         'numberId': student.numberId,
         'age': student.age,
         'headquarter': headquartersMap[student.headquarterId] ?? 'N/A',
-        'belt': student, // renderer del cinturon
+        'belt': student, // renderer del cinturon (belt indicator)
+        'student': student, // para detalles (la card details)
       };
     }).toList();
 
     return ScaffoldPage(
       header: PageHeader(
         title: Text(
-          'Estudiantes',
+          'Alumnos',
           style: TextStyle(
             fontSize: AppTypography.titleView,
             fontWeight: AppTypography.semiBold,
@@ -74,12 +80,10 @@ class _StudentsPageState extends State<StudentsPage> {
           children: [
             const Spacer(),
             FluentActionButton(
-              icon: FluentIcons.user_window,
+              icon: FluentIcons.contact_info,
               label: 'Detalles',
               onPressed: () {
-                setState(() {
-                  showDetail = !showDetail;
-                });
+                context.read<UIStateProvider>().toggleStudentsDetail();
               },
               filled: false,
             ),
@@ -91,99 +95,136 @@ class _StudentsPageState extends State<StudentsPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            /// 🔹 TOP BAR
+            //  TOP BAR
             Row(
               children: [
-                /// ➕ Crear
+                const SizedBox(width: 8),
+
+                /// Crear
                 FluentActionButton(
                   icon: FluentIcons.add,
-                  label: 'Añadir estudiante',
+                  label: 'Crear alumno',
                   onPressed: () {},
                   filled: true,
                 ),
 
                 const SizedBox(width: 16),
 
-                /// 🔍 Search
+                ///  Search
                 SizedBox(
                   width: 250,
                   child: FluentSearchBox(
-                    placeholder: 'Buscar...',
+                    placeholder: 'Buscar alumno...',
                     onChanged: (value) {},
                   ),
                 ),
 
                 const Spacer(),
 
-                /// 🔹 Acciones lado derecho
-                // if (showDetail) ...[
-                //   const SizedBox(width: 12),
+                ///  Acciones lado derecho
+                if (ui.showStudentsDetail) ...[
+                  const SizedBox(width: 12),
 
-                //   /// Info compacta
-                //   Container(
-                //     padding: const EdgeInsets.symmetric(
-                //       horizontal: 10,
-                //       vertical: 6,
-                //     ),
-                //     decoration: BoxDecoration(
-                //       color: isDark
-                //           ? Colors.white.withOpacity(0.04)
-                //           : Colors.black.withOpacity(0.04),
-                //       borderRadius: BorderRadius.circular(6),
-                //     ),
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: const [
-                //         Icon(FluentIcons.info, size: 14),
-                //         SizedBox(width: 6),
-                //         Text('0'),
-                //       ],
-                //     ),
-                //   ),
+                  /// Info compacta
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 10,
+                  //     vertical: 6,
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     color: isDark
+                  //         ? Colors.white.withOpacity(0.04)
+                  //         : Colors.black.withOpacity(0.04),
+                  //     borderRadius: BorderRadius.circular(6),
+                  //   ),
+                  //   child: Row(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     children: const [
+                  //       Icon(FluentIcons.info, size: 14),
+                  //       SizedBox(width: 6),
+                  //       Text('0'),
+                  //     ],
+                  //   ),
+                  // ),
+                  const SizedBox(width: 16),
 
-                //   const SizedBox(width: 16),
-
-                //   /// Botón acción
-                //   FluentActionButton(
-                //     icon: FluentIcons.add_friend,
-                //     label: "Añadir",
-                //     onPressed: () {},
-                //     filled: true,
-                //   ),
-                // ],
+                  /// Botón para llevar a estadísticas del alumno
+                  FluentActionButton(
+                    icon: FluentIcons.chart_series,
+                    label: "Estadisticas",
+                    onPressed: () {},
+                    filled: true,
+                  ),
+                  const SizedBox(width: 12),
+                ],
               ],
             ),
 
             const SizedBox(height: 12),
 
-            /// 🔹 TABLA + PANEL DERECHO
+            ///  TABLA + PANEL DERECHO
             Expanded(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// 📊 TABLA
+                  ///  TABLA
                   Expanded(
-                    flex: showDetail ? 5 : 1,
+                    flex: ui.showStudentsDetail ? 5 : 1,
                     child: CustomTable(
                       columns: columns,
                       data: data,
-                      onRowSelected: (row) {},
+                      selectedRow: ui.selectedStudentRow,
+                      isSameRow: (row1, row2) => row1['student'].id == row2['student'].id,
+                      onRowSelected: (selectedRow) {
+                        final student = selectedRow['student'];
+
+                        if (student is StudentMock) {
+                          context.read<UIStateProvider>().selectStudent(student,selectedRow);
+
+                        } else {
+                          print('Error: No se pudo obtener el estudiante de la fila seleccionada');
+                        }
+                      },
                     ),
                   ),
 
-                  /// 👉 PANEL DERECHO
-                  if (showDetail) ...[
+                  ///  PANEL DERECHO
+                  if (ui.showStudentsDetail) ...[
                     const SizedBox(width: 12),
 
                     Expanded(
                       flex: 2,
-                      child: Container(
+                      child: ui.selectedStudent == null
+                      ? Center(
+                          child: Text(
+                            "Selecciona un alumno para ver detalles",
+                            style: TextStyle(fontSize: 16, color: isDark
+                              ? const Color.fromARGB(255, 236, 236, 236)
+                              : const Color.fromARGB(255, 8, 8, 8),),
+                          ),
+                        )            
+                      : Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: isDark
                               ? const Color(0xFF1E1E1E)
                               : const Color(0xFFF9F9F9),
                         ),
-                        child: const Center(child: Text('Detalle / contenido')),
+
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 12, // separación del scroll
+                            ),
+                            child: StudentCard(
+                                    student: ui.selectedStudent!,
+                                    headquarters:
+                                        headquartersMap[ui.selectedStudent!
+                                            .headquarterId] ??
+                                        'N/A',
+                                  ),
+                          ),
+                        ),
                       ),
                     ),
                   ],

@@ -1,4 +1,4 @@
-import '../../data/mappers/belts_mapper.dart';
+import '../mappers/belts_mapper.dart';
 import '../../domain/entities/belts_entity.dart';
 import '../../domain/repositories/belts_repository.dart';
 import '../datasources/belts_dao.dart';

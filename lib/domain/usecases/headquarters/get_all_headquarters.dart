@@ -1,10 +1,10 @@
 import '../../entities/headquarters_entity.dart';
 import '../../repositories/headquarters_repository.dart';
 
-class GetHeadquart {
+class GetAllHeadquarters {
   final HeadquartersRepository repository;
 
-  GetHeadquart(this.repository);
+  GetAllHeadquarters(this.repository);
 
   Future<List<HeadquartersEntity>> call() {
     return repository.getAll();

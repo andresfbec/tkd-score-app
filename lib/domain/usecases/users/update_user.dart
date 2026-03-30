@@ -1,5 +1,5 @@
-import '../../entities/user_entity.dart';
-import '../../repositories/user_repository.dart';
+import '../../entities/users_entity.dart';
+import '../../repositories/users_repository.dart';
 import '../../repositories/headquarters_repository.dart';
 
 class UpdateUser {

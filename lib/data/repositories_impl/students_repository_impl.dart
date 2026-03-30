@@ -1,4 +1,4 @@
-import '../../data/mappers/students_mapper.dart';
+import '../mappers/students_mapper.dart';
 import '../../domain/entities/students_entity.dart';
 import '../../domain/repositories/students_repository.dart';
 import '../datasources/students_dao.dart';

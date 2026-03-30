@@ -1,26 +1,28 @@
 import 'package:drift/drift.dart';
-import 'headquarters.dart';
-import 'belsts.dart';
+import 'group.dart';
+import 'tournament.dart';
+import 'students.dart';
 
-class Students extends Table {
+class Inscription extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get names => text()();
-  TextColumn get surnames => text()();
-  TextColumn get typeIdentify => text()();
-  TextColumn get identify => text()();
-  IntColumn get age => integer()();
-  TextColumn get gender => text()();
-  RealColumn get weight => real()();
-  RealColumn get size => real()();
+  DateTimeColumn get date => dateTime().withDefault(currentDateAndTime)();
 
-  IntColumn get headquarterId => integer().references(
-    Headquarters,
+  IntColumn get studentId => integer().references(
+    Students,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,
   )();
-  IntColumn get beltId => integer().references(
-    Belsts,
+
+  IntColumn get tournamentId => integer().references(
+    Tournament,
+    #id,
+    onDelete: KeyAction.setNull,
+    onUpdate: KeyAction.cascade,
+  )();
+
+  IntColumn get grupId => integer().references(
+    Group,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

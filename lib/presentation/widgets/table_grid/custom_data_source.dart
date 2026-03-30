@@ -9,12 +9,19 @@ class CustomDataSource extends DataGridSource {
   }) {
     _dataGridRows = data.map<DataGridRow>((row) {
       return DataGridRow(
-        cells: columns.map((column) {
-          return DataGridCell(
-            columnName: column['key']!,
-            value: row[column['key']] ?? '',
-          );
-        }).toList(),
+        cells: [
+          ...columns.map((column) {
+            return DataGridCell(
+              columnName: column['key']!,
+              value: row[column['key']] ?? '',
+            );
+          }),
+
+          DataGridCell(
+            columnName: '_original',
+            value: row,
+          ),
+        ],
       );
     }).toList();
   }
@@ -31,7 +38,8 @@ class CustomDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
       cells: [
-        ...row.getCells().map<Widget>((cell) {
+        ...row.getCells().where((cell) => cell.columnName != '_original')
+        .map<Widget>((cell) {
         final columnConfig = columns.firstWhere(
           (col) => col['key'] == cell.columnName,
         );

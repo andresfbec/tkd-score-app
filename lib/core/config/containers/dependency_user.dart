@@ -1,7 +1,7 @@
 import '../db/database.dart';
-import '../../../data/datasources/user_dao.dart';
-import '../../../data/repositories/user_repository_impl.dart';
-import '../../../data/repositories/headquarters_repository_impl.dart';
+import '../../../data/datasources/users_dao.dart';
+import '../../../data/repositories_impl/users_repository_impl.dart';
+import '../../../data/repositories_impl/headquarters_repository_impl.dart';
 import '../../../data/datasources/headquarters_dao.dart';
 import '../../../domain/usecases/users/create_user.dart';
 import '../../../domain/usecases/users/delete_user.dart';
@@ -10,6 +10,8 @@ import '../../../domain/usecases/users/update_user.dart';
 import '../../../domain/usecases/users/update_password.dart';
 import '../../../domain/usecases/users/login_user.dart';
 import '../../../presentation/controllers/session_controller.dart';
+
+import '../db/app_database_provider.dart';
 
 class InjectionUser {
   static final InjectionUser _instancia = InjectionUser._internal();
@@ -51,11 +53,15 @@ class InjectionUser {
   NewPassword get updatePassword => _updatePassword;
   LoginUser get loginUser => _loginUser;
 
+  static bool initialized = false;
+
   static Future<void> init() async {
+    if (initialized) return;
+
     final container = InjectionUser();
 
     // Drift no necesita configuración externa, simplemente instanciamos
-    container._database = AppDatabase();
+    container._database = AppDatabaseProvider.instance;
 
     // DAOS
     container._userDao = UserDao(container._database);
@@ -88,5 +94,7 @@ class InjectionUser {
     container._updatePassword = NewPassword(container._userRepository);
 
     container._loginUser = LoginUser(container._userRepository);
+
+    initialized = true;
   }
 }

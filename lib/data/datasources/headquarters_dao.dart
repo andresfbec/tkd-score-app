@@ -12,9 +12,17 @@ class HeadquartersDao {
   }
 
   Future<bool> update(HeadquartersCompanion hq) async {
-    return _db
-        .update(_db.headquarters)
-        .replace(hq.copyWith(id: Value(hq.id.value)));
+    // actualiza solo los campos que se proporcionan en el companion
+    if (!hq.id.present) {
+      // valida que el ID esté presente para actualizar
+      throw ArgumentError('ID requerido para update');
+    }
+
+    final rowsAfected = await (_db.update(
+      _db.headquarters,
+    )..where((tbl) => tbl.id.equals(hq.id.value))).write(hq);
+
+    return rowsAfected > 0; // true si se actualizó al menos una fila
   }
 
   Future<int> delete(int pk) async {
@@ -24,13 +32,10 @@ class HeadquartersDao {
   }
 
   Future<List<Headquarter>> findAll() async {
-    // Versión simplificada sin .where primero para probar
-    final all = await _db.select(_db.headquarters).get();
-
-    // Filtrar manualmente (solo para prueba)
-    final active = all.where((hq) => hq.isActive == 1).toList();
-
-    return active;
+    // mejora en find all filtra en bd y no en memoria
+    return await (_db.select(
+      _db.headquarters,
+    )..where((tbl) => tbl.isActive.equals(1))).get();
   }
 
   Future<Headquarter?> findById(int pk) async {
@@ -53,38 +58,40 @@ class HeadquartersDao {
     final query = _db.select(_db.headquarters);
 
     query.where((tbl) {
-      Expression<bool>? predicate;
+      final conditions = <Expression<bool>>[];
 
       if (filter.id != null) {
-        predicate = tbl.id.equals(filter.id!);
+        conditions.add(tbl.id.equals(filter.id!));
       }
 
       if (filter.name != null) {
-        final condition = tbl.name.equals(filter.name!);
-        predicate = predicate == null ? condition : predicate & condition;
+        conditions.add(tbl.name.equals(filter.name!));
       }
 
       if (filter.city != null) {
-        final condition = tbl.city.equals(filter.city!);
-        predicate = predicate == null ? condition : predicate & condition;
+        conditions.add(tbl.city.equals(filter.city!));
       }
 
       if (filter.address != null) {
-        final condition = tbl.address.equals(filter.address!);
-        predicate = predicate == null ? condition : predicate & condition;
+        conditions.add(tbl.address.equals(filter.address!));
       }
 
       // agregar condición de activo
       final activeCondition = tbl.isActive.equals(1);
-      predicate = predicate == null
-          ? activeCondition
-          : predicate & activeCondition;
+      conditions.add(activeCondition);
 
-      return predicate;
+      return conditions.length == 1
+          ? conditions.first
+          : conditions.reduce((a, b) => a & b);
     });
 
-    return await query.getSingleOrNull() != null
-        ? await query.get()
-        : [];
+    return await query
+        .get(); // devuelve la lista de sedes que cumplen si no hay devuelve vacia
+  }
+
+  Stream<List<Headquarter>> watchAll() { // Escucha cambios en la tabla y emite la lista actualizada de sedes activas
+    return (_db.select(
+      _db.headquarters,
+    )..where((tbl) => tbl.isActive.equals(1))).watch();
   }
 }

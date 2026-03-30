@@ -7,7 +7,7 @@ import '../../core/constants/app.dart';
 import '../../core/theme/theme_provider.dart';
 
 // Controller
-import '../controllers/user_controller.dart';
+import '../controllers/users_controller.dart';
 // Widget tabla
 import '../widgets/data_table.dart';
 

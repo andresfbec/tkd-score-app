@@ -1,35 +1,32 @@
 import '../../entities/headquarters_entity.dart';
 import '../../repositories/headquarters_repository.dart';
+import '../../errors/exceptions.dart';
 
-class CreateHeadquart {
+class CreateHeadquarter {
   final HeadquartersRepository repository;
 
-  CreateHeadquart(this.repository);
+  CreateHeadquarter(this.repository);
 
   Future<int> call(HeadquartersEntity headquarters) async {
-    print(headquarters);
+
     if (headquarters.name.trim().isEmpty) {
-      throw Exception('El nombre es obligatorio');
+      throw EmptyNameException();
     }
     if (headquarters.phoneNumber.trim().isEmpty) {
-      throw Exception('El teléfono es obligatorio');
+      throw EmptyPhoneException();
     }
 
     if (headquarters.city.trim().isEmpty) {
-      throw Exception('La ciudad es obligatoria');
+      throw EmptyCityException();
     }
-    print(headquarters.name);
-
-    print(headquarters.city);
 
     final exists = await repository.find(
       name: headquarters.name,
       city: headquarters.city,
     );
-    print("Lo que me devuelve la consulta: $exists");
 
-    if (exists!.isNotEmpty) {
-      throw Exception('La sede ya existe');
+    if (exists.isNotEmpty) {
+      throw HeadquarterAlreadyExistsException();
     }
 
     return repository.create(headquarters);

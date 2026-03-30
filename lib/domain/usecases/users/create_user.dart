@@ -1,6 +1,6 @@
-import 'package:tkd_score/domain/entities/user_entity.dart';
+import 'package:tkd_score/domain/entities/users_entity.dart';
 
-import '../../repositories/user_repository.dart';
+import '../../repositories/users_repository.dart';
 import '../../../core/utils/hash_text.dart';
 import '../../repositories/headquarters_repository.dart';
 
