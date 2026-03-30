@@ -47,17 +47,28 @@ El ejecutable para Windows aún no está disponible públicamente, ya que el pro
 
 ---
 
-## Comando técnico
+## Comandos técnicos
+
+Para iniciar el proyecto(desarrollo)
+
+    flutter run -d windows 
+
+Para instalar dependencias
+
+    flutter pub get
 
 Para regenerar los archivos de base de datos (.g.dart):
 
     flutter pub run build_runner build --delete-conflicting-outputs
 
+Para generar el ejecutable (!producción¡)
+
+    flutter build windows
 ---
 
 ## Equipo de desarrollo
 
-- Andrés Felipe Malaver
+- Andrés Malaver
 - Ever Giraldo
 
 ---
