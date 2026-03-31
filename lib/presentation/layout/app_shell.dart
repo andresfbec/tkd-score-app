@@ -159,7 +159,7 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
         body: Builder(
-          builder: (_) => const UserPage(),
+          builder: (_) => const UsersPage(),
         ),
       ),
       PaneItem(

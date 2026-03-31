@@ -17,10 +17,7 @@ class CustomDataSource extends DataGridSource {
             );
           }),
 
-          DataGridCell(
-            columnName: '_original',
-            value: row,
-          ),
+          DataGridCell(columnName: '_original', value: row),
         ],
       );
     }).toList();
@@ -36,30 +33,37 @@ class CustomDataSource extends DataGridSource {
 
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
+    final original =
+        row.getCells().firstWhere((c) => c.columnName == '_original').value
+            as Map<String, dynamic>;
+
     return DataGridRowAdapter(
       cells: [
-        ...row.getCells().where((cell) => cell.columnName != '_original')
-        .map<Widget>((cell) {
-        final columnConfig = columns.firstWhere(
-          (col) => col['key'] == cell.columnName,
-        );
+        ...row
+            .getCells()
+            .where((cell) => cell.columnName != '_original')
+            .map<Widget>((cell) {
+              final columnConfig = columns.firstWhere(
+                (col) => col['key'] == cell.columnName,
+              );
 
-        final renderer = columnConfig['renderer'] as Widget Function(dynamic)?;
+              final renderer =
+                  columnConfig['renderer'] as Widget Function(dynamic)?;
 
-        Widget content;
+              Widget content;
 
-        if (renderer != null) {
-          content = renderer(cell.value);
-        } else {
-          content = Text(cell.value.toString());
-        }
+              if (renderer != null) {
+                content = renderer(cell.value);
+              } else {
+                content = Text(cell.value.toString());
+              }
 
-        return Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: content,
-        );
-      }),
+              return Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: content,
+              );
+            }),
 
         /// ACCIONES
         Container(
@@ -67,25 +71,22 @@ class CustomDataSource extends DataGridSource {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              
               /// EDITAR
               IconButton(
-                icon: const Icon(
-                  FluentIcons.edit,
-                  size: 18,
-                ),
-                onPressed: () {},
+                icon: const Icon(FluentIcons.edit, size: 18),
+                onPressed: () {
+                  print('Editar: $original');
+                },
               ),
 
               const SizedBox(width: 4),
 
               /// ELIMINAR
               IconButton(
-                icon: const Icon(
-                  FluentIcons.delete,
-                  size: 18,
-                ),
-                onPressed: () {},
+                icon: const Icon(FluentIcons.delete, size: 18),
+                onPressed: () {
+                  print('Eliminar: $original');
+                },
                 style: ButtonStyle(
                   backgroundColor: ButtonState.resolveWith((states) {
                     if (states.isHovering) {

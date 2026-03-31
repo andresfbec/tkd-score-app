@@ -94,7 +94,7 @@ class _CustomTableState extends State<CustomTable> {
       Future.delayed(const Duration(milliseconds: 50), () {
         if (mounted && _controller.selectedIndex != -1) {
           try {
-            _controller.scrollToRow(index.toDouble());
+            _controller.scrollToRow(index.toDouble()); // quitar para desactivar scroll automatico
           } catch (_) {}
         }
       });
@@ -116,7 +116,7 @@ class _CustomTableState extends State<CustomTable> {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? fluentTheme.cardColor : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
@@ -127,7 +127,7 @@ class _CustomTableState extends State<CustomTable> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         child: SfDataGridTheme(
           data: SfDataGridThemeData(
             headerColor: isDark

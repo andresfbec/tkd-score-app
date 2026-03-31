@@ -60,6 +60,14 @@ class StudentCard extends StatelessWidget {
         ? const Color(0xFF2A2A2A)
         : const Color.fromARGB(255, 235, 232, 232);
 
+    final avatarBg = isDark
+    ? const Color.fromARGB(255, 83, 83, 83)
+    : const Color.fromARGB(255, 197, 197, 197);
+
+    final avatarTextColor = isDark
+        ? Colors.white.withOpacity(0.9)
+        : Colors.black.withOpacity(0.75);
+
     final FlyoutController controller = FlyoutController();
 
     return HoverButton(
@@ -82,24 +90,22 @@ class StudentCard extends StatelessWidget {
                 children: [
                   /// Avatar
                   Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: theme.accentColor.defaultBrushFor(
-                        theme.brightness,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      _getInitials(fullName),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: AppTypography.bold,
-                        fontSize: 12,
-                      ),
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: avatarBg,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    _getInitials(fullName),
+                    style: TextStyle(
+                      color: avatarTextColor,
+                      fontWeight: AppTypography.bold,
+                      fontSize: 11,
                     ),
                   ),
+                ),
 
                   const SizedBox(width: 12),
 
@@ -177,7 +183,7 @@ class StudentCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
               /// FILA INFERIOR
               Row(
