@@ -1,11 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import '../../core/theme/theme_provider.dart';
+import '../../../core/theme/theme_provider.dart';
 
-import '../mockers/students_mock.dart';
+import '../../mockers/students_mock.dart';
 
 // functions utils (helpers)
-import '../../core/utils/name_utils.dart';
+import '../../../core/utils/name_utils.dart';
 
 class StudentCard extends StatelessWidget {
   final StudentMock student;

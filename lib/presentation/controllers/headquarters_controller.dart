@@ -162,7 +162,7 @@ class HeadquartersController extends ChangeNotifier {
   // CLEANUP
   @override
   void dispose() {
-    _subscription?.cancel();
+    _subscription?.cancel(); // cancelar conexion activa al stream
     super.dispose();
   }
 

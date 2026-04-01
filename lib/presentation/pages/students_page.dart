@@ -11,7 +11,7 @@ import '../widgets/table_grid/custom_table.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_search.dart';
 import '../widgets/belt_indicator.dart';
-import '../widgets/student_detail_card.dart';
+import '../widgets/cards/student_detail_card.dart';
 
 // Mocker
 import '../mockers/students_mock.dart';

@@ -6,6 +6,7 @@ class JudgeCard extends StatelessWidget {
   final String document;
   final String phone;
   final String rank;
+  final String club; // 🔥 nuevo campo
   final int tournaments;
 
   final VoidCallback? onTap;
@@ -19,6 +20,7 @@ class JudgeCard extends StatelessWidget {
     required this.document,
     required this.phone,
     required this.rank,
+    required this.club, // 🔥 requerido
     required this.tournaments,
     this.onTap,
     this.onEdit,
@@ -61,7 +63,6 @@ class JudgeCard extends StatelessWidget {
               /// 🔹 HEADER
               Row(
                 children: [
-                  /// Avatar neutro (Fluent)
                   Container(
                     width: 34,
                     height: 34,
@@ -76,7 +77,6 @@ class JudgeCard extends StatelessWidget {
 
                   const SizedBox(width: 10),
 
-                  /// Nombre + categoría
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +100,6 @@ class JudgeCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// Torneos (dato importante pero no principal)
                   Text(
                     'Torneos $tournaments',
                     style: TextStyle(
@@ -121,32 +120,39 @@ class JudgeCard extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              /// 🔹 INFO GRID (clave del cambio)
+              /// 🔥 SCROLL AREA
               Expanded(
-                child: Row(
-                  children: [
-                    /// Columna izquierda
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _infoItem('Documento', document, mutedText),
-                          const SizedBox(height: 6),
-                          _infoItem('Teléfono', phone, mutedText),
-                        ],
+                child: SingleChildScrollView(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// izquierda
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _infoItem('Documento', document, mutedText),
+                            const SizedBox(height: 6),
+                            _infoItem('Teléfono', phone, mutedText),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    /// Columna derecha
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _infoItem('Rango', rank, mutedText),
-                        ],
+                      /// derecha
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _infoItem('Rango', rank, mutedText),
+                            const SizedBox(height: 6),
+
+                            /// 🔥 NUEVO
+                            _infoItem('Club afiliado', club, mutedText),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 

@@ -13,6 +13,8 @@ class CustomTable extends StatefulWidget {
   final Function(Map<String, dynamic>) onRowSelected;
   final Map<String, dynamic>? selectedRow;
   final bool Function(Map<String, dynamic>, Map<String, dynamic>) isSameRow;
+  final Function(Map<String, dynamic>)? onEdit;
+  final Function(Map<String, dynamic>)? onDelete;
 
   const CustomTable({
     super.key,
@@ -21,6 +23,8 @@ class CustomTable extends StatefulWidget {
     required this.onRowSelected,
     required this.isSameRow,
     this.selectedRow,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -38,6 +42,8 @@ class _CustomTableState extends State<CustomTable> {
       data: widget.data,
       columns: widget.columns,
       onRowSelected: widget.onRowSelected,
+      onEdit: widget.onEdit,
+      onDelete: widget.onDelete,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,6 +60,7 @@ class _CustomTableState extends State<CustomTable> {
         data: widget.data,
         columns: widget.columns,
         onRowSelected: widget.onRowSelected,
+        
       );
     }
 
@@ -94,7 +101,9 @@ class _CustomTableState extends State<CustomTable> {
       Future.delayed(const Duration(milliseconds: 50), () {
         if (mounted && _controller.selectedIndex != -1) {
           try {
-            _controller.scrollToRow(index.toDouble()); // quitar para desactivar scroll automatico
+            _controller.scrollToRow(
+              index.toDouble(),
+            ); // quitar para desactivar scroll automatico
           } catch (_) {}
         }
       });

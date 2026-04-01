@@ -2,10 +2,15 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class CustomDataSource extends DataGridSource {
+  final Function(Map<String, dynamic>)? onEdit;
+  final Function(Map<String, dynamic>)? onDelete;
+
   CustomDataSource({
     required List<Map<String, dynamic>> data,
     required this.columns,
     required this.onRowSelected,
+    this.onEdit,
+    this.onDelete,
   }) {
     _dataGridRows = data.map<DataGridRow>((row) {
       return DataGridRow(
@@ -74,9 +79,7 @@ class CustomDataSource extends DataGridSource {
               /// EDITAR
               IconButton(
                 icon: const Icon(FluentIcons.edit, size: 18),
-                onPressed: () {
-                  print('Editar: $original');
-                },
+                onPressed: () => onEdit?.call(original),
               ),
 
               const SizedBox(width: 4),
@@ -84,9 +87,7 @@ class CustomDataSource extends DataGridSource {
               /// ELIMINAR
               IconButton(
                 icon: const Icon(FluentIcons.delete, size: 18),
-                onPressed: () {
-                  print('Eliminar: $original');
-                },
+                onPressed: () => onDelete?.call(original),
                 style: ButtonStyle(
                   backgroundColor: ButtonState.resolveWith((states) {
                     if (states.isHovering) {

@@ -15,10 +15,14 @@ import '../widgets/table_grid/custom_table.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/input_search.dart';
 import '../widgets/dropdown_filter.dart';
-import '../widgets/student_card.dart';
+import '../widgets/cards/student_card.dart';
+import '../widgets/modals/custom_form_modal.dart';
 
 // Controller
 import '../controllers/headquarters_controller.dart';
+
+import '../widgets/inputs/input_type.dart';
+import '../forms/validators.dart';
 
 class HeadquartersPage extends StatefulWidget {
   const HeadquartersPage({super.key});
@@ -114,11 +118,50 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                   icon: FluentIcons.add,
                   label: 'Crear sede',
                   onPressed: () {
-                    context.read<HeadquartersController>().createHeadquarter(
-                      name: 'Buchido PaloBlanco',
-                      address: 'Cra 174 9na 50',
-                      city: 'Bogotá',
-                      phone: '32521452',
+                    showDialog(
+                      context: context,
+                      builder: (_) => CustomFormModal(
+                        title: "Crear sede",
+                        fields: [
+                          FormFieldConfig(
+                            name: "name",
+                            label: "Nombre",
+                            type: InputType.name,
+                            validator: (v) =>
+                                FormValidations.required(v, field: "Nombre"),
+                          ),
+                          FormFieldConfig(
+                            name: "address",
+                            label: "Dirección",
+                            type: InputType.text,
+                            validator: (v) =>
+                                FormValidations.required(v, field: "Dirección"),
+                          ),
+                          FormFieldConfig(
+                            name: "city",
+                            label: "Ciudad",
+                            type: InputType.name,
+                            validator: (v) =>
+                                FormValidations.required(v, field: "Ciudad"),
+                          ),
+                          FormFieldConfig(
+                            name: "phone",
+                            label: "Teléfono",
+                            type: InputType.phone,
+                            validator: FormValidations.validatePhone,
+                          ),
+                        ],
+                        onSubmit: (data) {
+                          context
+                              .read<HeadquartersController>()
+                              .createHeadquarter(
+                                name: data["name"] ?? '',
+                                address: data["address"] ?? '',
+                                city: data["city"] ?? '',
+                                phone: data["phoneNumber"] ?? '',
+                              );
+                        },
+                      ),
                     );
                   },
                   filled: true,
@@ -226,13 +269,74 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                         columns: columns,
                         data: headquartersData,
                         selectedRow: ui.selectedHeadquarterRow,
-                        isSameRow: (row1, row2) => row1['headquarter'].id == row2['headquarter'].id,
+                        isSameRow: (row1, row2) =>
+                            row1['headquarter'].id == row2['headquarter'].id,
                         onRowSelected: (selectedRow) {
                           final hq = selectedRow['headquarter'];
 
                           context.read<UIStateProvider>().selectHeadquarter(
                             hq,
                             selectedRow,
+                          );
+                        },
+                        onEdit: (row) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => CustomFormModal(
+                              title: "Editar sede ${row['name']}",
+                              initialValues: {
+                                "name": row["name"],
+                                "address": row["address"],
+                                "city": row["city"],
+                                "phone": row["phoneNumber"],
+                              },
+                              fields: [
+                                FormFieldConfig(
+                                  name: "name",
+                                  label: "Nombre",
+                                  type: InputType.name,
+                                  validator: (v) => FormValidations.required(
+                                    v,
+                                    field: "Nombre",
+                                  ),
+                                ),
+                                FormFieldConfig(
+                                  name: "address",
+                                  label: "Dirección",
+                                  type: InputType.text,
+                                  validator: (v) => FormValidations.required(
+                                    v,
+                                    field: "Dirección",
+                                  ),
+                                ),
+                                FormFieldConfig(
+                                  name: "city",
+                                  label: "Ciudad",
+                                  type: InputType.name,
+                                  validator: (v) => FormValidations.required(
+                                    v,
+                                    field: "Ciudad",
+                                  ),
+                                ),
+                                FormFieldConfig(
+                                  name: "phone",
+                                  label: "Teléfono",
+                                  type: InputType.phone,
+                                  validator: FormValidations.validatePhone,
+                                ),
+                              ],
+                              onSubmit: (data) {
+                                context
+                                    .read<HeadquartersController>()
+                                    .updateHeadquarter(
+                                      id: row["id"], //  CLAVE
+                                      name: data["name"] ?? '',
+                                      address: data["address"] ?? '',
+                                      city: data["city"] ?? '',
+                                      phone: data["phoneNumber"] ?? '',
+                                    );
+                              },
+                            ),
                           );
                         },
                       ),

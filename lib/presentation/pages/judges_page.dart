@@ -7,7 +7,7 @@ import '../mockers/judges_mock.dart';
 // Widgets
 import '../widgets/custom_button.dart';
 import '../widgets/input_search.dart';
-import '../widgets/judge_card.dart';
+import '../widgets/cards/judge_card.dart';
 
 class JudgesPage extends StatelessWidget {
   const JudgesPage({super.key});
@@ -84,6 +84,7 @@ class JudgesPage extends StatelessWidget {
                     phone: judge.phoneNumber,
                     rank: judge.rank,
                     tournaments: judge.participations,
+                    club: judge.affiliatedClub,
                   );
                 },
               ),
