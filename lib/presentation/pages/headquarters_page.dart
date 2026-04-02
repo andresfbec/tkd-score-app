@@ -69,7 +69,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
       {'key': 'phoneNumber', 'label': 'Teléfono'},
     ];
 
-    final headquartersData = controller.headquarters.map((hq) {
+    final headquartersData = controller.filteredHeadquarters.map((hq) {
       return {
         'id': hq.id,
         'name': hq.name,
@@ -174,12 +174,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                   child: FluentSearchBox(
                     placeholder: 'Buscar sede...',
                     onChanged: (value) {
-                      if (value.isEmpty) {
-                        controller.reset();
-                      } else {
-                        controller.search(name: value);
-                      }
-                      // aquí podrías filtrar controller.headquarters
+                      controller.updateSearch(value);
                     },
                   ),
                 ),
@@ -345,7 +340,8 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                             builder: (_) => ContentDialog(
                               title: const Text('Confirmar eliminación'),
                               content: Text(
-                                  '¿Estás seguro de que deseas eliminar la sede ${row['name']}?'),
+                                '¿Estás seguro de que deseas eliminar la sede ${row['name']}?',
+                              ),
                               actions: [
                                 Button(
                                   child: const Text('Cancelar'),
@@ -360,10 +356,12 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                                     Navigator.pop(context);
                                   },
                                   style: ButtonStyle(
-                                    backgroundColor:
-                                        ButtonState.all(Colors.red),
-                                    foregroundColor:
-                                        ButtonState.all(Colors.white),
+                                    backgroundColor: ButtonState.all(
+                                      Colors.red,
+                                    ),
+                                    foregroundColor: ButtonState.all(
+                                      Colors.white,
+                                    ),
                                   ),
                                 ),
                               ],

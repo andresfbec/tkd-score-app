@@ -27,20 +27,35 @@ class HeadquartersController extends ChangeNotifier {
   );
 
   // STATE
-  List<HeadquartersEntity> headquarters = [];
+  List<HeadquartersEntity> _allHeadquarters = [];
   bool isLoading = false;
   String? errorMessage;
 
+  String _searchQuery = "";
+
   StreamSubscription<List<HeadquartersEntity>>? _subscription;
+
+  // Getter para la tabla (aplica filtros de búsqueda)
+  List<HeadquartersEntity> get filteredHeadquarters {
+    if (_searchQuery.isEmpty) return _allHeadquarters;
+
+    final query = _searchQuery.toLowerCase();
+    return _allHeadquarters.where((h) {
+      return h.name.toLowerCase().contains(query) ||
+          h.city.toLowerCase().contains(query) ||
+          h.address.toLowerCase().contains(query);
+    }).toList();
+  }
 
   // INIT (STREAM)
   void startListening() {
     isLoading = true;
     notifyListeners();
 
+    _subscription?.cancel(); // cancelar conexion previa (si existe)
     _subscription = watch().listen(
       (data) {
-        headquarters = data;
+        _allHeadquarters = data;
         isLoading = false;
         notifyListeners();
       },
@@ -94,13 +109,7 @@ class HeadquartersController extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      await update(
-        id,
-        name: name,
-        address: address,
-        city: city,
-        phone: phone,
-      );
+      await update(id, name: name, address: address, city: city, phone: phone);
 
       errorMessage = null;
     } catch (e) {
@@ -129,28 +138,29 @@ class HeadquartersController extends ChangeNotifier {
   }
 
   // FIND (FILTROS)
-  Future<void> search({
-    String? name,
-    String? city,
-    String? address,
-  }) async {
+  Future<void> search({String? name, String? city, String? address}) async {
+    // No usarlo ya que usamos updateSearch
     try {
       isLoading = true;
       notifyListeners();
 
-      final result = await find(
-        name: name,
-        city: city,
-        address: address,
-      );
+      final result = await find(name: name, city: city, address: address);
 
-      headquarters = result;
+      _allHeadquarters = result;
       errorMessage = null;
     } catch (e) {
       errorMessage = e.toString();
     }
 
     isLoading = false;
+    notifyListeners();
+  }
+
+
+  /// SECONDARY METHODS
+
+  void updateSearch(String query) {
+    _searchQuery = query;
     notifyListeners();
   }
 
@@ -166,7 +176,8 @@ class HeadquartersController extends ChangeNotifier {
     super.dispose();
   }
 
-  void clearError() { // Limpiar mensajes de error
+  void clearError() {
+    // Limpiar mensajes de error
     errorMessage = null;
   }
 }
