@@ -158,7 +158,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                                 name: data["name"] ?? '',
                                 address: data["address"] ?? '',
                                 city: data["city"] ?? '',
-                                phone: data["phoneNumber"] ?? '',
+                                phone: data["phone"] ?? '',
                               );
                         },
                       ),
@@ -333,9 +333,40 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                                       name: data["name"] ?? '',
                                       address: data["address"] ?? '',
                                       city: data["city"] ?? '',
-                                      phone: data["phoneNumber"] ?? '',
+                                      phone: data["phone"] ?? '',
                                     );
                               },
+                            ),
+                          );
+                        },
+                        onDelete: (row) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => ContentDialog(
+                              title: const Text('Confirmar eliminación'),
+                              content: Text(
+                                  '¿Estás seguro de que deseas eliminar la sede ${row['name']}?'),
+                              actions: [
+                                Button(
+                                  child: const Text('Cancelar'),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                Button(
+                                  child: const Text('Eliminar'),
+                                  onPressed: () {
+                                    context
+                                        .read<HeadquartersController>()
+                                        .deleteHeadquarter(row["id"]); // CLAVE
+                                    Navigator.pop(context);
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        ButtonState.all(Colors.red),
+                                    foregroundColor:
+                                        ButtonState.all(Colors.white),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },

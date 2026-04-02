@@ -60,7 +60,8 @@ class _CustomTableState extends State<CustomTable> {
         data: widget.data,
         columns: widget.columns,
         onRowSelected: widget.onRowSelected,
-        
+        onEdit: widget.onEdit,
+        onDelete: widget.onDelete,
       );
     }
 
