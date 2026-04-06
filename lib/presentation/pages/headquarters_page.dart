@@ -24,6 +24,9 @@ import '../controllers/headquarters_controller.dart';
 import '../widgets/inputs/input_type.dart';
 import '../forms/validators.dart';
 
+// notifications
+import '../../core/utils/notifications.dart';
+
 class HeadquartersPage extends StatefulWidget {
   const HeadquartersPage({super.key});
 
@@ -32,6 +35,166 @@ class HeadquartersPage extends StatefulWidget {
 }
 
 class _HeadquartersPageState extends State<HeadquartersPage> {
+  // Create
+  void showCreateHeadquarterModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => CustomFormModal(
+        title: "Crear nueva sede",
+        fields: [
+          FormFieldConfig(
+            name: "name",
+            label: "Nombre",
+            type: InputType.name,
+            validator: (v) => FormValidations.required(v, field: "Nombre"),
+          ),
+          FormFieldConfig(
+            name: "address",
+            label: "Dirección",
+            type: InputType.text,
+            validator: (v) => FormValidations.required(v, field: "Dirección"),
+          ),
+          FormFieldConfig(
+            name: "city",
+            label: "Ciudad",
+            type: InputType.name,
+            validator: (v) => FormValidations.required(v, field: "Ciudad"),
+          ),
+          FormFieldConfig(
+            name: "phone",
+            label: "Teléfono",
+            type: InputType.phone,
+            validator: FormValidations.validatePhone,
+          ),
+        ],
+        onSubmit: (data) async {
+          try {
+            await context.read<HeadquartersController>().createHeadquarter(
+              name: data["name"] ?? '',
+              address: data["address"] ?? '',
+              city: data["city"] ?? '',
+              phone: data["phone"] ?? '',
+            );
+
+
+            // AppNotifications.showSuccess(context, "Sede creada correctamente");
+          } catch (e) {
+            debugPrint("Error creando sede: $e");
+          }
+        },
+      ),
+    );
+  }
+
+  // Edit
+  void showEditHeadquarterModal(Map<String, dynamic> row) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => CustomFormModal(
+        title: "Editar sede: ${row['name']}",
+        initialValues: {
+          "name": row["name"],
+          "address": row["address"],
+          "city": row["city"],
+          "phone": row["phoneNumber"],
+        },
+        fields: [
+          FormFieldConfig(
+            name: "name",
+            label: "Nombre",
+            type: InputType.name,
+            validator: (v) => FormValidations.required(v, field: "Nombre"),
+          ),
+          FormFieldConfig(
+            name: "address",
+            label: "Dirección",
+            type: InputType.text,
+            validator: (v) => FormValidations.required(v, field: "Dirección"),
+          ),
+          FormFieldConfig(
+            name: "city",
+            label: "Ciudad",
+            type: InputType.name,
+            validator: (v) => FormValidations.required(v, field: "Ciudad"),
+          ),
+          FormFieldConfig(
+            name: "phone",
+            label: "Teléfono",
+            type: InputType.phone,
+            validator: FormValidations.validatePhone,
+          ),
+        ],
+        onSubmit: (data) async {
+          try {
+            await context.read<HeadquartersController>().updateHeadquarter(
+              id: row["id"],
+              name: data["name"] ?? '',
+              address: data["address"] ?? '',
+              city: data["city"] ?? '',
+              phone: data["phone"] ?? '',
+            );
+
+
+            // AppNotifications.showSuccess(
+            //   context,
+            //   "Sede actualizada correctamente",
+            // );
+          } catch (e) {
+            debugPrint("Error actualizando sede: $e");
+          }
+        },
+      ),
+    );
+  }
+
+  void showDeleteHeadquarterDialog(Map<String, dynamic> row) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => ContentDialog(
+        title: const Text('Confirmar eliminación'),
+        content: Text(
+          '¿Estás seguro de que deseas eliminar la sede ${row['name']}?',
+        ),
+        actions: [
+          /// CANCELAR (solo cierra)
+          Button(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+
+          Button(
+            child: const Text('Eliminar'),
+            onPressed: () async {
+              try {
+                await context.read<HeadquartersController>().deleteHeadquarter(
+                  row["id"],
+                );
+                
+                if (!mounted) return;
+
+                // AppNotifications.showSuccess(
+                //   context,
+                //   "Sede eliminada correctamente",
+                // );
+
+                Navigator.pop(dialogContext); 
+              } catch (e) {
+                if (!mounted) return;
+                Navigator.pop(dialogContext); // opcional cerrarlo también en error
+
+                debugPrint("Error eliminando sede: $e");
+              }
+            },
+            style: ButtonStyle(
+              backgroundColor: ButtonState.all(Colors.red),
+              foregroundColor: ButtonState.all(Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(
@@ -40,25 +203,24 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
     final bool isDark = themeProvider.isDarkMode; // tema oscuro o claro
     final ui = context.watch<UIStateProvider>();
     final controller = context.watch<HeadquartersController>();
+    // mensajes de error y estados
     final error = controller.errorMessage;
+    final success = controller.status == Status.success;
+    final status = controller.status;
 
     if (error != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(
-          context: context,
-          builder: (_) => ContentDialog(
-            title: const Text('Error'),
-            content: Text(error),
-            actions: [
-              Button(
-                child: const Text('OK'),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        );
+        AppNotifications.showError(context, error);
 
-        controller.clearError(); // limpiar error
+        controller.clearError();
+      });
+    }
+
+    if (controller.status == Status.success && controller.successMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppNotifications.showSuccess(context, controller.successMessage!);
+
+        controller.clearMessages(); // resetea status 
       });
     }
 
@@ -117,53 +279,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                 FluentActionButton(
                   icon: FluentIcons.add,
                   label: 'Crear sede',
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => CustomFormModal(
-                        title: "Crear sede",
-                        fields: [
-                          FormFieldConfig(
-                            name: "name",
-                            label: "Nombre",
-                            type: InputType.name,
-                            validator: (v) =>
-                                FormValidations.required(v, field: "Nombre"),
-                          ),
-                          FormFieldConfig(
-                            name: "address",
-                            label: "Dirección",
-                            type: InputType.text,
-                            validator: (v) =>
-                                FormValidations.required(v, field: "Dirección"),
-                          ),
-                          FormFieldConfig(
-                            name: "city",
-                            label: "Ciudad",
-                            type: InputType.name,
-                            validator: (v) =>
-                                FormValidations.required(v, field: "Ciudad"),
-                          ),
-                          FormFieldConfig(
-                            name: "phone",
-                            label: "Teléfono",
-                            type: InputType.phone,
-                            validator: FormValidations.validatePhone,
-                          ),
-                        ],
-                        onSubmit: (data) {
-                          context
-                              .read<HeadquartersController>()
-                              .createHeadquarter(
-                                name: data["name"] ?? '',
-                                address: data["address"] ?? '',
-                                city: data["city"] ?? '',
-                                phone: data["phone"] ?? '',
-                              );
-                        },
-                      ),
-                    );
-                  },
+                  onPressed: () => showCreateHeadquarterModal(context),
                   filled: true,
                 ),
                 const SizedBox(width: 16),
@@ -255,7 +371,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (controller.isLoading)
+                  if (controller.status == Status.loading)
                     Expanded(child: Center(child: ProgressRing()))
                   else
                     Expanded(
@@ -274,100 +390,8 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                             selectedRow,
                           );
                         },
-                        onEdit: (row) {
-                          showDialog(
-                            context: context,
-                            builder: (_) => CustomFormModal(
-                              title: "Editar sede ${row['name']}",
-                              initialValues: {
-                                "name": row["name"],
-                                "address": row["address"],
-                                "city": row["city"],
-                                "phone": row["phoneNumber"],
-                              },
-                              fields: [
-                                FormFieldConfig(
-                                  name: "name",
-                                  label: "Nombre",
-                                  type: InputType.name,
-                                  validator: (v) => FormValidations.required(
-                                    v,
-                                    field: "Nombre",
-                                  ),
-                                ),
-                                FormFieldConfig(
-                                  name: "address",
-                                  label: "Dirección",
-                                  type: InputType.text,
-                                  validator: (v) => FormValidations.required(
-                                    v,
-                                    field: "Dirección",
-                                  ),
-                                ),
-                                FormFieldConfig(
-                                  name: "city",
-                                  label: "Ciudad",
-                                  type: InputType.name,
-                                  validator: (v) => FormValidations.required(
-                                    v,
-                                    field: "Ciudad",
-                                  ),
-                                ),
-                                FormFieldConfig(
-                                  name: "phone",
-                                  label: "Teléfono",
-                                  type: InputType.phone,
-                                  validator: FormValidations.validatePhone,
-                                ),
-                              ],
-                              onSubmit: (data) {
-                                context
-                                    .read<HeadquartersController>()
-                                    .updateHeadquarter(
-                                      id: row["id"], //  CLAVE
-                                      name: data["name"] ?? '',
-                                      address: data["address"] ?? '',
-                                      city: data["city"] ?? '',
-                                      phone: data["phone"] ?? '',
-                                    );
-                              },
-                            ),
-                          );
-                        },
-                        onDelete: (row) {
-                          showDialog(
-                            context: context,
-                            builder: (_) => ContentDialog(
-                              title: const Text('Confirmar eliminación'),
-                              content: Text(
-                                '¿Estás seguro de que deseas eliminar la sede ${row['name']}?',
-                              ),
-                              actions: [
-                                Button(
-                                  child: const Text('Cancelar'),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                Button(
-                                  child: const Text('Eliminar'),
-                                  onPressed: () {
-                                    context
-                                        .read<HeadquartersController>()
-                                        .deleteHeadquarter(row["id"]); // CLAVE
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor: ButtonState.all(
-                                      Colors.red,
-                                    ),
-                                    foregroundColor: ButtonState.all(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                        onEdit: (row) => showEditHeadquarterModal(row),
+                        onDelete: (row) => showDeleteHeadquarterDialog(row),
                       ),
                     ),
 

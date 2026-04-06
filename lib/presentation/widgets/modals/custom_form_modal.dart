@@ -2,6 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import '../inputs/custom_input.dart';
 import '../inputs/input_type.dart';
 
+import '../../../core/constants/app.dart';
+
 /// 🔹 CONFIG DE CADA CAMPO
 class FormFieldConfig {
   final String name;
@@ -84,7 +86,7 @@ class _CustomFormModalState extends State<CustomFormModal> {
 
     final data = {
       for (var field in widget.fields)
-        field.name: controllers[field.name]!.text
+        field.name: controllers[field.name]!.text,
     };
 
     widget.onSubmit(data);
@@ -93,27 +95,56 @@ class _CustomFormModalState extends State<CustomFormModal> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness.isDark;
+
     return ContentDialog(
-      title: Text(widget.title),
+      title: DefaultTextStyle.merge(
+        style: const TextStyle(), // 🔥 rompe estilo heredado
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: AppTypography.titleView, // 
+                fontWeight: AppTypography.semiBold,
+                fontFamily: AppTypography.fontFamily,
+                color: AppColors.getTextPrimary(isDark),
+              ),
+            ),
+
+
+            const SizedBox(height: 12),
+
+            /// 🔹 Divider estilo Fluent
+            Container(
+              height: 1,
+              color: AppColors.getBorder(isDark),
+            ),
+          ],
+        ),
+      ),
 
       content: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 400, 
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: widget.fields.map((field) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: CustomInput(
-                label: field.label,
-                type: field.type,
-                controller: controllers[field.name]!,
-                errorText: errors[field.name],
-                onChanged: (value) => _validateField(field, value),
-              ),
-            );
-          }).toList(),
+        constraints: const BoxConstraints(maxWidth: 480),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widget.fields.map((field) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: CustomInput(
+                  label: field.label,
+                  type: field.type,
+                  controller: controllers[field.name]!,
+                  errorText: errors[field.name],
+                  onChanged: (value) => _validateField(field, value),
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
 

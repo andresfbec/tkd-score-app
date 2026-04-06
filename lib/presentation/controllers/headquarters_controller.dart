@@ -9,6 +9,8 @@ import '../../domain/usecases/headquarters/get_all_headquarters.dart';
 import '../../domain/usecases/headquarters/find_headquarters.dart';
 import '../../domain/usecases/headquarters/watch_headquarters.dart';
 
+enum Status { idle, loading, success, error }
+
 class HeadquartersController extends ChangeNotifier {
   final CreateHeadquarter create;
   final UpdateHeadquarter update;
@@ -28,8 +30,11 @@ class HeadquartersController extends ChangeNotifier {
 
   // STATE
   List<HeadquartersEntity> _allHeadquarters = [];
-  bool isLoading = false;
+
+  Status status = Status.idle;
   String? errorMessage;
+
+  String? successMessage;
 
   String _searchQuery = "";
 
@@ -49,19 +54,21 @@ class HeadquartersController extends ChangeNotifier {
 
   // INIT (STREAM)
   void startListening() {
-    isLoading = true;
+
+    status = Status.loading;
     notifyListeners();
 
     _subscription?.cancel(); // cancelar conexion previa (si existe)
     _subscription = watch().listen(
       (data) {
         _allHeadquarters = data;
-        isLoading = false;
+        status = Status.success;
+        errorMessage = null;
         notifyListeners();
       },
       onError: (error) {
         errorMessage = error.toString();
-        isLoading = false;
+        status = Status.error;
         notifyListeners();
       },
     );
@@ -75,7 +82,8 @@ class HeadquartersController extends ChangeNotifier {
     required String phone,
   }) async {
     try {
-      isLoading = true;
+
+      status = Status.loading;
       notifyListeners();
 
       await create(
@@ -88,12 +96,16 @@ class HeadquartersController extends ChangeNotifier {
         ),
       );
 
+      status = Status.success;
+      successMessage = "Sede creada correctamente";
+
       errorMessage = null;
     } catch (e) {
+      status = Status.error;
       errorMessage = e.toString();
     }
 
-    isLoading = false;
+
     notifyListeners();
   }
 
@@ -106,34 +118,41 @@ class HeadquartersController extends ChangeNotifier {
     String? phone,
   }) async {
     try {
-      isLoading = true;
+
+
+      status = Status.loading;
       notifyListeners();
 
       await update(id, name: name, address: address, city: city, phone: phone);
 
+      status = Status.success;
+      successMessage = "Sede actualizada correctamente";
       errorMessage = null;
     } catch (e) {
+      status = Status.error;
       errorMessage = e.toString();
     }
 
-    isLoading = false;
     notifyListeners();
   }
 
   // DELETE
   Future<void> deleteHeadquarter(int id) async {
     try {
-      isLoading = true;
+
+      status = Status.loading;
       notifyListeners();
 
       await delete(id);
 
+      status = Status.success;
+      successMessage = "Sede eliminada correctamente";
       errorMessage = null;
     } catch (e) {
+      status = Status.error;
       errorMessage = e.toString();
     }
 
-    isLoading = false;
     notifyListeners();
   }
 
@@ -141,7 +160,7 @@ class HeadquartersController extends ChangeNotifier {
   Future<void> search({String? name, String? city, String? address}) async {
     // No usarlo ya que usamos updateSearch
     try {
-      isLoading = true;
+
       notifyListeners();
 
       final result = await find(name: name, city: city, address: address);
@@ -152,12 +171,13 @@ class HeadquartersController extends ChangeNotifier {
       errorMessage = e.toString();
     }
 
-    isLoading = false;
+
     notifyListeners();
   }
 
-
-  /// SECONDARY METHODS
+////////////////////////////
+  /// SECONDARY METHODS ///
+///////////////////////////
 
   void updateSearch(String query) {
     _searchQuery = query;
@@ -177,7 +197,15 @@ class HeadquartersController extends ChangeNotifier {
   }
 
   void clearError() {
+    status = Status.idle; 
     // Limpiar mensajes de error
     errorMessage = null;
+    notifyListeners();
+  }
+
+  void clearMessages() {
+    status = Status.idle;
+    errorMessage = null;
+    successMessage = null;
   }
 }
