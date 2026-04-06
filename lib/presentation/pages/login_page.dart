@@ -6,7 +6,7 @@ import '../widgets/inputs/custom_input.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../app/routes.dart';
 import '../../core/constants/app.dart';
-import '../widgets/inputs/input_type.dart';
+import '../../core/enums/input_type.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});

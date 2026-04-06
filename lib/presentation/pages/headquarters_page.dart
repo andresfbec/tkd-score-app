@@ -21,11 +21,13 @@ import '../widgets/modals/custom_form_modal.dart';
 // Controller
 import '../controllers/headquarters_controller.dart';
 
-import '../widgets/inputs/input_type.dart';
+import '../../core/enums/input_type.dart';
 import '../forms/validators.dart';
 
 // notifications
 import '../../core/utils/notifications.dart';
+import '../../core/enums/status.dart';
+import '../../core/utils/status_handler.dart';
 
 class HeadquartersPage extends StatefulWidget {
   const HeadquartersPage({super.key});
@@ -75,7 +77,6 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
               city: data["city"] ?? '',
               phone: data["phone"] ?? '',
             );
-
 
             // AppNotifications.showSuccess(context, "Sede creada correctamente");
           } catch (e) {
@@ -134,7 +135,6 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
               phone: data["phone"] ?? '',
             );
 
-
             // AppNotifications.showSuccess(
             //   context,
             //   "Sede actualizada correctamente",
@@ -169,7 +169,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                 await context.read<HeadquartersController>().deleteHeadquarter(
                   row["id"],
                 );
-                
+
                 if (!mounted) return;
 
                 // AppNotifications.showSuccess(
@@ -177,10 +177,10 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                 //   "Sede eliminada correctamente",
                 // );
 
-                Navigator.pop(dialogContext); 
+                Navigator.pop(dialogContext);
               } catch (e) {
                 if (!mounted) return;
-                Navigator.pop(dialogContext); // opcional cerrarlo también en error
+                Navigator.pop(dialogContext);
 
                 debugPrint("Error eliminando sede: $e");
               }
@@ -203,26 +203,12 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
     final bool isDark = themeProvider.isDarkMode; // tema oscuro o claro
     final ui = context.watch<UIStateProvider>();
     final controller = context.watch<HeadquartersController>();
+    
+    
     // mensajes de error y estados
-    final error = controller.errorMessage;
-    final success = controller.status == Status.success;
-    final status = controller.status;
+    handleStatus(context, controller); // maneja estados y notificaciones
 
-    if (error != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppNotifications.showError(context, error);
-
-        controller.clearError();
-      });
-    }
-
-    if (controller.status == Status.success && controller.successMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppNotifications.showSuccess(context, controller.successMessage!);
-
-        controller.clearMessages(); // resetea status 
-      });
-    }
+     /// CLAVE: cada vez que se reconstruya el widget (ej. por un cambio en el provider) sincronizamos la selección del DataGrid con el selectedRow del provider
 
     final columns = [
       {'key': 'name', 'label': 'Nombre'},

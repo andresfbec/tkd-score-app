@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import '../inputs/custom_input.dart';
-import '../inputs/input_type.dart';
+import '../../../core/enums/input_type.dart';
 
 import '../../../core/constants/app.dart';
 

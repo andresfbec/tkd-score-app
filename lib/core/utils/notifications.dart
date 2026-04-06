@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+// Clase de utilidad para mostrar notificaciones en la aplicación succes, error, warning e info
 class AppNotifications {
   static void showSuccess(BuildContext context, String message) {
     _show(
@@ -46,6 +47,7 @@ class AppNotifications {
   }) {
     displayInfoBar(
       context,
+      alignment: Alignment.topCenter,
       builder: (context, close) {
         return InfoBar(
           title: Text(title),

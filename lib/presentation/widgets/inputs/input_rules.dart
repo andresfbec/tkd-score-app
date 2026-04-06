@@ -1,7 +1,7 @@
 // Este archivo define las reglas, osea lo que el usuario puede o no escribir en los campos ej. juan123 (no se puede)
 
 import 'package:flutter/services.dart';
-import 'input_type.dart';
+import '../../../core/enums/input_type.dart';
 
 
 class InputRules {

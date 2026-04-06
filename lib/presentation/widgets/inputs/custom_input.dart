@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'package:tkd_score/core/theme/theme_provider.dart';
 import '../../../core/constants/app.dart';
-import './input_type.dart';
+import '../../../core/enums/input_type.dart';
 import './input_rules.dart';
 
 class CustomInput extends StatelessWidget {

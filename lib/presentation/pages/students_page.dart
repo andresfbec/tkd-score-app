@@ -119,6 +119,14 @@ class _StudentsPageState extends State<StudentsPage> {
                   ),
                 ),
 
+                const SizedBox(width: 16),
+
+                FluentActionButton(
+                  icon: FluentIcons.filter, 
+                  label: 'Filtros', 
+                  onPressed: () {}
+                  ),
+
                 const Spacer(),
 
                 ///  Acciones lado derecho

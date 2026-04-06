@@ -9,7 +9,8 @@ import '../../domain/usecases/headquarters/get_all_headquarters.dart';
 import '../../domain/usecases/headquarters/find_headquarters.dart';
 import '../../domain/usecases/headquarters/watch_headquarters.dart';
 
-enum Status { idle, loading, success, error }
+import '../../core/enums/status.dart';
+
 
 class HeadquartersController extends ChangeNotifier {
   final CreateHeadquarter create;
@@ -32,9 +33,7 @@ class HeadquartersController extends ChangeNotifier {
   List<HeadquartersEntity> _allHeadquarters = [];
 
   Status status = Status.idle;
-  String? errorMessage;
-
-  String? successMessage;
+  String? message;
 
   String _searchQuery = "";
 
@@ -54,7 +53,6 @@ class HeadquartersController extends ChangeNotifier {
 
   // INIT (STREAM)
   void startListening() {
-
     status = Status.loading;
     notifyListeners();
 
@@ -63,11 +61,9 @@ class HeadquartersController extends ChangeNotifier {
       (data) {
         _allHeadquarters = data;
         status = Status.success;
-        errorMessage = null;
         notifyListeners();
       },
       onError: (error) {
-        errorMessage = error.toString();
         status = Status.error;
         notifyListeners();
       },
@@ -82,7 +78,6 @@ class HeadquartersController extends ChangeNotifier {
     required String phone,
   }) async {
     try {
-
       status = Status.loading;
       notifyListeners();
 
@@ -97,14 +92,12 @@ class HeadquartersController extends ChangeNotifier {
       );
 
       status = Status.success;
-      successMessage = "Sede creada correctamente";
+      message = "Sede creada correctamente";
 
-      errorMessage = null;
     } catch (e) {
       status = Status.error;
-      errorMessage = e.toString();
+      message = 'No se pudo crear la sede: ${e.toString()}';
     }
-
 
     notifyListeners();
   }
@@ -118,19 +111,16 @@ class HeadquartersController extends ChangeNotifier {
     String? phone,
   }) async {
     try {
-
-
       status = Status.loading;
       notifyListeners();
 
       await update(id, name: name, address: address, city: city, phone: phone);
 
       status = Status.success;
-      successMessage = "Sede actualizada correctamente";
-      errorMessage = null;
+      message = "Sede actualizada correctamente";
     } catch (e) {
       status = Status.error;
-      errorMessage = e.toString();
+      message = 'No se pudo actualizar la sede: ${e.toString()}';
     }
 
     notifyListeners();
@@ -139,18 +129,16 @@ class HeadquartersController extends ChangeNotifier {
   // DELETE
   Future<void> deleteHeadquarter(int id) async {
     try {
-
       status = Status.loading;
       notifyListeners();
 
       await delete(id);
 
       status = Status.success;
-      successMessage = "Sede eliminada correctamente";
-      errorMessage = null;
+      message = "Sede eliminada correctamente";
     } catch (e) {
       status = Status.error;
-      errorMessage = e.toString();
+      message = 'No se pudo eliminar la sede: ${e.toString()}';
     }
 
     notifyListeners();
@@ -160,24 +148,22 @@ class HeadquartersController extends ChangeNotifier {
   Future<void> search({String? name, String? city, String? address}) async {
     // No usarlo ya que usamos updateSearch
     try {
-
       notifyListeners();
 
       final result = await find(name: name, city: city, address: address);
 
       _allHeadquarters = result;
-      errorMessage = null;
+      message = null;
     } catch (e) {
-      errorMessage = e.toString();
+      message = e.toString();
     }
-
 
     notifyListeners();
   }
 
-////////////////////////////
+  ////////////////////////////
   /// SECONDARY METHODS ///
-///////////////////////////
+  ///////////////////////////
 
   void updateSearch(String query) {
     _searchQuery = query;
@@ -197,15 +183,14 @@ class HeadquartersController extends ChangeNotifier {
   }
 
   void clearError() {
-    status = Status.idle; 
+    status = Status.idle;
     // Limpiar mensajes de error
-    errorMessage = null;
+    message = null;
     notifyListeners();
   }
 
   void clearMessages() {
     status = Status.idle;
-    errorMessage = null;
-    successMessage = null;
+    message = null;
   }
 }
