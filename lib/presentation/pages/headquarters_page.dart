@@ -63,6 +63,12 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
             validator: (v) => FormValidations.required(v, field: "Ciudad"),
           ),
           FormFieldConfig(
+            name: "master",
+            label: "Responsable",
+            type: InputType.name,
+            validator: (v) => FormValidations.required(v, field: "Responsable"),
+          ),
+          FormFieldConfig(
             name: "phone",
             label: "Teléfono",
             type: InputType.phone,
@@ -75,6 +81,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
               name: data["name"] ?? '',
               address: data["address"] ?? '',
               city: data["city"] ?? '',
+              master: data["master"] ?? '',
               phone: data["phone"] ?? '',
             );
 
@@ -97,6 +104,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
           "name": row["name"],
           "address": row["address"],
           "city": row["city"],
+          "master": row["master"],
           "phone": row["phoneNumber"],
         },
         fields: [
@@ -118,6 +126,12 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
             type: InputType.name,
             validator: (v) => FormValidations.required(v, field: "Ciudad"),
           ),
+            FormFieldConfig(
+              name: "master",
+              label: "Responsable",
+              type: InputType.name,
+              validator: (v) => FormValidations.required(v, field: "Responsable"),
+            ),
           FormFieldConfig(
             name: "phone",
             label: "Teléfono",
@@ -132,6 +146,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
               name: data["name"] ?? '',
               address: data["address"] ?? '',
               city: data["city"] ?? '',
+              master: data["master"] ?? '',
               phone: data["phone"] ?? '',
             );
 
@@ -214,6 +229,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
       {'key': 'name', 'label': 'Nombre'},
       {'key': 'address', 'label': 'Dirección'},
       {'key': 'city', 'label': 'Ciudad'},
+      {'key': 'master', 'label': 'Responsable'},
       {'key': 'phoneNumber', 'label': 'Teléfono'},
     ];
 
@@ -223,6 +239,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
         'name': hq.name,
         'address': hq.address,
         'city': hq.city,
+        'master': hq.master,
         'phoneNumber': hq.phoneNumber,
         'headquarter': hq,
       };

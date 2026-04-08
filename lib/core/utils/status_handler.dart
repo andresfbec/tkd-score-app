@@ -6,6 +6,7 @@ import '../enums/status.dart';
 // status + message 
 // 1 solo handler 
 // UI limpia 
+// esto en sisntesis es para mostrar las notificaciones en la ui en la page que se nececite
 void handleStatus(BuildContext context, dynamic controller) {
   final message = controller.message;
   final status = controller.status;

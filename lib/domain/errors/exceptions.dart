@@ -22,3 +22,13 @@ class EmptyCityException implements Exception {
   @override
   String toString() => "La ciudad es obligatoria";
 }
+
+class EmptyAddressException implements Exception {
+  @override
+  String toString() => "La dirección es obligatoria";
+}
+
+class EmptyMasterException implements Exception {
+  @override
+  String toString() => "El responsable de la sede es obligatorio";
+}

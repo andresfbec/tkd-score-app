@@ -4,27 +4,44 @@ class StudentsEntity extends Equatable {
   final int? id;
   final String names;
   final String surnames;
-  final String typeDocument;
-  final String documentNumber;
-  final int age;
+  final String typeIdentify;
+  final String numberIdentify;
   final String gender;
-  final double weight;
-  final double size;
+  final DateTime birthDate;
+  final int tournamentWins;
+  final int participations;
+  final double weightKg;
+  final double heightCm;
   final int headquarterId;
-  final int beltsId;
+  final int beltId;
+
+  // campos nuevos producto de los joins en la consulta
+  final String? headquarterName;
+
+  final String? beltName;
+  final String? beltPrimaryColor;
+  final String? beltSecondaryColor;
+
 
   const StudentsEntity({
     required this.id,
     required this.names,
     required this.surnames,
-    required this.typeDocument,
-    required this.documentNumber,
-    required this.age,
+    required this.typeIdentify,
+    required this.numberIdentify,
     required this.gender,
-    required this.weight,
-    required this.size,
+    required this.birthDate,
+    required this.tournamentWins,
+    required this.participations,
+    required this.weightKg,
+    required this.heightCm,
     required this.headquarterId,
-    required this.beltsId,
+    required this.beltId,
+
+    this.headquarterName,
+    this.beltName,
+    this.beltPrimaryColor,
+    this.beltSecondaryColor,
   });
 
   @override
@@ -32,13 +49,19 @@ class StudentsEntity extends Equatable {
     id,
     names,
     surnames,
-    typeDocument,
-    documentNumber,
-    age,
+    typeIdentify,
+    numberIdentify,
     gender,
-    weight,
-    size,
+    birthDate,
+    tournamentWins,
+    participations,
+    weightKg,
+    heightCm,
     headquarterId,
-    beltsId,
+    beltId,
+    headquarterName,
+    beltName,
+    beltPrimaryColor,
+    beltSecondaryColor,
   ];
 }

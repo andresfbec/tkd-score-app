@@ -130,7 +130,9 @@ class _CustomFormModalState extends State<CustomFormModal> {
         constraints: const BoxConstraints(maxWidth: 480),
         child: Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: Column(
+          child: SingleChildScrollView(
+            child:
+          Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.fields.map((field) {
               return Padding(
@@ -145,6 +147,7 @@ class _CustomFormModalState extends State<CustomFormModal> {
               );
             }).toList(),
           ),
+          )
         ),
       ),
 

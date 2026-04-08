@@ -76,6 +76,7 @@ class HeadquartersController extends ChangeNotifier {
     required String address,
     required String city,
     required String phone,
+    required String master,
   }) async {
     try {
       status = Status.loading;
@@ -88,6 +89,7 @@ class HeadquartersController extends ChangeNotifier {
           address: address,
           city: city,
           phoneNumber: phone,
+          master: master,
         ),
       );
 
@@ -109,12 +111,13 @@ class HeadquartersController extends ChangeNotifier {
     String? address,
     String? city,
     String? phone,
+    String? master,
   }) async {
     try {
       status = Status.loading;
       notifyListeners();
 
-      await update(id, name: name, address: address, city: city, phone: phone);
+      await update(id, name: name, address: address, city: city, phone: phone, master: master);
 
       status = Status.success;
       message = "Sede actualizada correctamente";

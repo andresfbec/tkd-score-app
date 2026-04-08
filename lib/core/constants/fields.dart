@@ -16,6 +16,7 @@ class DatabaseFields {
     'address',
     'city',
     'phone',
+    'master', 
   };
 
   static const Set<String> users = {'id', 'username', 'headquartersId'};
@@ -24,14 +25,15 @@ class DatabaseFields {
     'id',
     'names',
     'surnames',
-    'typeDocument',
-    'documentNumber',
-    'age',
+    'typeIdentify',
+    'numberIdentify',
     'gender',
-    'weight',
-    'size',
+    'birthDate',
+    'tournamentWins',
+    'weightKg',
+    'heightCm',
     'headquarterId',
-    'beltsId',
+    'beltId',
   };
 }
 

@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'group.dart';
+import 'groups.dart';
 import 'tournament.dart';
 import 'students.dart';
 
@@ -22,7 +22,7 @@ class Inscription extends Table {
   )();
 
   IntColumn get grupId => integer().references(
-    Group,
+    Groups,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

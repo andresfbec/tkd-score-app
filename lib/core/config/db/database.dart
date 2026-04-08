@@ -11,7 +11,7 @@ import 'package:tkd_score/data/tables/belts.dart';
 import 'package:tkd_score/data/tables/students.dart';
 import 'package:tkd_score/data/tables/tournament.dart';
 import 'package:tkd_score/data/tables/judge.dart';
-import 'package:tkd_score/data/tables/group.dart';
+import 'package:tkd_score/data/tables/groups.dart';
 import '../../../core/constants/database.dart';
 import 'package:tkd_score/data/tables/inscription.dart';
 import 'package:tkd_score/data/tables/versus.dart';
@@ -31,7 +31,7 @@ part 'database.g.dart'; // se generará automáticamente
     Tournament,
     Judge,
     JudgeTournament,
-    Group,
+    Groups,
     Inscription,
     Versus,
     Score,

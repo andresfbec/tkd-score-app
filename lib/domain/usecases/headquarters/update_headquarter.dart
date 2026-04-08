@@ -14,6 +14,7 @@ class UpdateHeadquarter {
     String? address,
     String? city,
     String? phone,
+    String? master, 
   }) async {
     final existing = await repository.getById(pk);
 
@@ -26,6 +27,7 @@ class UpdateHeadquarter {
       address: address ?? existing.address,
       city: city ?? existing.city,
       phoneNumber: phone ?? existing.phoneNumber,
+      master: master ?? existing.master, 
     );
 
     final nameChanged = name != null && name != existing.name;

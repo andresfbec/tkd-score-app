@@ -60,6 +60,15 @@ class $HeadquartersTable extends Headquarters
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _masterMeta = const VerificationMeta('master');
+  @override
+  late final GeneratedColumn<String> master = GeneratedColumn<String>(
+    'master',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -115,6 +124,7 @@ class $HeadquartersTable extends Headquarters
     address,
     city,
     phone,
+    master,
     createdAt,
     updatedAt,
     synchronized,
@@ -166,6 +176,14 @@ class $HeadquartersTable extends Headquarters
       );
     } else if (isInserting) {
       context.missing(_phoneMeta);
+    }
+    if (data.containsKey('master')) {
+      context.handle(
+        _masterMeta,
+        master.isAcceptableOrUnknown(data['master']!, _masterMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_masterMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -223,6 +241,10 @@ class $HeadquartersTable extends Headquarters
         DriftSqlType.string,
         data['${effectivePrefix}phone'],
       )!,
+      master: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}master'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -254,6 +276,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
   final String address;
   final String city;
   final String phone;
+  final String master;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int synchronized;
@@ -264,6 +287,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
     required this.address,
     required this.city,
     required this.phone,
+    required this.master,
     required this.createdAt,
     required this.updatedAt,
     required this.synchronized,
@@ -277,6 +301,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
     map['address'] = Variable<String>(address);
     map['city'] = Variable<String>(city);
     map['phone'] = Variable<String>(phone);
+    map['master'] = Variable<String>(master);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['synchronized'] = Variable<int>(synchronized);
@@ -291,6 +316,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
       address: Value(address),
       city: Value(city),
       phone: Value(phone),
+      master: Value(master),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       synchronized: Value(synchronized),
@@ -309,6 +335,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
       address: serializer.fromJson<String>(json['address']),
       city: serializer.fromJson<String>(json['city']),
       phone: serializer.fromJson<String>(json['phone']),
+      master: serializer.fromJson<String>(json['master']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       synchronized: serializer.fromJson<int>(json['synchronized']),
@@ -324,6 +351,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
       'address': serializer.toJson<String>(address),
       'city': serializer.toJson<String>(city),
       'phone': serializer.toJson<String>(phone),
+      'master': serializer.toJson<String>(master),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'synchronized': serializer.toJson<int>(synchronized),
@@ -337,6 +365,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
     String? address,
     String? city,
     String? phone,
+    String? master,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? synchronized,
@@ -347,6 +376,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
     address: address ?? this.address,
     city: city ?? this.city,
     phone: phone ?? this.phone,
+    master: master ?? this.master,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     synchronized: synchronized ?? this.synchronized,
@@ -359,6 +389,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
       address: data.address.present ? data.address.value : this.address,
       city: data.city.present ? data.city.value : this.city,
       phone: data.phone.present ? data.phone.value : this.phone,
+      master: data.master.present ? data.master.value : this.master,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       synchronized: data.synchronized.present
@@ -376,6 +407,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
           ..write('address: $address, ')
           ..write('city: $city, ')
           ..write('phone: $phone, ')
+          ..write('master: $master, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synchronized: $synchronized, ')
@@ -391,6 +423,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
     address,
     city,
     phone,
+    master,
     createdAt,
     updatedAt,
     synchronized,
@@ -405,6 +438,7 @@ class Headquarter extends DataClass implements Insertable<Headquarter> {
           other.address == this.address &&
           other.city == this.city &&
           other.phone == this.phone &&
+          other.master == this.master &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.synchronized == this.synchronized &&
@@ -417,6 +451,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
   final Value<String> address;
   final Value<String> city;
   final Value<String> phone;
+  final Value<String> master;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
@@ -427,6 +462,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
     this.address = const Value.absent(),
     this.city = const Value.absent(),
     this.phone = const Value.absent(),
+    this.master = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
@@ -438,6 +474,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
     required String address,
     required String city,
     required String phone,
+    required String master,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
@@ -445,13 +482,15 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
   }) : name = Value(name),
        address = Value(address),
        city = Value(city),
-       phone = Value(phone);
+       phone = Value(phone),
+       master = Value(master);
   static Insertable<Headquarter> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? address,
     Expression<String>? city,
     Expression<String>? phone,
+    Expression<String>? master,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? synchronized,
@@ -463,6 +502,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
       if (address != null) 'address': address,
       if (city != null) 'city': city,
       if (phone != null) 'phone': phone,
+      if (master != null) 'master': master,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (synchronized != null) 'synchronized': synchronized,
@@ -476,6 +516,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
     Value<String>? address,
     Value<String>? city,
     Value<String>? phone,
+    Value<String>? master,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? synchronized,
@@ -487,6 +528,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
       address: address ?? this.address,
       city: city ?? this.city,
       phone: phone ?? this.phone,
+      master: master ?? this.master,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       synchronized: synchronized ?? this.synchronized,
@@ -512,6 +554,9 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
     if (phone.present) {
       map['phone'] = Variable<String>(phone.value);
     }
+    if (master.present) {
+      map['master'] = Variable<String>(master.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -535,6 +580,7 @@ class HeadquartersCompanion extends UpdateCompanion<Headquarter> {
           ..write('address: $address, ')
           ..write('city: $city, ')
           ..write('phone: $phone, ')
+          ..write('master: $master, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synchronized: $synchronized, ')
@@ -1475,6 +1521,28 @@ class $BeltsTable extends Belts with TableInfo<$BeltsTable, Belt> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _primaryColorMeta = const VerificationMeta(
+    'primaryColor',
+  );
+  @override
+  late final GeneratedColumn<String> primaryColor = GeneratedColumn<String>(
+    'primary_color',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _secondaryColorMeta = const VerificationMeta(
+    'secondaryColor',
+  );
+  @override
+  late final GeneratedColumn<String> secondaryColor = GeneratedColumn<String>(
+    'secondary_color',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1527,6 +1595,8 @@ class $BeltsTable extends Belts with TableInfo<$BeltsTable, Belt> {
   List<GeneratedColumn> get $columns => [
     id,
     name,
+    primaryColor,
+    secondaryColor,
     createdAt,
     updatedAt,
     synchronized,
@@ -1554,6 +1624,28 @@ class $BeltsTable extends Belts with TableInfo<$BeltsTable, Belt> {
       );
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('primary_color')) {
+      context.handle(
+        _primaryColorMeta,
+        primaryColor.isAcceptableOrUnknown(
+          data['primary_color']!,
+          _primaryColorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_primaryColorMeta);
+    }
+    if (data.containsKey('secondary_color')) {
+      context.handle(
+        _secondaryColorMeta,
+        secondaryColor.isAcceptableOrUnknown(
+          data['secondary_color']!,
+          _secondaryColorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_secondaryColorMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -1599,6 +1691,14 @@ class $BeltsTable extends Belts with TableInfo<$BeltsTable, Belt> {
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
+      primaryColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}primary_color'],
+      )!,
+      secondaryColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}secondary_color'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1627,6 +1727,8 @@ class $BeltsTable extends Belts with TableInfo<$BeltsTable, Belt> {
 class Belt extends DataClass implements Insertable<Belt> {
   final int id;
   final String name;
+  final String primaryColor;
+  final String secondaryColor;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int synchronized;
@@ -1634,6 +1736,8 @@ class Belt extends DataClass implements Insertable<Belt> {
   const Belt({
     required this.id,
     required this.name,
+    required this.primaryColor,
+    required this.secondaryColor,
     required this.createdAt,
     required this.updatedAt,
     required this.synchronized,
@@ -1644,6 +1748,8 @@ class Belt extends DataClass implements Insertable<Belt> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
+    map['primary_color'] = Variable<String>(primaryColor);
+    map['secondary_color'] = Variable<String>(secondaryColor);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['synchronized'] = Variable<int>(synchronized);
@@ -1655,6 +1761,8 @@ class Belt extends DataClass implements Insertable<Belt> {
     return BeltsCompanion(
       id: Value(id),
       name: Value(name),
+      primaryColor: Value(primaryColor),
+      secondaryColor: Value(secondaryColor),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       synchronized: Value(synchronized),
@@ -1670,6 +1778,8 @@ class Belt extends DataClass implements Insertable<Belt> {
     return Belt(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      primaryColor: serializer.fromJson<String>(json['primaryColor']),
+      secondaryColor: serializer.fromJson<String>(json['secondaryColor']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       synchronized: serializer.fromJson<int>(json['synchronized']),
@@ -1682,6 +1792,8 @@ class Belt extends DataClass implements Insertable<Belt> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'primaryColor': serializer.toJson<String>(primaryColor),
+      'secondaryColor': serializer.toJson<String>(secondaryColor),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'synchronized': serializer.toJson<int>(synchronized),
@@ -1692,6 +1804,8 @@ class Belt extends DataClass implements Insertable<Belt> {
   Belt copyWith({
     int? id,
     String? name,
+    String? primaryColor,
+    String? secondaryColor,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? synchronized,
@@ -1699,6 +1813,8 @@ class Belt extends DataClass implements Insertable<Belt> {
   }) => Belt(
     id: id ?? this.id,
     name: name ?? this.name,
+    primaryColor: primaryColor ?? this.primaryColor,
+    secondaryColor: secondaryColor ?? this.secondaryColor,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     synchronized: synchronized ?? this.synchronized,
@@ -1708,6 +1824,12 @@ class Belt extends DataClass implements Insertable<Belt> {
     return Belt(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
+      primaryColor: data.primaryColor.present
+          ? data.primaryColor.value
+          : this.primaryColor,
+      secondaryColor: data.secondaryColor.present
+          ? data.secondaryColor.value
+          : this.secondaryColor,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       synchronized: data.synchronized.present
@@ -1722,6 +1844,8 @@ class Belt extends DataClass implements Insertable<Belt> {
     return (StringBuffer('Belt(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('primaryColor: $primaryColor, ')
+          ..write('secondaryColor: $secondaryColor, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synchronized: $synchronized, ')
@@ -1731,14 +1855,24 @@ class Belt extends DataClass implements Insertable<Belt> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, createdAt, updatedAt, synchronized, isActive);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    primaryColor,
+    secondaryColor,
+    createdAt,
+    updatedAt,
+    synchronized,
+    isActive,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Belt &&
           other.id == this.id &&
           other.name == this.name &&
+          other.primaryColor == this.primaryColor &&
+          other.secondaryColor == this.secondaryColor &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.synchronized == this.synchronized &&
@@ -1748,6 +1882,8 @@ class Belt extends DataClass implements Insertable<Belt> {
 class BeltsCompanion extends UpdateCompanion<Belt> {
   final Value<int> id;
   final Value<String> name;
+  final Value<String> primaryColor;
+  final Value<String> secondaryColor;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
@@ -1755,6 +1891,8 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
   const BeltsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.primaryColor = const Value.absent(),
+    this.secondaryColor = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
@@ -1763,14 +1901,20 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
   BeltsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
+    required String primaryColor,
+    required String secondaryColor,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
-  }) : name = Value(name);
+  }) : name = Value(name),
+       primaryColor = Value(primaryColor),
+       secondaryColor = Value(secondaryColor);
   static Insertable<Belt> custom({
     Expression<int>? id,
     Expression<String>? name,
+    Expression<String>? primaryColor,
+    Expression<String>? secondaryColor,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? synchronized,
@@ -1779,6 +1923,8 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (primaryColor != null) 'primary_color': primaryColor,
+      if (secondaryColor != null) 'secondary_color': secondaryColor,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (synchronized != null) 'synchronized': synchronized,
@@ -1789,6 +1935,8 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
   BeltsCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
+    Value<String>? primaryColor,
+    Value<String>? secondaryColor,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? synchronized,
@@ -1797,6 +1945,8 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
     return BeltsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      primaryColor: primaryColor ?? this.primaryColor,
+      secondaryColor: secondaryColor ?? this.secondaryColor,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       synchronized: synchronized ?? this.synchronized,
@@ -1812,6 +1962,12 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (primaryColor.present) {
+      map['primary_color'] = Variable<String>(primaryColor.value);
+    }
+    if (secondaryColor.present) {
+      map['secondary_color'] = Variable<String>(secondaryColor.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1833,6 +1989,8 @@ class BeltsCompanion extends UpdateCompanion<Belt> {
     return (StringBuffer('BeltsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('primaryColor: $primaryColor, ')
+          ..write('secondaryColor: $secondaryColor, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synchronized: $synchronized, ')
@@ -2346,24 +2504,15 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _identifyMeta = const VerificationMeta(
-    'identify',
+  static const VerificationMeta _numberIdentifyMeta = const VerificationMeta(
+    'numberIdentify',
   );
   @override
-  late final GeneratedColumn<String> identify = GeneratedColumn<String>(
-    'identify',
+  late final GeneratedColumn<String> numberIdentify = GeneratedColumn<String>(
+    'number_identify',
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _ageMeta = const VerificationMeta('age');
-  @override
-  late final GeneratedColumn<int> age = GeneratedColumn<int>(
-    'age',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
   static const VerificationMeta _genderMeta = const VerificationMeta('gender');
@@ -2375,19 +2524,58 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _weightMeta = const VerificationMeta('weight');
+  static const VerificationMeta _birthDateMeta = const VerificationMeta(
+    'birthDate',
+  );
   @override
-  late final GeneratedColumn<double> weight = GeneratedColumn<double>(
-    'weight',
+  late final GeneratedColumn<DateTime> birthDate = GeneratedColumn<DateTime>(
+    'birth_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tournamentWinsMeta = const VerificationMeta(
+    'tournamentWins',
+  );
+  @override
+  late final GeneratedColumn<int> tournamentWins = GeneratedColumn<int>(
+    'tournament_wins',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _participationsMeta = const VerificationMeta(
+    'participations',
+  );
+  @override
+  late final GeneratedColumn<int> participations = GeneratedColumn<int>(
+    'participations',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _weightKgMeta = const VerificationMeta(
+    'weightKg',
+  );
+  @override
+  late final GeneratedColumn<double> weightKg = GeneratedColumn<double>(
+    'weight_kg',
     aliasedName,
     false,
     type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _sizeMeta = const VerificationMeta('size');
+  static const VerificationMeta _heightCmMeta = const VerificationMeta(
+    'heightCm',
+  );
   @override
-  late final GeneratedColumn<double> size = GeneratedColumn<double>(
-    'size',
+  late final GeneratedColumn<double> heightCm = GeneratedColumn<double>(
+    'height_cm',
     aliasedName,
     false,
     type: DriftSqlType.double,
@@ -2473,11 +2661,13 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     names,
     surnames,
     typeIdentify,
-    identify,
-    age,
+    numberIdentify,
     gender,
-    weight,
-    size,
+    birthDate,
+    tournamentWins,
+    participations,
+    weightKg,
+    heightCm,
     headquarterId,
     beltId,
     createdAt,
@@ -2527,21 +2717,16 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     } else if (isInserting) {
       context.missing(_typeIdentifyMeta);
     }
-    if (data.containsKey('identify')) {
+    if (data.containsKey('number_identify')) {
       context.handle(
-        _identifyMeta,
-        identify.isAcceptableOrUnknown(data['identify']!, _identifyMeta),
+        _numberIdentifyMeta,
+        numberIdentify.isAcceptableOrUnknown(
+          data['number_identify']!,
+          _numberIdentifyMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_identifyMeta);
-    }
-    if (data.containsKey('age')) {
-      context.handle(
-        _ageMeta,
-        age.isAcceptableOrUnknown(data['age']!, _ageMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_ageMeta);
+      context.missing(_numberIdentifyMeta);
     }
     if (data.containsKey('gender')) {
       context.handle(
@@ -2551,21 +2736,47 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     } else if (isInserting) {
       context.missing(_genderMeta);
     }
-    if (data.containsKey('weight')) {
+    if (data.containsKey('birth_date')) {
       context.handle(
-        _weightMeta,
-        weight.isAcceptableOrUnknown(data['weight']!, _weightMeta),
+        _birthDateMeta,
+        birthDate.isAcceptableOrUnknown(data['birth_date']!, _birthDateMeta),
       );
     } else if (isInserting) {
-      context.missing(_weightMeta);
+      context.missing(_birthDateMeta);
     }
-    if (data.containsKey('size')) {
+    if (data.containsKey('tournament_wins')) {
       context.handle(
-        _sizeMeta,
-        size.isAcceptableOrUnknown(data['size']!, _sizeMeta),
+        _tournamentWinsMeta,
+        tournamentWins.isAcceptableOrUnknown(
+          data['tournament_wins']!,
+          _tournamentWinsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('participations')) {
+      context.handle(
+        _participationsMeta,
+        participations.isAcceptableOrUnknown(
+          data['participations']!,
+          _participationsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('weight_kg')) {
+      context.handle(
+        _weightKgMeta,
+        weightKg.isAcceptableOrUnknown(data['weight_kg']!, _weightKgMeta),
       );
     } else if (isInserting) {
-      context.missing(_sizeMeta);
+      context.missing(_weightKgMeta);
+    }
+    if (data.containsKey('height_cm')) {
+      context.handle(
+        _heightCmMeta,
+        heightCm.isAcceptableOrUnknown(data['height_cm']!, _heightCmMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_heightCmMeta);
     }
     if (data.containsKey('headquarter_id')) {
       context.handle(
@@ -2638,25 +2849,33 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
         DriftSqlType.string,
         data['${effectivePrefix}type_identify'],
       )!,
-      identify: attachedDatabase.typeMapping.read(
+      numberIdentify: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}identify'],
-      )!,
-      age: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}age'],
+        data['${effectivePrefix}number_identify'],
       )!,
       gender: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}gender'],
       )!,
-      weight: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}weight'],
+      birthDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}birth_date'],
       )!,
-      size: attachedDatabase.typeMapping.read(
+      tournamentWins: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tournament_wins'],
+      )!,
+      participations: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}participations'],
+      )!,
+      weightKg: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
-        data['${effectivePrefix}size'],
+        data['${effectivePrefix}weight_kg'],
+      )!,
+      heightCm: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}height_cm'],
       )!,
       headquarterId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -2696,11 +2915,13 @@ class Student extends DataClass implements Insertable<Student> {
   final String names;
   final String surnames;
   final String typeIdentify;
-  final String identify;
-  final int age;
+  final String numberIdentify;
   final String gender;
-  final double weight;
-  final double size;
+  final DateTime birthDate;
+  final int tournamentWins;
+  final int participations;
+  final double weightKg;
+  final double heightCm;
   final int headquarterId;
   final int beltId;
   final DateTime createdAt;
@@ -2712,11 +2933,13 @@ class Student extends DataClass implements Insertable<Student> {
     required this.names,
     required this.surnames,
     required this.typeIdentify,
-    required this.identify,
-    required this.age,
+    required this.numberIdentify,
     required this.gender,
-    required this.weight,
-    required this.size,
+    required this.birthDate,
+    required this.tournamentWins,
+    required this.participations,
+    required this.weightKg,
+    required this.heightCm,
     required this.headquarterId,
     required this.beltId,
     required this.createdAt,
@@ -2731,11 +2954,13 @@ class Student extends DataClass implements Insertable<Student> {
     map['names'] = Variable<String>(names);
     map['surnames'] = Variable<String>(surnames);
     map['type_identify'] = Variable<String>(typeIdentify);
-    map['identify'] = Variable<String>(identify);
-    map['age'] = Variable<int>(age);
+    map['number_identify'] = Variable<String>(numberIdentify);
     map['gender'] = Variable<String>(gender);
-    map['weight'] = Variable<double>(weight);
-    map['size'] = Variable<double>(size);
+    map['birth_date'] = Variable<DateTime>(birthDate);
+    map['tournament_wins'] = Variable<int>(tournamentWins);
+    map['participations'] = Variable<int>(participations);
+    map['weight_kg'] = Variable<double>(weightKg);
+    map['height_cm'] = Variable<double>(heightCm);
     map['headquarter_id'] = Variable<int>(headquarterId);
     map['belt_id'] = Variable<int>(beltId);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -2751,11 +2976,13 @@ class Student extends DataClass implements Insertable<Student> {
       names: Value(names),
       surnames: Value(surnames),
       typeIdentify: Value(typeIdentify),
-      identify: Value(identify),
-      age: Value(age),
+      numberIdentify: Value(numberIdentify),
       gender: Value(gender),
-      weight: Value(weight),
-      size: Value(size),
+      birthDate: Value(birthDate),
+      tournamentWins: Value(tournamentWins),
+      participations: Value(participations),
+      weightKg: Value(weightKg),
+      heightCm: Value(heightCm),
       headquarterId: Value(headquarterId),
       beltId: Value(beltId),
       createdAt: Value(createdAt),
@@ -2775,11 +3002,13 @@ class Student extends DataClass implements Insertable<Student> {
       names: serializer.fromJson<String>(json['names']),
       surnames: serializer.fromJson<String>(json['surnames']),
       typeIdentify: serializer.fromJson<String>(json['typeIdentify']),
-      identify: serializer.fromJson<String>(json['identify']),
-      age: serializer.fromJson<int>(json['age']),
+      numberIdentify: serializer.fromJson<String>(json['numberIdentify']),
       gender: serializer.fromJson<String>(json['gender']),
-      weight: serializer.fromJson<double>(json['weight']),
-      size: serializer.fromJson<double>(json['size']),
+      birthDate: serializer.fromJson<DateTime>(json['birthDate']),
+      tournamentWins: serializer.fromJson<int>(json['tournamentWins']),
+      participations: serializer.fromJson<int>(json['participations']),
+      weightKg: serializer.fromJson<double>(json['weightKg']),
+      heightCm: serializer.fromJson<double>(json['heightCm']),
       headquarterId: serializer.fromJson<int>(json['headquarterId']),
       beltId: serializer.fromJson<int>(json['beltId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -2796,11 +3025,13 @@ class Student extends DataClass implements Insertable<Student> {
       'names': serializer.toJson<String>(names),
       'surnames': serializer.toJson<String>(surnames),
       'typeIdentify': serializer.toJson<String>(typeIdentify),
-      'identify': serializer.toJson<String>(identify),
-      'age': serializer.toJson<int>(age),
+      'numberIdentify': serializer.toJson<String>(numberIdentify),
       'gender': serializer.toJson<String>(gender),
-      'weight': serializer.toJson<double>(weight),
-      'size': serializer.toJson<double>(size),
+      'birthDate': serializer.toJson<DateTime>(birthDate),
+      'tournamentWins': serializer.toJson<int>(tournamentWins),
+      'participations': serializer.toJson<int>(participations),
+      'weightKg': serializer.toJson<double>(weightKg),
+      'heightCm': serializer.toJson<double>(heightCm),
       'headquarterId': serializer.toJson<int>(headquarterId),
       'beltId': serializer.toJson<int>(beltId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -2815,11 +3046,13 @@ class Student extends DataClass implements Insertable<Student> {
     String? names,
     String? surnames,
     String? typeIdentify,
-    String? identify,
-    int? age,
+    String? numberIdentify,
     String? gender,
-    double? weight,
-    double? size,
+    DateTime? birthDate,
+    int? tournamentWins,
+    int? participations,
+    double? weightKg,
+    double? heightCm,
     int? headquarterId,
     int? beltId,
     DateTime? createdAt,
@@ -2831,11 +3064,13 @@ class Student extends DataClass implements Insertable<Student> {
     names: names ?? this.names,
     surnames: surnames ?? this.surnames,
     typeIdentify: typeIdentify ?? this.typeIdentify,
-    identify: identify ?? this.identify,
-    age: age ?? this.age,
+    numberIdentify: numberIdentify ?? this.numberIdentify,
     gender: gender ?? this.gender,
-    weight: weight ?? this.weight,
-    size: size ?? this.size,
+    birthDate: birthDate ?? this.birthDate,
+    tournamentWins: tournamentWins ?? this.tournamentWins,
+    participations: participations ?? this.participations,
+    weightKg: weightKg ?? this.weightKg,
+    heightCm: heightCm ?? this.heightCm,
     headquarterId: headquarterId ?? this.headquarterId,
     beltId: beltId ?? this.beltId,
     createdAt: createdAt ?? this.createdAt,
@@ -2851,11 +3086,19 @@ class Student extends DataClass implements Insertable<Student> {
       typeIdentify: data.typeIdentify.present
           ? data.typeIdentify.value
           : this.typeIdentify,
-      identify: data.identify.present ? data.identify.value : this.identify,
-      age: data.age.present ? data.age.value : this.age,
+      numberIdentify: data.numberIdentify.present
+          ? data.numberIdentify.value
+          : this.numberIdentify,
       gender: data.gender.present ? data.gender.value : this.gender,
-      weight: data.weight.present ? data.weight.value : this.weight,
-      size: data.size.present ? data.size.value : this.size,
+      birthDate: data.birthDate.present ? data.birthDate.value : this.birthDate,
+      tournamentWins: data.tournamentWins.present
+          ? data.tournamentWins.value
+          : this.tournamentWins,
+      participations: data.participations.present
+          ? data.participations.value
+          : this.participations,
+      weightKg: data.weightKg.present ? data.weightKg.value : this.weightKg,
+      heightCm: data.heightCm.present ? data.heightCm.value : this.heightCm,
       headquarterId: data.headquarterId.present
           ? data.headquarterId.value
           : this.headquarterId,
@@ -2876,11 +3119,13 @@ class Student extends DataClass implements Insertable<Student> {
           ..write('names: $names, ')
           ..write('surnames: $surnames, ')
           ..write('typeIdentify: $typeIdentify, ')
-          ..write('identify: $identify, ')
-          ..write('age: $age, ')
+          ..write('numberIdentify: $numberIdentify, ')
           ..write('gender: $gender, ')
-          ..write('weight: $weight, ')
-          ..write('size: $size, ')
+          ..write('birthDate: $birthDate, ')
+          ..write('tournamentWins: $tournamentWins, ')
+          ..write('participations: $participations, ')
+          ..write('weightKg: $weightKg, ')
+          ..write('heightCm: $heightCm, ')
           ..write('headquarterId: $headquarterId, ')
           ..write('beltId: $beltId, ')
           ..write('createdAt: $createdAt, ')
@@ -2897,11 +3142,13 @@ class Student extends DataClass implements Insertable<Student> {
     names,
     surnames,
     typeIdentify,
-    identify,
-    age,
+    numberIdentify,
     gender,
-    weight,
-    size,
+    birthDate,
+    tournamentWins,
+    participations,
+    weightKg,
+    heightCm,
     headquarterId,
     beltId,
     createdAt,
@@ -2917,11 +3164,13 @@ class Student extends DataClass implements Insertable<Student> {
           other.names == this.names &&
           other.surnames == this.surnames &&
           other.typeIdentify == this.typeIdentify &&
-          other.identify == this.identify &&
-          other.age == this.age &&
+          other.numberIdentify == this.numberIdentify &&
           other.gender == this.gender &&
-          other.weight == this.weight &&
-          other.size == this.size &&
+          other.birthDate == this.birthDate &&
+          other.tournamentWins == this.tournamentWins &&
+          other.participations == this.participations &&
+          other.weightKg == this.weightKg &&
+          other.heightCm == this.heightCm &&
           other.headquarterId == this.headquarterId &&
           other.beltId == this.beltId &&
           other.createdAt == this.createdAt &&
@@ -2935,11 +3184,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
   final Value<String> names;
   final Value<String> surnames;
   final Value<String> typeIdentify;
-  final Value<String> identify;
-  final Value<int> age;
+  final Value<String> numberIdentify;
   final Value<String> gender;
-  final Value<double> weight;
-  final Value<double> size;
+  final Value<DateTime> birthDate;
+  final Value<int> tournamentWins;
+  final Value<int> participations;
+  final Value<double> weightKg;
+  final Value<double> heightCm;
   final Value<int> headquarterId;
   final Value<int> beltId;
   final Value<DateTime> createdAt;
@@ -2951,11 +3202,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     this.names = const Value.absent(),
     this.surnames = const Value.absent(),
     this.typeIdentify = const Value.absent(),
-    this.identify = const Value.absent(),
-    this.age = const Value.absent(),
+    this.numberIdentify = const Value.absent(),
     this.gender = const Value.absent(),
-    this.weight = const Value.absent(),
-    this.size = const Value.absent(),
+    this.birthDate = const Value.absent(),
+    this.tournamentWins = const Value.absent(),
+    this.participations = const Value.absent(),
+    this.weightKg = const Value.absent(),
+    this.heightCm = const Value.absent(),
     this.headquarterId = const Value.absent(),
     this.beltId = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2968,11 +3221,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     required String names,
     required String surnames,
     required String typeIdentify,
-    required String identify,
-    required int age,
+    required String numberIdentify,
     required String gender,
-    required double weight,
-    required double size,
+    required DateTime birthDate,
+    this.tournamentWins = const Value.absent(),
+    this.participations = const Value.absent(),
+    required double weightKg,
+    required double heightCm,
     required int headquarterId,
     required int beltId,
     this.createdAt = const Value.absent(),
@@ -2982,11 +3237,11 @@ class StudentsCompanion extends UpdateCompanion<Student> {
   }) : names = Value(names),
        surnames = Value(surnames),
        typeIdentify = Value(typeIdentify),
-       identify = Value(identify),
-       age = Value(age),
+       numberIdentify = Value(numberIdentify),
        gender = Value(gender),
-       weight = Value(weight),
-       size = Value(size),
+       birthDate = Value(birthDate),
+       weightKg = Value(weightKg),
+       heightCm = Value(heightCm),
        headquarterId = Value(headquarterId),
        beltId = Value(beltId);
   static Insertable<Student> custom({
@@ -2994,11 +3249,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     Expression<String>? names,
     Expression<String>? surnames,
     Expression<String>? typeIdentify,
-    Expression<String>? identify,
-    Expression<int>? age,
+    Expression<String>? numberIdentify,
     Expression<String>? gender,
-    Expression<double>? weight,
-    Expression<double>? size,
+    Expression<DateTime>? birthDate,
+    Expression<int>? tournamentWins,
+    Expression<int>? participations,
+    Expression<double>? weightKg,
+    Expression<double>? heightCm,
     Expression<int>? headquarterId,
     Expression<int>? beltId,
     Expression<DateTime>? createdAt,
@@ -3011,11 +3268,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
       if (names != null) 'names': names,
       if (surnames != null) 'surnames': surnames,
       if (typeIdentify != null) 'type_identify': typeIdentify,
-      if (identify != null) 'identify': identify,
-      if (age != null) 'age': age,
+      if (numberIdentify != null) 'number_identify': numberIdentify,
       if (gender != null) 'gender': gender,
-      if (weight != null) 'weight': weight,
-      if (size != null) 'size': size,
+      if (birthDate != null) 'birth_date': birthDate,
+      if (tournamentWins != null) 'tournament_wins': tournamentWins,
+      if (participations != null) 'participations': participations,
+      if (weightKg != null) 'weight_kg': weightKg,
+      if (heightCm != null) 'height_cm': heightCm,
       if (headquarterId != null) 'headquarter_id': headquarterId,
       if (beltId != null) 'belt_id': beltId,
       if (createdAt != null) 'created_at': createdAt,
@@ -3030,11 +3289,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     Value<String>? names,
     Value<String>? surnames,
     Value<String>? typeIdentify,
-    Value<String>? identify,
-    Value<int>? age,
+    Value<String>? numberIdentify,
     Value<String>? gender,
-    Value<double>? weight,
-    Value<double>? size,
+    Value<DateTime>? birthDate,
+    Value<int>? tournamentWins,
+    Value<int>? participations,
+    Value<double>? weightKg,
+    Value<double>? heightCm,
     Value<int>? headquarterId,
     Value<int>? beltId,
     Value<DateTime>? createdAt,
@@ -3047,11 +3308,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
       names: names ?? this.names,
       surnames: surnames ?? this.surnames,
       typeIdentify: typeIdentify ?? this.typeIdentify,
-      identify: identify ?? this.identify,
-      age: age ?? this.age,
+      numberIdentify: numberIdentify ?? this.numberIdentify,
       gender: gender ?? this.gender,
-      weight: weight ?? this.weight,
-      size: size ?? this.size,
+      birthDate: birthDate ?? this.birthDate,
+      tournamentWins: tournamentWins ?? this.tournamentWins,
+      participations: participations ?? this.participations,
+      weightKg: weightKg ?? this.weightKg,
+      heightCm: heightCm ?? this.heightCm,
       headquarterId: headquarterId ?? this.headquarterId,
       beltId: beltId ?? this.beltId,
       createdAt: createdAt ?? this.createdAt,
@@ -3076,20 +3339,26 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     if (typeIdentify.present) {
       map['type_identify'] = Variable<String>(typeIdentify.value);
     }
-    if (identify.present) {
-      map['identify'] = Variable<String>(identify.value);
-    }
-    if (age.present) {
-      map['age'] = Variable<int>(age.value);
+    if (numberIdentify.present) {
+      map['number_identify'] = Variable<String>(numberIdentify.value);
     }
     if (gender.present) {
       map['gender'] = Variable<String>(gender.value);
     }
-    if (weight.present) {
-      map['weight'] = Variable<double>(weight.value);
+    if (birthDate.present) {
+      map['birth_date'] = Variable<DateTime>(birthDate.value);
     }
-    if (size.present) {
-      map['size'] = Variable<double>(size.value);
+    if (tournamentWins.present) {
+      map['tournament_wins'] = Variable<int>(tournamentWins.value);
+    }
+    if (participations.present) {
+      map['participations'] = Variable<int>(participations.value);
+    }
+    if (weightKg.present) {
+      map['weight_kg'] = Variable<double>(weightKg.value);
+    }
+    if (heightCm.present) {
+      map['height_cm'] = Variable<double>(heightCm.value);
     }
     if (headquarterId.present) {
       map['headquarter_id'] = Variable<int>(headquarterId.value);
@@ -3119,11 +3388,13 @@ class StudentsCompanion extends UpdateCompanion<Student> {
           ..write('names: $names, ')
           ..write('surnames: $surnames, ')
           ..write('typeIdentify: $typeIdentify, ')
-          ..write('identify: $identify, ')
-          ..write('age: $age, ')
+          ..write('numberIdentify: $numberIdentify, ')
           ..write('gender: $gender, ')
-          ..write('weight: $weight, ')
-          ..write('size: $size, ')
+          ..write('birthDate: $birthDate, ')
+          ..write('tournamentWins: $tournamentWins, ')
+          ..write('participations: $participations, ')
+          ..write('weightKg: $weightKg, ')
+          ..write('heightCm: $heightCm, ')
           ..write('headquarterId: $headquarterId, ')
           ..write('beltId: $beltId, ')
           ..write('createdAt: $createdAt, ')
@@ -4685,11 +4956,11 @@ class JudgeTournamentCompanion extends UpdateCompanion<JudgeTournamentData> {
   }
 }
 
-class $GroupTable extends Group with TableInfo<$GroupTable, GroupData> {
+class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $GroupTable(this.attachedDatabase, [this._alias]);
+  $GroupsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -4785,10 +5056,10 @@ class $GroupTable extends Group with TableInfo<$GroupTable, GroupData> {
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'group';
+  static const String $name = 'groups';
   @override
   VerificationContext validateIntegrity(
-    Insertable<GroupData> instance, {
+    Insertable<Group> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -4848,9 +5119,9 @@ class $GroupTable extends Group with TableInfo<$GroupTable, GroupData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  GroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Group map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return GroupData(
+    return Group(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -4883,12 +5154,12 @@ class $GroupTable extends Group with TableInfo<$GroupTable, GroupData> {
   }
 
   @override
-  $GroupTable createAlias(String alias) {
-    return $GroupTable(attachedDatabase, alias);
+  $GroupsTable createAlias(String alias) {
+    return $GroupsTable(attachedDatabase, alias);
   }
 }
 
-class GroupData extends DataClass implements Insertable<GroupData> {
+class Group extends DataClass implements Insertable<Group> {
   final int id;
   final String name;
   final String description;
@@ -4896,7 +5167,7 @@ class GroupData extends DataClass implements Insertable<GroupData> {
   final DateTime updatedAt;
   final int synchronized;
   final int isActive;
-  const GroupData({
+  const Group({
     required this.id,
     required this.name,
     required this.description,
@@ -4918,8 +5189,8 @@ class GroupData extends DataClass implements Insertable<GroupData> {
     return map;
   }
 
-  GroupCompanion toCompanion(bool nullToAbsent) {
-    return GroupCompanion(
+  GroupsCompanion toCompanion(bool nullToAbsent) {
+    return GroupsCompanion(
       id: Value(id),
       name: Value(name),
       description: Value(description),
@@ -4930,12 +5201,12 @@ class GroupData extends DataClass implements Insertable<GroupData> {
     );
   }
 
-  factory GroupData.fromJson(
+  factory Group.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return GroupData(
+    return Group(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
@@ -4959,7 +5230,7 @@ class GroupData extends DataClass implements Insertable<GroupData> {
     };
   }
 
-  GroupData copyWith({
+  Group copyWith({
     int? id,
     String? name,
     String? description,
@@ -4967,7 +5238,7 @@ class GroupData extends DataClass implements Insertable<GroupData> {
     DateTime? updatedAt,
     int? synchronized,
     int? isActive,
-  }) => GroupData(
+  }) => Group(
     id: id ?? this.id,
     name: name ?? this.name,
     description: description ?? this.description,
@@ -4976,8 +5247,8 @@ class GroupData extends DataClass implements Insertable<GroupData> {
     synchronized: synchronized ?? this.synchronized,
     isActive: isActive ?? this.isActive,
   );
-  GroupData copyWithCompanion(GroupCompanion data) {
-    return GroupData(
+  Group copyWithCompanion(GroupsCompanion data) {
+    return Group(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       description: data.description.present
@@ -4994,7 +5265,7 @@ class GroupData extends DataClass implements Insertable<GroupData> {
 
   @override
   String toString() {
-    return (StringBuffer('GroupData(')
+    return (StringBuffer('Group(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
@@ -5019,7 +5290,7 @@ class GroupData extends DataClass implements Insertable<GroupData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is GroupData &&
+      (other is Group &&
           other.id == this.id &&
           other.name == this.name &&
           other.description == this.description &&
@@ -5029,7 +5300,7 @@ class GroupData extends DataClass implements Insertable<GroupData> {
           other.isActive == this.isActive);
 }
 
-class GroupCompanion extends UpdateCompanion<GroupData> {
+class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> description;
@@ -5037,7 +5308,7 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
   final Value<int> isActive;
-  const GroupCompanion({
+  const GroupsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
@@ -5046,7 +5317,7 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   });
-  GroupCompanion.insert({
+  GroupsCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String description,
@@ -5056,7 +5327,7 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
     this.isActive = const Value.absent(),
   }) : name = Value(name),
        description = Value(description);
-  static Insertable<GroupData> custom({
+  static Insertable<Group> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? description,
@@ -5076,7 +5347,7 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
     });
   }
 
-  GroupCompanion copyWith({
+  GroupsCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
     Value<String>? description,
@@ -5085,7 +5356,7 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
     Value<int>? synchronized,
     Value<int>? isActive,
   }) {
-    return GroupCompanion(
+    return GroupsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -5125,7 +5396,7 @@ class GroupCompanion extends UpdateCompanion<GroupData> {
 
   @override
   String toString() {
-    return (StringBuffer('GroupCompanion(')
+    return (StringBuffer('GroupsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
@@ -5204,7 +5475,7 @@ class $InscriptionTable extends Inscription
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES "group" (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES "groups" (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -5748,7 +6019,7 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES "group" (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES "groups" (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -7337,7 +7608,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $JudgeTournamentTable judgeTournament = $JudgeTournamentTable(
     this,
   );
-  late final $GroupTable group = $GroupTable(this);
+  late final $GroupsTable groups = $GroupsTable(this);
   late final $InscriptionTable inscription = $InscriptionTable(this);
   late final $VersusTable versus = $VersusTable(this);
   late final $ScoreTable score = $ScoreTable(this);
@@ -7356,7 +7627,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tournament,
     judge,
     judgeTournament,
-    group,
+    groups,
     inscription,
     versus,
     score,
@@ -7492,14 +7763,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'group',
+        'groups',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('inscription', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'group',
+        'groups',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('inscription', kind: UpdateKind.update)],
@@ -7534,14 +7805,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'group',
+        'groups',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('versus', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'group',
+        'groups',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('versus', kind: UpdateKind.update)],
@@ -7640,6 +7911,7 @@ typedef $$HeadquartersTableCreateCompanionBuilder =
       required String address,
       required String city,
       required String phone,
+      required String master,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -7652,6 +7924,7 @@ typedef $$HeadquartersTableUpdateCompanionBuilder =
       Value<String> address,
       Value<String> city,
       Value<String> phone,
+      Value<String> master,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -7735,6 +8008,11 @@ class $$HeadquartersTableFilterComposer
 
   ColumnFilters<String> get phone => $composableBuilder(
     column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get master => $composableBuilder(
+    column: $table.master,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7843,6 +8121,11 @@ class $$HeadquartersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get master => $composableBuilder(
+    column: $table.master,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -7887,6 +8170,9 @@ class $$HeadquartersTableAnnotationComposer
 
   GeneratedColumn<String> get phone =>
       $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get master =>
+      $composableBuilder(column: $table.master, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -7986,6 +8272,7 @@ class $$HeadquartersTableTableManager
                 Value<String> address = const Value.absent(),
                 Value<String> city = const Value.absent(),
                 Value<String> phone = const Value.absent(),
+                Value<String> master = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -7996,6 +8283,7 @@ class $$HeadquartersTableTableManager
                 address: address,
                 city: city,
                 phone: phone,
+                master: master,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synchronized: synchronized,
@@ -8008,6 +8296,7 @@ class $$HeadquartersTableTableManager
                 required String address,
                 required String city,
                 required String phone,
+                required String master,
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -8018,6 +8307,7 @@ class $$HeadquartersTableTableManager
                 address: address,
                 city: city,
                 phone: phone,
+                master: master,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synchronized: synchronized,
@@ -8962,6 +9252,8 @@ typedef $$BeltsTableCreateCompanionBuilder =
     BeltsCompanion Function({
       Value<int> id,
       required String name,
+      required String primaryColor,
+      required String secondaryColor,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -8971,6 +9263,8 @@ typedef $$BeltsTableUpdateCompanionBuilder =
     BeltsCompanion Function({
       Value<int> id,
       Value<String> name,
+      Value<String> primaryColor,
+      Value<String> secondaryColor,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -9034,6 +9328,16 @@ class $$BeltsTableFilterComposer extends Composer<_$AppDatabase, $BeltsTable> {
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get primaryColor => $composableBuilder(
+    column: $table.primaryColor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get secondaryColor => $composableBuilder(
+    column: $table.secondaryColor,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9127,6 +9431,16 @@ class $$BeltsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get primaryColor => $composableBuilder(
+    column: $table.primaryColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get secondaryColor => $composableBuilder(
+    column: $table.secondaryColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -9162,6 +9476,16 @@ class $$BeltsTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get primaryColor => $composableBuilder(
+    column: $table.primaryColor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get secondaryColor => $composableBuilder(
+    column: $table.secondaryColor,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -9258,6 +9582,8 @@ class $$BeltsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
+                Value<String> primaryColor = const Value.absent(),
+                Value<String> secondaryColor = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -9265,6 +9591,8 @@ class $$BeltsTableTableManager
               }) => BeltsCompanion(
                 id: id,
                 name: name,
+                primaryColor: primaryColor,
+                secondaryColor: secondaryColor,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synchronized: synchronized,
@@ -9274,6 +9602,8 @@ class $$BeltsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
+                required String primaryColor,
+                required String secondaryColor,
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -9281,6 +9611,8 @@ class $$BeltsTableTableManager
               }) => BeltsCompanion.insert(
                 id: id,
                 name: name,
+                primaryColor: primaryColor,
+                secondaryColor: secondaryColor,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synchronized: synchronized,
@@ -9804,11 +10136,13 @@ typedef $$StudentsTableCreateCompanionBuilder =
       required String names,
       required String surnames,
       required String typeIdentify,
-      required String identify,
-      required int age,
+      required String numberIdentify,
       required String gender,
-      required double weight,
-      required double size,
+      required DateTime birthDate,
+      Value<int> tournamentWins,
+      Value<int> participations,
+      required double weightKg,
+      required double heightCm,
       required int headquarterId,
       required int beltId,
       Value<DateTime> createdAt,
@@ -9822,11 +10156,13 @@ typedef $$StudentsTableUpdateCompanionBuilder =
       Value<String> names,
       Value<String> surnames,
       Value<String> typeIdentify,
-      Value<String> identify,
-      Value<int> age,
+      Value<String> numberIdentify,
       Value<String> gender,
-      Value<double> weight,
-      Value<double> size,
+      Value<DateTime> birthDate,
+      Value<int> tournamentWins,
+      Value<int> participations,
+      Value<double> weightKg,
+      Value<double> heightCm,
       Value<int> headquarterId,
       Value<int> beltId,
       Value<DateTime> createdAt,
@@ -9924,13 +10260,8 @@ class $$StudentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get identify => $composableBuilder(
-    column: $table.identify,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get age => $composableBuilder(
-    column: $table.age,
+  ColumnFilters<String> get numberIdentify => $composableBuilder(
+    column: $table.numberIdentify,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9939,13 +10270,28 @@ class $$StudentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get weight => $composableBuilder(
-    column: $table.weight,
+  ColumnFilters<DateTime> get birthDate => $composableBuilder(
+    column: $table.birthDate,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get size => $composableBuilder(
-    column: $table.size,
+  ColumnFilters<int> get tournamentWins => $composableBuilder(
+    column: $table.tournamentWins,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get participations => $composableBuilder(
+    column: $table.participations,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get weightKg => $composableBuilder(
+    column: $table.weightKg,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get heightCm => $composableBuilder(
+    column: $table.heightCm,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10070,13 +10416,8 @@ class $$StudentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get identify => $composableBuilder(
-    column: $table.identify,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get age => $composableBuilder(
-    column: $table.age,
+  ColumnOrderings<String> get numberIdentify => $composableBuilder(
+    column: $table.numberIdentify,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -10085,13 +10426,28 @@ class $$StudentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get weight => $composableBuilder(
-    column: $table.weight,
+  ColumnOrderings<DateTime> get birthDate => $composableBuilder(
+    column: $table.birthDate,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get size => $composableBuilder(
-    column: $table.size,
+  ColumnOrderings<int> get tournamentWins => $composableBuilder(
+    column: $table.tournamentWins,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get participations => $composableBuilder(
+    column: $table.participations,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get weightKg => $composableBuilder(
+    column: $table.weightKg,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get heightCm => $composableBuilder(
+    column: $table.heightCm,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -10185,20 +10541,32 @@ class $$StudentsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get identify =>
-      $composableBuilder(column: $table.identify, builder: (column) => column);
-
-  GeneratedColumn<int> get age =>
-      $composableBuilder(column: $table.age, builder: (column) => column);
+  GeneratedColumn<String> get numberIdentify => $composableBuilder(
+    column: $table.numberIdentify,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get gender =>
       $composableBuilder(column: $table.gender, builder: (column) => column);
 
-  GeneratedColumn<double> get weight =>
-      $composableBuilder(column: $table.weight, builder: (column) => column);
+  GeneratedColumn<DateTime> get birthDate =>
+      $composableBuilder(column: $table.birthDate, builder: (column) => column);
 
-  GeneratedColumn<double> get size =>
-      $composableBuilder(column: $table.size, builder: (column) => column);
+  GeneratedColumn<int> get tournamentWins => $composableBuilder(
+    column: $table.tournamentWins,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get participations => $composableBuilder(
+    column: $table.participations,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get weightKg =>
+      $composableBuilder(column: $table.weightKg, builder: (column) => column);
+
+  GeneratedColumn<double> get heightCm =>
+      $composableBuilder(column: $table.heightCm, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -10322,11 +10690,13 @@ class $$StudentsTableTableManager
                 Value<String> names = const Value.absent(),
                 Value<String> surnames = const Value.absent(),
                 Value<String> typeIdentify = const Value.absent(),
-                Value<String> identify = const Value.absent(),
-                Value<int> age = const Value.absent(),
+                Value<String> numberIdentify = const Value.absent(),
                 Value<String> gender = const Value.absent(),
-                Value<double> weight = const Value.absent(),
-                Value<double> size = const Value.absent(),
+                Value<DateTime> birthDate = const Value.absent(),
+                Value<int> tournamentWins = const Value.absent(),
+                Value<int> participations = const Value.absent(),
+                Value<double> weightKg = const Value.absent(),
+                Value<double> heightCm = const Value.absent(),
                 Value<int> headquarterId = const Value.absent(),
                 Value<int> beltId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -10338,11 +10708,13 @@ class $$StudentsTableTableManager
                 names: names,
                 surnames: surnames,
                 typeIdentify: typeIdentify,
-                identify: identify,
-                age: age,
+                numberIdentify: numberIdentify,
                 gender: gender,
-                weight: weight,
-                size: size,
+                birthDate: birthDate,
+                tournamentWins: tournamentWins,
+                participations: participations,
+                weightKg: weightKg,
+                heightCm: heightCm,
                 headquarterId: headquarterId,
                 beltId: beltId,
                 createdAt: createdAt,
@@ -10356,11 +10728,13 @@ class $$StudentsTableTableManager
                 required String names,
                 required String surnames,
                 required String typeIdentify,
-                required String identify,
-                required int age,
+                required String numberIdentify,
                 required String gender,
-                required double weight,
-                required double size,
+                required DateTime birthDate,
+                Value<int> tournamentWins = const Value.absent(),
+                Value<int> participations = const Value.absent(),
+                required double weightKg,
+                required double heightCm,
                 required int headquarterId,
                 required int beltId,
                 Value<DateTime> createdAt = const Value.absent(),
@@ -10372,11 +10746,13 @@ class $$StudentsTableTableManager
                 names: names,
                 surnames: surnames,
                 typeIdentify: typeIdentify,
-                identify: identify,
-                age: age,
+                numberIdentify: numberIdentify,
                 gender: gender,
-                weight: weight,
-                size: size,
+                birthDate: birthDate,
+                tournamentWins: tournamentWins,
+                participations: participations,
+                weightKg: weightKg,
+                heightCm: heightCm,
                 headquarterId: headquarterId,
                 beltId: beltId,
                 createdAt: createdAt,
@@ -11895,8 +12271,8 @@ typedef $$JudgeTournamentTableProcessedTableManager =
       JudgeTournamentData,
       PrefetchHooks Function({bool judgeId, bool tournamentId})
     >;
-typedef $$GroupTableCreateCompanionBuilder =
-    GroupCompanion Function({
+typedef $$GroupsTableCreateCompanionBuilder =
+    GroupsCompanion Function({
       Value<int> id,
       required String name,
       required String description,
@@ -11905,8 +12281,8 @@ typedef $$GroupTableCreateCompanionBuilder =
       Value<int> synchronized,
       Value<int> isActive,
     });
-typedef $$GroupTableUpdateCompanionBuilder =
-    GroupCompanion Function({
+typedef $$GroupsTableUpdateCompanionBuilder =
+    GroupsCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<String> description,
@@ -11916,14 +12292,14 @@ typedef $$GroupTableUpdateCompanionBuilder =
       Value<int> isActive,
     });
 
-final class $$GroupTableReferences
-    extends BaseReferences<_$AppDatabase, $GroupTable, GroupData> {
-  $$GroupTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$GroupsTableReferences
+    extends BaseReferences<_$AppDatabase, $GroupsTable, Group> {
+  $$GroupsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$InscriptionTable, List<InscriptionData>>
   _inscriptionRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.inscription,
-    aliasName: $_aliasNameGenerator(db.group.id, db.inscription.grupId),
+    aliasName: $_aliasNameGenerator(db.groups.id, db.inscription.grupId),
   );
 
   $$InscriptionTableProcessedTableManager get inscriptionRefs {
@@ -11942,7 +12318,7 @@ final class $$GroupTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.versus,
-    aliasName: $_aliasNameGenerator(db.group.id, db.versus.grupid),
+    aliasName: $_aliasNameGenerator(db.groups.id, db.versus.grupid),
   );
 
   $$VersusTableProcessedTableManager get versusRefs {
@@ -11958,8 +12334,9 @@ final class $$GroupTableReferences
   }
 }
 
-class $$GroupTableFilterComposer extends Composer<_$AppDatabase, $GroupTable> {
-  $$GroupTableFilterComposer({
+class $$GroupsTableFilterComposer
+    extends Composer<_$AppDatabase, $GroupsTable> {
+  $$GroupsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -12052,9 +12429,9 @@ class $$GroupTableFilterComposer extends Composer<_$AppDatabase, $GroupTable> {
   }
 }
 
-class $$GroupTableOrderingComposer
-    extends Composer<_$AppDatabase, $GroupTable> {
-  $$GroupTableOrderingComposer({
+class $$GroupsTableOrderingComposer
+    extends Composer<_$AppDatabase, $GroupsTable> {
+  $$GroupsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -12097,9 +12474,9 @@ class $$GroupTableOrderingComposer
   );
 }
 
-class $$GroupTableAnnotationComposer
-    extends Composer<_$AppDatabase, $GroupTable> {
-  $$GroupTableAnnotationComposer({
+class $$GroupsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GroupsTable> {
+  $$GroupsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -12182,32 +12559,32 @@ class $$GroupTableAnnotationComposer
   }
 }
 
-class $$GroupTableTableManager
+class $$GroupsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $GroupTable,
-          GroupData,
-          $$GroupTableFilterComposer,
-          $$GroupTableOrderingComposer,
-          $$GroupTableAnnotationComposer,
-          $$GroupTableCreateCompanionBuilder,
-          $$GroupTableUpdateCompanionBuilder,
-          (GroupData, $$GroupTableReferences),
-          GroupData,
+          $GroupsTable,
+          Group,
+          $$GroupsTableFilterComposer,
+          $$GroupsTableOrderingComposer,
+          $$GroupsTableAnnotationComposer,
+          $$GroupsTableCreateCompanionBuilder,
+          $$GroupsTableUpdateCompanionBuilder,
+          (Group, $$GroupsTableReferences),
+          Group,
           PrefetchHooks Function({bool inscriptionRefs, bool versusRefs})
         > {
-  $$GroupTableTableManager(_$AppDatabase db, $GroupTable table)
+  $$GroupsTableTableManager(_$AppDatabase db, $GroupsTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$GroupTableFilterComposer($db: db, $table: table),
+              $$GroupsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$GroupTableOrderingComposer($db: db, $table: table),
+              $$GroupsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$GroupTableAnnotationComposer($db: db, $table: table),
+              $$GroupsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
@@ -12217,7 +12594,7 @@ class $$GroupTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
                 Value<int> isActive = const Value.absent(),
-              }) => GroupCompanion(
+              }) => GroupsCompanion(
                 id: id,
                 name: name,
                 description: description,
@@ -12235,7 +12612,7 @@ class $$GroupTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
                 Value<int> isActive = const Value.absent(),
-              }) => GroupCompanion.insert(
+              }) => GroupsCompanion.insert(
                 id: id,
                 name: name,
                 description: description,
@@ -12247,7 +12624,7 @@ class $$GroupTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) =>
-                    (e.readTable(table), $$GroupTableReferences(db, table, e)),
+                    (e.readTable(table), $$GroupsTableReferences(db, table, e)),
               )
               .toList(),
           prefetchHooksCallback:
@@ -12263,15 +12640,15 @@ class $$GroupTableTableManager
                     return [
                       if (inscriptionRefs)
                         await $_getPrefetchedData<
-                          GroupData,
-                          $GroupTable,
+                          Group,
+                          $GroupsTable,
                           InscriptionData
                         >(
                           currentTable: table,
-                          referencedTable: $$GroupTableReferences
+                          referencedTable: $$GroupsTableReferences
                               ._inscriptionRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$GroupTableReferences(
+                              $$GroupsTableReferences(
                                 db,
                                 table,
                                 p0,
@@ -12284,15 +12661,15 @@ class $$GroupTableTableManager
                         ),
                       if (versusRefs)
                         await $_getPrefetchedData<
-                          GroupData,
-                          $GroupTable,
+                          Group,
+                          $GroupsTable,
                           VersusData
                         >(
                           currentTable: table,
-                          referencedTable: $$GroupTableReferences
+                          referencedTable: $$GroupsTableReferences
                               ._versusRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$GroupTableReferences(db, table, p0).versusRefs,
+                              $$GroupsTableReferences(db, table, p0).versusRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.grupid == item.id,
@@ -12307,18 +12684,18 @@ class $$GroupTableTableManager
       );
 }
 
-typedef $$GroupTableProcessedTableManager =
+typedef $$GroupsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $GroupTable,
-      GroupData,
-      $$GroupTableFilterComposer,
-      $$GroupTableOrderingComposer,
-      $$GroupTableAnnotationComposer,
-      $$GroupTableCreateCompanionBuilder,
-      $$GroupTableUpdateCompanionBuilder,
-      (GroupData, $$GroupTableReferences),
-      GroupData,
+      $GroupsTable,
+      Group,
+      $$GroupsTableFilterComposer,
+      $$GroupsTableOrderingComposer,
+      $$GroupsTableAnnotationComposer,
+      $$GroupsTableCreateCompanionBuilder,
+      $$GroupsTableUpdateCompanionBuilder,
+      (Group, $$GroupsTableReferences),
+      Group,
       PrefetchHooks Function({bool inscriptionRefs, bool versusRefs})
     >;
 typedef $$InscriptionTableCreateCompanionBuilder =
@@ -12388,16 +12765,16 @@ final class $$InscriptionTableReferences
     );
   }
 
-  static $GroupTable _grupIdTable(_$AppDatabase db) => db.group.createAlias(
-    $_aliasNameGenerator(db.inscription.grupId, db.group.id),
+  static $GroupsTable _grupIdTable(_$AppDatabase db) => db.groups.createAlias(
+    $_aliasNameGenerator(db.inscription.grupId, db.groups.id),
   );
 
-  $$GroupTableProcessedTableManager get grupId {
+  $$GroupsTableProcessedTableManager get grupId {
     final $_column = $_itemColumn<int>('grup_id')!;
 
-    final manager = $$GroupTableTableManager(
+    final manager = $$GroupsTableTableManager(
       $_db,
-      $_db.group,
+      $_db.groups,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_grupIdTable($_db));
     if (item == null) return manager;
@@ -12555,20 +12932,20 @@ class $$InscriptionTableFilterComposer
     return composer;
   }
 
-  $$GroupTableFilterComposer get grupId {
-    final $$GroupTableFilterComposer composer = $composerBuilder(
+  $$GroupsTableFilterComposer get grupId {
+    final $$GroupsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupId,
-      referencedTable: $db.group,
+      referencedTable: $db.groups,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GroupTableFilterComposer(
+          }) => $$GroupsTableFilterComposer(
             $db: $db,
-            $table: $db.group,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -12739,20 +13116,20 @@ class $$InscriptionTableOrderingComposer
     return composer;
   }
 
-  $$GroupTableOrderingComposer get grupId {
-    final $$GroupTableOrderingComposer composer = $composerBuilder(
+  $$GroupsTableOrderingComposer get grupId {
+    final $$GroupsTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupId,
-      referencedTable: $db.group,
+      referencedTable: $db.groups,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GroupTableOrderingComposer(
+          }) => $$GroupsTableOrderingComposer(
             $db: $db,
-            $table: $db.group,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -12838,20 +13215,20 @@ class $$InscriptionTableAnnotationComposer
     return composer;
   }
 
-  $$GroupTableAnnotationComposer get grupId {
-    final $$GroupTableAnnotationComposer composer = $composerBuilder(
+  $$GroupsTableAnnotationComposer get grupId {
+    final $$GroupsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupId,
-      referencedTable: $db.group,
+      referencedTable: $db.groups,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GroupTableAnnotationComposer(
+          }) => $$GroupsTableAnnotationComposer(
             $db: $db,
-            $table: $db.group,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -13261,15 +13638,16 @@ final class $$VersusTableReferences
     );
   }
 
-  static $GroupTable _grupidTable(_$AppDatabase db) =>
-      db.group.createAlias($_aliasNameGenerator(db.versus.grupid, db.group.id));
+  static $GroupsTable _grupidTable(_$AppDatabase db) => db.groups.createAlias(
+    $_aliasNameGenerator(db.versus.grupid, db.groups.id),
+  );
 
-  $$GroupTableProcessedTableManager get grupid {
+  $$GroupsTableProcessedTableManager get grupid {
     final $_column = $_itemColumn<int>('grupid')!;
 
-    final manager = $$GroupTableTableManager(
+    final manager = $$GroupsTableTableManager(
       $_db,
-      $_db.group,
+      $_db.groups,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_grupidTable($_db));
     if (item == null) return manager;
@@ -13378,20 +13756,20 @@ class $$VersusTableFilterComposer
     return composer;
   }
 
-  $$GroupTableFilterComposer get grupid {
-    final $$GroupTableFilterComposer composer = $composerBuilder(
+  $$GroupsTableFilterComposer get grupid {
+    final $$GroupsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupid,
-      referencedTable: $db.group,
+      referencedTable: $db.groups,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GroupTableFilterComposer(
+          }) => $$GroupsTableFilterComposer(
             $db: $db,
-            $table: $db.group,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -13507,20 +13885,20 @@ class $$VersusTableOrderingComposer
     return composer;
   }
 
-  $$GroupTableOrderingComposer get grupid {
-    final $$GroupTableOrderingComposer composer = $composerBuilder(
+  $$GroupsTableOrderingComposer get grupid {
+    final $$GroupsTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupid,
-      referencedTable: $db.group,
+      referencedTable: $db.groups,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GroupTableOrderingComposer(
+          }) => $$GroupsTableOrderingComposer(
             $db: $db,
-            $table: $db.group,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -13603,20 +13981,20 @@ class $$VersusTableAnnotationComposer
     return composer;
   }
 
-  $$GroupTableAnnotationComposer get grupid {
-    final $$GroupTableAnnotationComposer composer = $composerBuilder(
+  $$GroupsTableAnnotationComposer get grupid {
+    final $$GroupsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.grupid,
-      referencedTable: $db.group,
+      referencedTable: $db.groups,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$GroupTableAnnotationComposer(
+          }) => $$GroupsTableAnnotationComposer(
             $db: $db,
-            $table: $db.group,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -15094,8 +15472,8 @@ class $AppDatabaseManager {
       $$JudgeTableTableManager(_db, _db.judge);
   $$JudgeTournamentTableTableManager get judgeTournament =>
       $$JudgeTournamentTableTableManager(_db, _db.judgeTournament);
-  $$GroupTableTableManager get group =>
-      $$GroupTableTableManager(_db, _db.group);
+  $$GroupsTableTableManager get groups =>
+      $$GroupsTableTableManager(_db, _db.groups);
   $$InscriptionTableTableManager get inscription =>
       $$InscriptionTableTableManager(_db, _db.inscription);
   $$VersusTableTableManager get versus =>

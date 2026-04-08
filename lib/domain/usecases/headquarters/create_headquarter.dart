@@ -20,6 +20,14 @@ class CreateHeadquarter {
       throw EmptyCityException();
     }
 
+    if (headquarters.address.trim().isEmpty) {
+      throw EmptyAddressException();
+    }
+
+    if (headquarters.master.trim().isEmpty) {
+      throw EmptyMasterException();
+    }
+
     final exists = await repository.find(
       name: headquarters.name,
       city: headquarters.city,

@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:tkd_score/data/tables/group.dart';
+import 'package:tkd_score/data/tables/groups.dart';
 import 'inscription.dart';
 
 class Versus extends Table {
@@ -21,7 +21,7 @@ class Versus extends Table {
   )();
 
   IntColumn get grupid => integer().references(
-    Group,
+    Groups,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

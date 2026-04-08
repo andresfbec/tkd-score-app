@@ -6,6 +6,7 @@ class Headquarters extends Table {
   TextColumn get address => text()();
   TextColumn get city => text()();
   TextColumn get phone => text()();
+  TextColumn get master => text()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   IntColumn get synchronized => integer().withDefault(const Constant(0))();

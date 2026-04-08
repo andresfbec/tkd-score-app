@@ -2,6 +2,7 @@ import '../mappers/students_mapper.dart';
 import '../../domain/entities/students_entity.dart';
 import '../../domain/repositories/students_repository.dart';
 import '../datasources/students_dao.dart';
+import 'package:drift/drift.dart';
 
 class StudentsRepositoryImpl implements StudentsRepository {
   final StudentsDao studentsDao;
@@ -10,23 +11,25 @@ class StudentsRepositoryImpl implements StudentsRepository {
 
   @override
   Future<int> create(StudentsEntity student) {
+    final comp = StudentsMapper.toCompanion(student);
+
     return studentsDao.insert(
-      names: student.names,
-      surnames: student.surnames,
-      typeDocument: student.typeDocument,
-      documentNumber: student.documentNumber,
-      age: student.age,
-      gender: student.gender,
-      weight: student.weight,
-      size: student.size,
-      headquarterId: student.headquarterId,
-      beltsId: student.beltsId,
+      comp.copyWith(
+        synchronized: const Value(0),
+        createdAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
     );
   }
 
   @override
-  Future<int> update(StudentsEntity student) {
-    return studentsDao.update(student);
+  Future<bool> update(StudentsEntity student) {
+    final comp = StudentsMapper.toCompanion(student);
+
+    return studentsDao.update(comp.copyWith(
+      updatedAt: Value(DateTime.now())
+      )
+    );
   }
 
   @override
@@ -35,32 +38,28 @@ class StudentsRepositoryImpl implements StudentsRepository {
   }
 
   @override
-  Future<StudentsEntity?> getById(int id) async {
-    final map = await studentsDao.findById(id);
-    return map != null ? StudentsMapper.fromMap(map) : null;
+  Stream<List<StudentsEntity>> watchStudents({
+    List<int>? hqIds,
+    List<int>? beltIds,
+    String? gender,
+    int? minAge,
+    int? maxAge,
+    double? minWeight,
+    double? maxWeight,
+    bool? onlyActive,
+  }) {
+    return studentsDao.watchStudents(
+      hqIds: hqIds,
+      beltIds: beltIds,
+      gender: gender,
+      minAge: minAge,
+      maxAge: maxAge,
+      minWeight: minWeight,
+      maxWeight: maxWeight,
+      onlyActive: onlyActive,
+    ).map(
+      (listWithInfo) => listWithInfo.map(StudentsMapper.fromData).toList()
+    );
   }
-
-  @override
-  Future<List<StudentsEntity>> getAll() async {
-    final result = await studentsDao.findAll();
-    return result.map(StudentsMapper.fromMap).toList();
-  }
-
-  @override
-  Future<StudentsEntity?> find({
-    String? documentNumber,
-    int? headquarterId,
-    int? age,
-    int? beltsId,
-  }) async {
-    final filters = <String, dynamic>{};
-
-    if (documentNumber != null) filters['documentNumber'] = documentNumber;
-    if (headquarterId != null) filters['headquarterId'] = headquarterId;
-    if (age != null) filters['age'] = age;
-    if (beltsId != null) filters['beltsId'] = beltsId;
-
-    final map = await studentsDao.query(filters: filters);
-    return map != null ? StudentsMapper.fromMap(map) : null;
-  }
+  
 }
