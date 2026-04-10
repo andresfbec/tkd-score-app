@@ -18,6 +18,9 @@ import 'package:tkd_score/data/tables/versus.dart';
 import 'package:tkd_score/data/tables/score.dart';
 import 'package:tkd_score/data/tables/winner.dart';
 
+// cinturones iniciales (se insertan en la migración onCreate)
+import '../../constants/initial_data.dart';
+
 part 'database.g.dart'; // se generará automáticamente
 
 @DriftDatabase(
@@ -43,6 +46,18 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => DatabaseConstants.databaseVersion;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) async {
+      await m.createAll();
+
+      await batch((batch) {
+        // Uso de lista externa
+        batch.insertAll(belts, InitialData.initialBelts);
+      });
+    },
+  );
 
   // Opcional: puedes agregar métodos de utilidad
   Future<void> printDatabasePath() async {

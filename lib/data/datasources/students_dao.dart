@@ -109,4 +109,43 @@ class StudentsDao {
       }).toList();
     });
   }
+
+  Future<StudentWithInfo?> getStudentByIdentify(String number) async {
+    final query = _db.select(_db.students).join([
+      leftOuterJoin(
+        _db.headquarters,
+        _db.headquarters.id.equalsExp(_db.students.headquarterId),
+      ),
+      leftOuterJoin(_db.belts, _db.belts.id.equalsExp(_db.students.beltId)),
+    ])
+    ..where(_db.students.numberIdentify.equals(number));
+
+    final row = await query.getSingleOrNull();
+
+    if (row == null) return null;
+
+    return StudentWithInfo(
+      student: row.readTable(_db.students),
+      headquarter: row.readTableOrNull(_db.headquarters),
+      belt: row.readTableOrNull(_db.belts),
+    );
+  }
+
+  
+  Future<StudentWithInfo?> getStudentById(int id) async {
+    final query = _db.select(_db.students).join([
+      leftOuterJoin(_db.headquarters, _db.headquarters.id.equalsExp(_db.students.headquarterId)),
+      leftOuterJoin(_db.belts, _db.belts.id.equalsExp(_db.students.beltId)),
+    ])..where(_db.students.id.equals(id));
+
+    final row = await query.getSingleOrNull();
+    
+    if (row == null) return null;
+
+    return StudentWithInfo(
+      student: row.readTable(_db.students),
+      headquarter: row.readTableOrNull(_db.headquarters),
+      belt: row.readTableOrNull(_db.belts),
+    );
+  }
 }

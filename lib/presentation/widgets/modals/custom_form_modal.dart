@@ -10,13 +10,16 @@ class FormFieldConfig {
   final String label;
   final InputType type;
   final String? placeholder;
+  final List<Map<String, String>>? options;
   final String? Function(String?)? validator;
+
 
   FormFieldConfig({
     required this.name,
     required this.label,
     required this.type,
     this.placeholder,
+    this.options,
     this.validator,
   });
 }
@@ -135,6 +138,33 @@ class _CustomFormModalState extends State<CustomFormModal> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.fields.map((field) {
+              if (field.type == InputType.dropdown) { 
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(field.label, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    ComboBox<String>(
+                      value: controllers[field.name]!.text.isEmpty ? null : controllers[field.name]!.text,
+                      placeholder: Text(field.placeholder ?? 'Seleccione una opción'),
+                      items: field.options?.map((opt) {
+                        return ComboBoxItem(
+                          value: opt['value'],
+                          child: Text(opt['label']!),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          controllers[field.name]!.text = val ?? '';
+                          _validateField(field, val ?? '');
+                        });
+                      },
+                    ),
+                    if (errors[field.name] != null)
+                      Text(errors[field.name]!, style: TextStyle(color: Colors.red)),
+                  ],
+                );
+              }
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: CustomInput(

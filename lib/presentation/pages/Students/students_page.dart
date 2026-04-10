@@ -1,20 +1,46 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import '../../core/constants/app.dart';
-import '../../core/theme/theme_provider.dart';
+import '../../../core/constants/app.dart';
+import '../../../core/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../domain/entities/students_entity.dart';
+
+// controller
+import '../../controllers/students_controller.dart';
+
 // provider ui
-import '../../app/ui_state_provider.dart';
+import '../../../app/ui_state_provider.dart';
 
 // Widgets
-import '../widgets/table_grid/custom_table.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/input_search.dart';
-import '../widgets/belt_indicator.dart';
-import '../widgets/cards/student_detail_card.dart';
+import '../../widgets/table_grid/custom_table.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/input_search.dart';
+import '../../widgets/belt_indicator.dart';
+import '../../widgets/cards/student_detail_card.dart';
+import '../../widgets/modals/custom_form_modal.dart';
+
+import '../../../core/enums/input_type.dart';
+import '../../forms/validators.dart';
 
 // Mocker
-import '../mockers/students_mock.dart';
+import '../../mockers/students_mock.dart';
+
+// notifications
+import '../../../core/utils/notifications.dart';
+import '../../../core/enums/status.dart';
+import '../../../core/utils/status_handler.dart';
+
+// modals forms
+import 'create_modal_student.dart';
+
+//injections
+import '../../../core/config/containers/dependency_students.dart';
+
+// helper para formatar la edad a partir de la fecha de nacimiento
+import '../../../core/utils/format_date.dart';
+
+// colores
+import '../../../core/utils/parse_color.dart';
 
 class StudentsPage extends StatefulWidget {
   const StudentsPage({super.key});
@@ -24,12 +50,32 @@ class StudentsPage extends StatefulWidget {
 }
 
 class _StudentsPageState extends State<StudentsPage> {
-
+  late StudentsController studentsController;
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = FluentTheme.of(context).brightness == Brightness.dark;
     final ui = context.watch<UIStateProvider>();
+    final studentsController = context.watch<StudentsController>();
+
+    handleStatus(
+      context,
+      studentsController,
+    ); // maneja estados y notificaciones
+
+    /// 🔹 Data vacía (placeholder)
+    final data = studentsController.filteredStudents.map((student) {
+      return {
+        'fullName': '${student.names} ${student.surnames}',
+        'numberId': student.numberIdentify,
+        'age': DateHelper.calculateAge(student.birthDate),
+        'headquarter':
+            student.headquarterName ??
+            'N/A', // Aquí podrías mapear el ID a un nombre de sede si tienes esa info
+        'belt': student, // renderer del cinturon (belt indicator)
+        'student': student, // para detalles (la card details)
+      };
+    }).toList();
 
     /// 🔹 Columnas base (puedes cambiarlas luego)
     final columns = [
@@ -41,29 +87,17 @@ class _StudentsPageState extends State<StudentsPage> {
         'key': 'belt',
         'label': 'Cinturón',
         'renderer': (value) {
-          final student = value as StudentMock;
+          final student = value as StudentsEntity;
 
           return BeltIndicator(
-            leftColor: student.leftBelt,
-            rightColor: student.rightBelt,
+            leftColor: ColorParser.fromName(student.beltPrimaryColor),
+            rightColor: ColorParser.fromName(student.beltSecondaryColor),
           );
         },
       },
     ];
 
     final headquartersMap = {1: 'Centro', 2: 'Norte', 3: 'Sur'};
-
-    /// 🔹 Data vacía (placeholder)
-    final data = mockStudents.map((student) {
-      return {
-        'fullName': student.fullName,
-        'numberId': student.numberId,
-        'age': student.age,
-        'headquarter': headquartersMap[student.headquarterId] ?? 'N/A',
-        'belt': student, // renderer del cinturon (belt indicator)
-        'student': student, // para detalles (la card details)
-      };
-    }).toList();
 
     return ScaffoldPage(
       header: PageHeader(
@@ -104,7 +138,13 @@ class _StudentsPageState extends State<StudentsPage> {
                 FluentActionButton(
                   icon: FluentIcons.add,
                   label: 'Crear alumno',
-                  onPressed: () {},
+                  onPressed: () => showCreateStudentModal(
+                    context,
+                    onSave: (student) {
+                      // Aquí puedes llamar a tu controlador para guardar el nuevo alumno
+                      studentsController.addStudent(student);
+                    },
+                  ),
                   filled: true,
                 ),
 
@@ -115,17 +155,19 @@ class _StudentsPageState extends State<StudentsPage> {
                   width: 250,
                   child: FluentSearchBox(
                     placeholder: 'Buscar alumno...',
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      studentsController.updateSearch(value);
+                    },
                   ),
                 ),
 
                 const SizedBox(width: 16),
 
                 FluentActionButton(
-                  icon: FluentIcons.filter, 
-                  label: 'Filtros', 
-                  onPressed: () {}
-                  ),
+                  icon: FluentIcons.filter,
+                  label: 'Filtros',
+                  onPressed: () {},
+                ),
 
                 const Spacer(),
 
@@ -182,15 +224,20 @@ class _StudentsPageState extends State<StudentsPage> {
                       columns: columns,
                       data: data,
                       selectedRow: ui.selectedStudentRow,
-                      isSameRow: (row1, row2) => row1['student'].id == row2['student'].id,
+                      isSameRow: (row1, row2) =>
+                          row1['student'].id == row2['student'].id,
                       onRowSelected: (selectedRow) {
                         final student = selectedRow['student'];
 
-                        if (student is StudentMock) {
-                          context.read<UIStateProvider>().selectStudent(student,selectedRow);
-
+                        if (student is StudentsEntity) {
+                          context.read<UIStateProvider>().selectStudent(
+                            student,
+                            selectedRow,
+                          );
                         } else {
-                          print('Error: No se pudo obtener el estudiante de la fila seleccionada');
+                          print(
+                            'Error: No se pudo obtener el estudiante de la fila seleccionada',
+                          );
                         }
                       },
                     ),
@@ -203,37 +250,41 @@ class _StudentsPageState extends State<StudentsPage> {
                     Expanded(
                       flex: 2,
                       child: ui.selectedStudent == null
-                      ? Center(
-                          child: Text(
-                            "Selecciona un alumno para ver detalles",
-                            style: TextStyle(fontSize: 16, color: isDark
-                              ? const Color.fromARGB(255, 236, 236, 236)
-                              : const Color.fromARGB(255, 8, 8, 8),),
-                          ),
-                        )            
-                      : Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: isDark
-                              ? const Color(0xFF1E1E1E)
-                              : const Color(0xFFF9F9F9),
-                        ),
+                          ? Center(
+                              child: Text(
+                                "Selecciona un alumno para ver detalles",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: isDark
+                                      ? const Color.fromARGB(255, 236, 236, 236)
+                                      : const Color.fromARGB(255, 8, 8, 8),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: isDark
+                                    ? const Color(0xFF1E1E1E)
+                                    : const Color(0xFFF9F9F9),
+                              ),
 
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              right: 12, // separación del scroll
-                            ),
-                            child: StudentCard(
-                                    student: ui.selectedStudent!,
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 12, // separación del scroll
+                                  ),
+                                  child: StudentCard(
+                                    student: ui.selectedStudent as StudentsEntity,
                                     headquarters:
-                                        headquartersMap[ui.selectedStudent!
+                                        headquartersMap[ui
+                                            .selectedStudent!
                                             .headquarterId] ??
                                         'N/A',
                                   ),
-                          ),
-                        ),
-                      ),
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 ],

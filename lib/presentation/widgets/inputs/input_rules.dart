@@ -3,36 +3,35 @@
 import 'package:flutter/services.dart';
 import '../../../core/enums/input_type.dart';
 
-
 class InputRules {
-
   static List<TextInputFormatter> getFormatters(InputType type) {
-
     switch (type) {
-
       case InputType.name:
         return [
-          FilteringTextInputFormatter.allow( // Solo letras, espacios y acentos LO DEMAS NO
-            RegExp(r"[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]")
+          FilteringTextInputFormatter.allow(
+            // Solo letras, espacios y acentos LO DEMAS NO
+            RegExp(r"[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]"),
           ),
         ];
 
       case InputType.number:
         return [
-          FilteringTextInputFormatter.digitsOnly // Solo números
+          FilteringTextInputFormatter.digitsOnly, // Solo números
         ];
 
       case InputType.phone:
         return [
-          FilteringTextInputFormatter.allow( // Solo números, espacios, guiones y signos de más
-            RegExp(r"[0-9+]")
+          FilteringTextInputFormatter.allow(
+            // Solo números, espacios, guiones y signos de más
+            RegExp(r"[0-9+]"),
           ),
         ];
 
       case InputType.alphanumeric:
         return [
-          FilteringTextInputFormatter.allow( // Solo letras y números DEMAS CARACTERES NO
-            RegExp(r"[a-zA-Z0-9]")
+          FilteringTextInputFormatter.allow(
+            // Solo letras y números DEMAS CARACTERES NO
+            RegExp(r"[a-zA-Z0-9]"),
           ),
         ];
 
@@ -43,6 +42,12 @@ class InputRules {
         return [];
 
       case InputType.password:
+        return [];
+
+      case InputType.dropdown:
+        return [];
+
+      case InputType.date:
         return [];
     }
   }

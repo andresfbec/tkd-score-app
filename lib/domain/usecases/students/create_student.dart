@@ -75,8 +75,8 @@ class CreateStudent {
       throw Exception('El cinturón con ID ${student.beltId} no existe');
     }
 
-    final existingStudent = await studentsRepository.find( // hacer esta consulta por número de documento para evitar duplicados
-      documentNumber: student.numberIdentify,
+    final existingStudent = await studentsRepository.getByIdentification( // hacer esta consulta por número de documento para evitar duplicados
+      student.numberIdentify,
     );
 
     if (existingStudent != null) {
@@ -89,6 +89,11 @@ class CreateStudent {
     // Persistencia
     // ===============================
 
-    return await studentsRepository.create(student);
+    final stundentToSave = student.copyWith(
+      tournamentWins: 0,
+      participations: 0,
+    );
+
+    return await studentsRepository.create(stundentToSave);
   }
 }

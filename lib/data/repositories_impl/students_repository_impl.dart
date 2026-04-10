@@ -61,5 +61,19 @@ class StudentsRepositoryImpl implements StudentsRepository {
       (listWithInfo) => listWithInfo.map(StudentsMapper.fromData).toList()
     );
   }
+
+  @override
+  Future<StudentsEntity?> getByIdentification(String number) async {
+    final data = await studentsDao.getStudentByIdentify(number);
+    if (data == null) return null;
+    return StudentsMapper.fromData(data);
+  }
+
+  @override
+  Future<StudentsEntity?> getById(int id) async {
+    final data = await studentsDao.getStudentById(id);
+    if (data == null) return null;
+    return StudentsMapper.fromData(data);
+  }
   
 }

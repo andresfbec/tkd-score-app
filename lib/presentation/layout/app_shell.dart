@@ -14,7 +14,7 @@ import '../pages/settings_page.dart';
 import '../pages/judges_page.dart';
 import '../pages/headquarters_page.dart';
 import '../pages/users_page_.dart';
-import '../pages/students_page.dart';
+import '../pages/Students/students_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});

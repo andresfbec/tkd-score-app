@@ -14,4 +14,7 @@ abstract class StudentsRepository {
     double? maxWeight,
     bool? onlyActive,
   });
+  // metodos de consulta para logica de negocio (ej: evitar duplicados por número de documento)
+  Future<StudentsEntity?> getByIdentification(String number);
+  Future<StudentsEntity?> getById(int id);
 }
