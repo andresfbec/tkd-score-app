@@ -138,6 +138,12 @@ class StudentCard extends StatelessWidget {
   // 🔹 DETALLES
   Widget _detailsSection(bool isDark) {
     final textColor = isDark ? Colors.white : Colors.black;
+    final headquarterName = (student.headquarterName != null && student.headquarterName!.isNotEmpty) 
+        ? student.headquarterName! 
+        : "Sin sede asignada";
+    final beltName = (student.beltName != null && student.beltName!.isNotEmpty) 
+        ? student.beltName! 
+        : "Sin cinturón asignado";
 
     return Column(
       children: [
@@ -151,7 +157,9 @@ class StudentCard extends StatelessWidget {
         const SizedBox(height: 8),
         _itemFull("Género", student.gender, textColor),
         const SizedBox(height: 8),
-        _itemFull("Sede", headquarters, textColor),
+        _itemFull("Sede", headquarterName, textColor),
+        const SizedBox(height: 8),
+        _itemFull("Cinturón", beltName, textColor),
         const SizedBox(height: 8),
         _itemFull(
           "Participaciones en torneos",

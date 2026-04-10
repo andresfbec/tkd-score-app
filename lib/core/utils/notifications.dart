@@ -47,7 +47,7 @@ class AppNotifications {
   }) {
     displayInfoBar(
       context,
-      alignment: Alignment.topCenter,
+      alignment: Alignment.topRight,
       builder: (context, close) {
         return InfoBar(
           title: Text(title),

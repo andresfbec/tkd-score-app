@@ -39,6 +39,8 @@ class HeadquartersController extends ChangeNotifier {
 
   StreamSubscription<List<HeadquartersEntity>>? _subscription;
 
+  List<HeadquartersEntity> get headquarters => _allHeadquarters;
+
   // Getter para la tabla (aplica filtros de búsqueda)
   List<HeadquartersEntity> get filteredHeadquarters {
     if (_searchQuery.isEmpty) return _allHeadquarters;

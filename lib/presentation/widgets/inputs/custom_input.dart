@@ -19,6 +19,8 @@ class CustomInput extends StatelessWidget {
   final String? errorText; // opcional: para mostrar mensajes de error
   final Function(String)? onChanged;
 
+  final String? Function(String?)? validator; // función de validación opcional
+
   const CustomInput({
     super.key,
     required this.label,
@@ -30,6 +32,7 @@ class CustomInput extends StatelessWidget {
     this.prefixIcon,
     this.errorText,
     this.onChanged,
+    this.validator,
   });
 
   /// 🔹 Define el tipo de teclado
@@ -62,8 +65,9 @@ class CustomInput extends StatelessWidget {
         ? Colors.white.withOpacity(0.15)
         : Colors.black.withOpacity(0.12);
 
-    final input = TextBox(
+    final input = TextFormBox(
       controller: controller,
+      validator: validator,
 
       placeholder: placeholder ?? '',
       obscureText: obscureText,

@@ -30,14 +30,15 @@ import '../../../core/utils/notifications.dart';
 import '../../../core/enums/status.dart';
 import '../../../core/utils/status_handler.dart';
 
-// modals forms
-import 'create_modal_student.dart';
+// modals forms crud
+import 'create_student_page.dart';
 
 //injections
 import '../../../core/config/containers/dependency_students.dart';
 
 // helper para formatar la edad a partir de la fecha de nacimiento
 import '../../../core/utils/format_date.dart';
+import '../../../core/utils/name_utils.dart';
 
 // colores
 import '../../../core/utils/parse_color.dart';
@@ -66,7 +67,7 @@ class _StudentsPageState extends State<StudentsPage> {
     /// 🔹 Data vacía (placeholder)
     final data = studentsController.filteredStudents.map((student) {
       return {
-        'fullName': '${student.names} ${student.surnames}',
+        'fullName': getShortName(student.names, student.surnames),
         'numberId': student.numberIdentify,
         'age': DateHelper.calculateAge(student.birthDate),
         'headquarter':
@@ -138,13 +139,12 @@ class _StudentsPageState extends State<StudentsPage> {
                 FluentActionButton(
                   icon: FluentIcons.add,
                   label: 'Crear alumno',
-                  onPressed: () => showCreateStudentModal(
-                    context,
-                    onSave: (student) {
-                      // Aquí puedes llamar a tu controlador para guardar el nuevo alumno
-                      studentsController.addStudent(student);
-                    },
-                  ),
+                  onPressed: () {
+                    Navigator.push(context, FluentPageRoute(
+                      builder: (context) => const StudentFormPage(),
+                      )
+                    );
+                  },
                   filled: true,
                 ),
 
@@ -172,7 +172,7 @@ class _StudentsPageState extends State<StudentsPage> {
                 const Spacer(),
 
                 ///  Acciones lado derecho
-                if (ui.showStudentsDetail) ...[
+                if (ui.showStudentsDetail && ui.selectedStudent != null) ...[
                   const SizedBox(width: 12),
 
                   /// Info compacta
@@ -275,7 +275,8 @@ class _StudentsPageState extends State<StudentsPage> {
                                     right: 12, // separación del scroll
                                   ),
                                   child: StudentCard(
-                                    student: ui.selectedStudent as StudentsEntity,
+                                    student:
+                                        ui.selectedStudent as StudentsEntity,
                                     headquarters:
                                         headquartersMap[ui
                                             .selectedStudent!

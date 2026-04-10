@@ -114,4 +114,11 @@ class FormValidations {
     return null;
   }
 
+  static String? validateNotNull<T>(T? value, {String field = 'Este campo'}) {
+    if (value == null) {
+      return '$field es obligatorio';
+    }
+    return null;
+  }
+
 }
