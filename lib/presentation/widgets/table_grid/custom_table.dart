@@ -15,6 +15,7 @@ class CustomTable extends StatefulWidget {
   final bool Function(Map<String, dynamic>, Map<String, dynamic>) isSameRow;
   final Function(Map<String, dynamic>)? onEdit;
   final Function(Map<String, dynamic>)? onDelete;
+  final bool allowSorting;
 
   const CustomTable({
     super.key,
@@ -25,6 +26,7 @@ class CustomTable extends StatefulWidget {
     this.selectedRow,
     this.onEdit,
     this.onDelete,
+    this.allowSorting = true,
   });
 
   @override
@@ -180,7 +182,7 @@ class _CustomTableState extends State<CustomTable> {
                   selectionMode: SelectionMode.single,
                   navigationMode: GridNavigationMode.row,
                   columnWidthMode: ColumnWidthMode.fill,
-                  allowSorting: true,
+                  allowSorting: widget.allowSorting,
                   highlightRowOnHover: true,
                   headerRowHeight: 52,
                   rowHeight: 48,
@@ -191,6 +193,7 @@ class _CustomTableState extends State<CustomTable> {
                     ...widget.columns.map(
                       (column) => GridColumn(
                         columnName: column['key']!,
+                        allowSorting: column['allowSorting'] ?? true,
                         width: column['width'] != null
                             ? column['width'] as double
                             : double.nan,

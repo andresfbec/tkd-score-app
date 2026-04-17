@@ -32,6 +32,8 @@ class StudentsController extends ChangeNotifier {
 
   StreamSubscription<List<StudentsEntity>>? _subscription;
 
+  List<StudentsEntity> get students => _allStudents;
+
   // ===============================
   // GETTERS
   // ===============================

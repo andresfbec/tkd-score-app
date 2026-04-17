@@ -7,6 +7,22 @@ class HeadquarterFilter {
   const HeadquarterFilter({this.id, this.name, this.city, this.address});
 }
 
+class TournamentFilter {
+  final int? id;
+  final String? name;
+  final String? location;
+  final String? status;
+  final DateTime? dateStart;
+
+  const TournamentFilter({
+    this.id,
+    this.name,
+    this.location,
+    this.status,
+    this.dateStart,
+  });
+}
+
 class DatabaseFields {
   DatabaseFields._(); // Constructor privado para evitar instancias
 
@@ -40,10 +56,13 @@ class DatabaseFields {
 const Set<String> fieldsTournaments = {
   'id',
   'name',
+  'host',
   'location',
-  'date_start',
-  'date_end',
+  'dateStart',
+  'dateEnd',
   'status',
+  'discipline',
+  'setupPhase',
 };
 
 const Set<String> fieldsJudge = {'id', 'names', 'surnames', 'numberId'};

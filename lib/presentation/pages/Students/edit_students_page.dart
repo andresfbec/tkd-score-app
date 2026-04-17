@@ -1,12 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
-// Widgets de entrada personalizados
 import '../../widgets/inputs/custom_input.dart';
 import '../../widgets/inputs/custom_dropdown.dart';
 import '../../widgets/inputs/custom_date_picker.dart';
 
-// Lógica y Dominio
 import '../../../domain/entities/students_entity.dart';
 import '../../controllers/students_controller.dart';
 import '../../controllers/headquarters_controller.dart';
@@ -15,43 +13,50 @@ import '../../../core/enums/input_type.dart';
 import '../../../core/constants/app.dart';
 import '../../../core/constants/student_form_options.dart';
 
-class StudentFormPage extends StatefulWidget {
-  final int? initialHeadquarterId;
+class StudentEditPage extends StatefulWidget {
+  final StudentsEntity student;
 
-  const StudentFormPage({super.key, this.initialHeadquarterId});
+  const StudentEditPage({super.key, required this.student});
 
   @override
-  State<StudentFormPage> createState() => _StudentFormPageState();
+  State<StudentEditPage> createState() => _StudentEditPageState();
 }
 
-class _StudentFormPageState extends State<StudentFormPage> {
+class _StudentEditPageState extends State<StudentEditPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controladores de texto
-  final _namesController = TextEditingController();
-  final _surnamesController = TextEditingController();
-  final _idNumberController = TextEditingController();
-  final _weightController = TextEditingController();
-  final _heightController = TextEditingController();
+  late TextEditingController _namesController;
+  late TextEditingController _surnamesController;
+  late TextEditingController _idNumberController;
+  late TextEditingController _weightController;
+  late TextEditingController _heightController;
 
-  // Estados de selección
-  DateTime _birthDate = DateTime.now().subtract(const Duration(days: 365 * 10));
-  String _gender = 'Masculino';
+  late DateTime _birthDate;
+  late String _gender;
+  late String _typeIdentify;
   int? _selectedHqId;
   int? _selectedBeltId;
-  String _typeIdentify = 'CC';
 
   @override
   void initState() {
     super.initState();
-    _selectedHqId = widget.initialHeadquarterId;
+    _namesController = TextEditingController(text: widget.student.names);
+    _surnamesController = TextEditingController(text: widget.student.surnames);
+    _idNumberController = TextEditingController(text: widget.student.numberIdentify);
+    _weightController = TextEditingController(text: widget.student.weightKg.toString());
+    _heightController = TextEditingController(text: widget.student.heightCm.toString());
+
+    _birthDate = widget.student.birthDate;
+    _gender = widget.student.gender;
+    _typeIdentify = widget.student.typeIdentify;
+    _selectedHqId = widget.student.headquarterId;
+    _selectedBeltId = widget.student.beltId;
   }
 
   @override
   Widget build(BuildContext context) {
     final hqController = context.watch<HeadquartersController>();
-    final theme = FluentTheme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
+    final bool isDark = FluentTheme.of(context).brightness == Brightness.dark;
 
     return ScaffoldPage.scrollable(
       header: PageHeader(
@@ -69,27 +74,20 @@ class _StudentFormPageState extends State<StudentFormPage> {
                   onTap: () => Navigator.pop(context),
                   child: MouseRegion(
                     cursor: SystemMouseCursors.alias,
-                    child: Text(
-                      'Alumnos',
+                    child: Text('Alumnos', 
                       style: TextStyle(
-                      fontSize: AppTypography.titleView,
-                      fontWeight: AppTypography.semiBold,
-                      fontFamily: AppTypography.fontFamily,
-                      color: AppColors.getTextPrimary(isDark),
-                    ),
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: AppTypography.titleView,
+                        fontFamily: AppTypography.fontFamily,
+                      )
                     ),
                   ),
                 ),
               ),
               const TextSpan(text: '  >  '),
-               TextSpan(
-                text: 'Crear Alumno',
-                style: TextStyle(
-                fontSize: AppTypography.titleView,
-                fontWeight: AppTypography.semiBold,
-                fontFamily: AppTypography.fontFamily,
-                color: AppColors.getTextPrimary(isDark),
-              ),
+              TextSpan(
+                text: 'Editar Alumno: ${widget.student.names}',
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -107,7 +105,6 @@ class _StudentFormPageState extends State<StudentFormPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-
                   _buildSectionTitle('Información Básica'),
                   const SizedBox(height: 20),
                   
@@ -118,17 +115,15 @@ class _StudentFormPageState extends State<StudentFormPage> {
                       CustomInput(
                         width: 360,
                         label: 'Nombres Completos',
-                        type: InputType.name,
                         controller: _namesController,
-                        placeholder: 'Escriba los nombres',
+                        type: InputType.name,
                         validator: FormValidations.validateName,
                       ),
                       CustomInput(
                         width: 360,
                         label: 'Apellidos Completos',
-                        type: InputType.name,
                         controller: _surnamesController,
-                        placeholder: 'Escriba los apellidos',
+                        type: InputType.name,
                         validator: (v) => FormValidations.required(v, field: 'Apellidos'),
                       ),
                       CustomDatePicker(
@@ -159,19 +154,19 @@ class _StudentFormPageState extends State<StudentFormPage> {
                     runSpacing: 24,
                     children: [
                       CustomDropdown<String>(
-                      width: 250, // Un poco más angosto que los demás
-                      label: 'Tipo Doc.',
-                      value: _typeIdentify,
-                      items: StudentFormOptions.identifyTypes.map((item) {
-                        return ComboBoxItem(
-                          value: item['value']!,
-                          child: Text(item['label']!),
-                        );
-                      }).toList(),
-                      onChanged: (v) => setState(() => _typeIdentify = v!),
-                    ),
+                        width: 250,
+                        label: 'Tipo Doc.',
+                        value: _typeIdentify,
+                        items: StudentFormOptions.identifyTypes.map((item) {
+                          return ComboBoxItem(
+                            value: item['value']!,
+                            child: Text(item['label']!),
+                          );
+                        }).toList(),
+                        onChanged: (v) => setState(() => _typeIdentify = v!),
+                      ),
                       CustomInput(
-                        width: 230,
+                        width: 216,
                         label: 'Número de Documento',
                         type: InputType.number,
                         controller: _idNumberController,
@@ -181,7 +176,6 @@ class _StudentFormPageState extends State<StudentFormPage> {
                         width: 230,
                         label: 'Sede de Entrenamiento',
                         value: _selectedHqId,
-                        placeholder: 'Seleccione Sede',
                         items: hqController.headquarters.map((h) {
                           return ComboBoxItem<int>(value: h.id, child: Text(h.name));
                         }).toList(),
@@ -189,9 +183,8 @@ class _StudentFormPageState extends State<StudentFormPage> {
                       ),
                       CustomDropdown<int>(
                         width: 230,
-                        label: 'Cinturón / Grado Actual',
+                        label: 'Cinturón Actual',
                         value: _selectedBeltId,
-                        placeholder: 'Seleccione Grado',
                         items: StudentFormOptions.belts.map((b) {
                           return ComboBoxItem<int>(
                             value: b['id'] as int,
@@ -205,31 +198,25 @@ class _StudentFormPageState extends State<StudentFormPage> {
                         label: 'Peso (Kg)',
                         type: InputType.number,
                         controller: _weightController,
-                        placeholder: '00.0',
                       ),
                       CustomInput(
                         width: 110,
                         label: 'Talla (Cm)',
                         type: InputType.number,
                         controller: _heightController,
-                        placeholder: '000',
                       ),
                     ],
                   ),
 
                   const SizedBox(height: 60),
-
-                  // Botón de acción principal
                   Align(
                     alignment: Alignment.centerRight,
                     child: FilledButton(
-                      style: ButtonStyle(
-                      ),
-                      onPressed: _saveStudent,
-                      child: const Text(
-                        'Guardar Alumno',
-                        style: TextStyle(fontWeight: AppTypography.regular),
-                      ),
+                      onPressed: _updateStudent,
+                      // style: ButtonStyle(
+                      //   padding: ButtonState.all(const EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
+                      // ),
+                      child: const Text('Actualizar Alumno'),
                     ),
                   ),
                 ],
@@ -245,14 +232,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.2,
-          ),
-        ),
+        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
         Container(
           width: 45,
@@ -266,27 +246,11 @@ class _StudentFormPageState extends State<StudentFormPage> {
     );
   }
 
-  void _saveStudent() {
+  void _updateStudent() {
     if (_formKey.currentState!.validate()) {
-      if (_selectedHqId == null || _selectedBeltId == null) {
-        showDialog(
-          context: context,
-          builder: (context) => ContentDialog(
-            title: const Text('Campos incompletos'),
-            content: const Text('Por favor, seleccione una Sede y un Cinturón.'),
-            actions: [
-              Button(
-                child: const Text('Aceptar'),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        );
-        return;
-      }
+      if (_selectedHqId == null || _selectedBeltId == null) return;
 
-      final student = StudentsEntity(
-        id: null,
+      final updatedStudent = widget.student.copyWith(
         names: _namesController.text,
         surnames: _surnamesController.text,
         typeIdentify: _typeIdentify,
@@ -297,11 +261,9 @@ class _StudentFormPageState extends State<StudentFormPage> {
         heightCm: double.tryParse(_heightController.text) ?? 0.0,
         headquarterId: _selectedHqId!,
         beltId: _selectedBeltId!,
-        tournamentWins: 0,
-        participations: 0,
       );
 
-      context.read<StudentsController>().addStudent(student);
+      context.read<StudentsController>().editStudent(updatedStudent);
       Navigator.pop(context);
     }
   }

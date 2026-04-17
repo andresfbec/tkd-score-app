@@ -32,6 +32,7 @@ import '../../../core/utils/status_handler.dart';
 
 // modals forms crud
 import 'create_student_page.dart';
+import 'edit_students_page.dart';
 
 //injections
 import '../../../core/config/containers/dependency_students.dart';
@@ -87,6 +88,7 @@ class _StudentsPageState extends State<StudentsPage> {
       {
         'key': 'belt',
         'label': 'Cinturón',
+        'allowSorting': false,
         'renderer': (value) {
           final student = value as StudentsEntity;
 
@@ -140,9 +142,11 @@ class _StudentsPageState extends State<StudentsPage> {
                   icon: FluentIcons.add,
                   label: 'Crear alumno',
                   onPressed: () {
-                    Navigator.push(context, FluentPageRoute(
-                      builder: (context) => const StudentFormPage(),
-                      )
+                    Navigator.push(
+                      context,
+                      FluentPageRoute(
+                        builder: (context) => const StudentFormPage(),
+                      ),
                     );
                   },
                   filled: true,
@@ -239,6 +243,72 @@ class _StudentsPageState extends State<StudentsPage> {
                             'Error: No se pudo obtener el estudiante de la fila seleccionada',
                           );
                         }
+                      },
+                      onEdit: (row) {
+                        final alumnoEditar = row['student'] as StudentsEntity;
+
+                        Navigator.push(
+                          context,
+                          FluentPageRoute(
+                            builder: (context) =>
+                                StudentEditPage(student: alumnoEditar),
+                          ),
+                        );
+
+                        final studentActualizado = studentsController.students
+                            .firstWhere(
+                              (s) => s.id == alumnoEditar.id,
+                              orElse: () => alumnoEditar,
+                            );
+
+                        // 3. Actualizamos la selección en la UI para que la Card se refresque
+                        // Pasamos el objeto nuevo y la misma fila (row) para mantener el highlight
+                        context.read<UIStateProvider>().selectStudent(
+                          studentActualizado,
+                          row,
+                        );
+                      },
+                      onDelete: (row) {
+                        final student = row['student'] as StudentsEntity;
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => ContentDialog(
+                            title: const Text('¿Eliminar alumno?'),
+                            content: Text(
+                              '¿Estás seguro de que deseas eliminar a ${student.names}? Esta acción no se puede deshacer.',
+                            ),
+                            actions: [
+                              Button(
+                                child: const Text('Cancelar'),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              FilledButton(
+                                style: ButtonStyle(
+                                  backgroundColor: ButtonState.all(Colors.red),
+                                ),
+                                child: const Text('Eliminar'),
+                                onPressed: () {
+                                  // Tu lógica directa:
+                                  studentsController.removeStudent(student.id!);
+
+                                  // Limpiar la selección en la UI si el alumno borrado estaba seleccionado
+                                  if (context
+                                          .read<UIStateProvider>()
+                                          .selectedStudent
+                                          ?.id ==
+                                      student.id) {
+                                    context
+                                        .read<UIStateProvider>()
+                                        .selectStudent(null, {});
+                                  }
+
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
                       },
                     ),
                   ),

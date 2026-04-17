@@ -64,6 +64,16 @@ class FormValidations {
   // VALIDACIONES COMPUESTAS PARA CAMPOS ESPECÍFICOS  
   // ==========================
 
+  static String? isoDate(String? value, {String field = 'Fecha'}) {
+    final req = required(value, field: field);
+    if (req != null) return req;
+    final d = DateTime.tryParse(value!.trim());
+    if (d == null) {
+      return '$field inválida. Use AAAA-MM-DD';
+    }
+    return null;
+  }
+
   static String? validateName(String? value) {
 
     final requiredError = required(value, field: "Nombre");

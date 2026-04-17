@@ -9,7 +9,9 @@ import '../core/config/containers/dependency_headquarters.dart';
 import '../core/config/containers/dependency_user.dart';
 import '../presentation/controllers/session_controller.dart';
 import '../core/config/containers/dependency_students.dart';
+import '../core/config/containers/dependency_tournament.dart';
 import '../presentation/controllers/students_controller.dart';
+import '../presentation/controllers/tournaments_controller.dart';
 import 'ui_state_provider.dart';
 
 class AppProviders {
@@ -21,6 +23,7 @@ class AppProviders {
     final containerUser = InjectionUser();
     final containerHeadquarters = InjectionHeadquarters();
     final containerStudents = InjectionStudents();
+    final containerTournament = InjectionTournament();
 
     return [
       // ThemeProvider
@@ -46,6 +49,15 @@ class AppProviders {
           containerHeadquarters.findHeadquarters,
           containerHeadquarters.watchHeadquarters,
         )..startListening(), // empieza a escuchar el stream al crear el controller
+      ),
+      ChangeNotifierProvider<TournamentsController>(
+        create: (_) => TournamentsController(
+          containerTournament.createTournament,
+          containerTournament.updateTournament,
+          containerTournament.deleteTournament,
+          containerTournament.findTournaments,
+          containerTournament.watchTournaments,
+        )..startListening(),
       ),
       ChangeNotifierProvider<StudentsController>(
         create: (_) => StudentsController(

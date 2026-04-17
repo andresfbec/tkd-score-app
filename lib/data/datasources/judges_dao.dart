@@ -1,10 +1,10 @@
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import '../../core/constants/fields.dart';
 
-class TournamentsDao {
+/// DAO legacy (sqflite); reservado para CRUD de jueces cuando lo conectes a Drift.
+class JudgesDao {
   final Database db;
 
-  TournamentsDao(this.db);
+  JudgesDao(this.db);
 
   Future<int> insert({
     required String name,
