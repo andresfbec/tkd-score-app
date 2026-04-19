@@ -52,3 +52,15 @@ class InvalidTournamentDatesException implements Exception {
   @override
   String toString() => "La fecha de fin debe ser igual o posterior a la de inicio";
 }
+
+class TournamentLockedException implements Exception {
+  @override
+  String toString() =>
+      "El torneo no puede modificarse en este estado";
+}
+
+class TournamentNotReadyToStartException implements Exception {
+  @override
+  String toString() =>
+      "Defina las reglas de combate y los grupos antes de iniciar el torneo";
+}

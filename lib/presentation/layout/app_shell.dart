@@ -9,7 +9,7 @@ import '../widgets/calendars/date_badge.dart';
 import '../widgets/calendars/tournament_calendar.dart';
 
 // ----- PAGES -----
-import '../pages/tournaments_page.dart';
+import '../pages/Tournaments/tournaments_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/judges_page.dart';
 import '../pages/headquarters_page.dart';

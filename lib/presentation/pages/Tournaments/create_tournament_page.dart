@@ -16,6 +16,7 @@ import '../../widgets/inputs/custom_input.dart';
 
 /// Formulario de torneo. [existing] distinto de null implica modo edición
 /// (también puedes usar [EditTournamentPage]).
+/// El estado operativo ([TournamentEntity.setupPhase]) no se edita aquí.
 class CreateTournamentPage extends StatefulWidget {
   final TournamentEntity? existing;
 
@@ -36,9 +37,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
 
   late DateTime _dateStart;
   late DateTime _dateEnd;
-  late String _tournamentStatus;
   late String _discipline;
-  late String _setupPhase;
 
   @override
   void initState() {
@@ -50,16 +49,12 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
       _locationController.text = e.location;
       _dateStart = e.dateStart;
       _dateEnd = e.dateEnd;
-      _tournamentStatus = e.status;
       _discipline = e.discipline;
-      _setupPhase = e.setupPhase;
     } else {
       final now = DateTime.now();
       _dateStart = DateTime(now.year, now.month, now.day);
       _dateEnd = _dateStart.add(const Duration(days: 1));
-      _tournamentStatus = 'draft';
       _discipline = 'combat';
-      _setupPhase = 'draft';
     }
   }
 
@@ -115,142 +110,106 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
         ),
       ),
       children: [
-        const SizedBox(height: 10),
-        Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 880),
-            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 48),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  _buildSectionTitle(context, 'Datos generales'),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    children: [
-                      CustomInput(
-                        width: 400,
-                        label: 'Nombre del torneo',
-                        type: InputType.name,
-                        controller: _nameController,
-                        placeholder: 'Ej. Copa regional 2026',
-                        validator: FormValidations.validateName,
-                      ),
-                      CustomInput(
-                        width: 400,
-                        label: 'Organizador / anfitrión',
-                        type: InputType.text,
-                        controller: _hostController,
-                        placeholder: 'Opcional',
-                      ),
-                      CustomInput(
-                        width: 400,
-                        label: 'Lugar',
-                        type: InputType.text,
-                        controller: _locationController,
-                        placeholder: 'Ciudad, recinto o dirección',
-                        validator: (v) =>
-                            FormValidations.required(v, field: 'Lugar'),
-                      ),
-                      CustomDatePicker(
-                        width: 400,
-                        label: 'Fecha de inicio',
-                        selected: _dateStart,
-                        onChanged: (v) => setState(() => _dateStart = v),
-                      ),
-                      CustomDatePicker(
-                        width: 400,
-                        label: 'Fecha de fin',
-                        selected: _dateEnd,
-                        onChanged: (v) => setState(() => _dateEnd = v),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
-                  _buildSectionTitle(context, 'Estado y modalidad'),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    children: [
-                      CustomDropdown<String>(
-                        width: 260,
-                        label: 'Estado del torneo',
-                        value: _tournamentStatus,
-                        items: TournamentFormOptions.tournamentStatuses
-                            .map(
-                              (item) => ComboBoxItem<String>(
-                                value: item['value']!,
-                                child: Text(item['label']!),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) =>
-                            setState(() => _tournamentStatus = v!),
-                      ),
-                      CustomDropdown<String>(
-                        width: 260,
-                        label: 'Modalidad',
-                        value: _discipline,
-                        items: TournamentFormOptions.disciplines
-                            .map(
-                              (item) => ComboBoxItem<String>(
-                                value: item['value']!,
-                                child: Text(item['label']!),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) => setState(() => _discipline = v!),
-                      ),
-                      if (widget.isEditMode)
-                        CustomDropdown<String>(
-                          width: 320,
-                          label: 'Fase de montaje',
-                          value: _setupPhase,
-                          items: TournamentFormOptions.setupPhases
-                              .map(
-                                (item) => ComboBoxItem<String>(
-                                  value: item['value']!,
-                                  child: Text(item['label']!),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (v) =>
-                              setState(() => _setupPhase = v!),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 48),
-                  Row(
-                    children: [
-                      Button(
-                        child: const Text('Cancelar'),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const Spacer(),
-                      FilledButton(
-                        onPressed: _onSave,
-                        child: Text(
-                          widget.isEditMode
-                              ? 'Actualizar torneo'
-                              : 'Guardar torneo',
-                          style: const TextStyle(
-                            fontWeight: AppTypography.regular,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+  const SizedBox(height: 10),
+  Center( 
+    child: Container(
+      constraints: const BoxConstraints(maxWidth: 880),
+      padding: const EdgeInsets.only(left: 24, right: 24, bottom: 48),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // centra los títulos y botones
+          children: [
+            const SizedBox(height: 8),
+
+
+            // 👇 aquí envuelves tu columna de inputs en otro Center + ConstrainedBox
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400), // ancho fijo y elegante
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomInput(
+                      width: double.infinity,
+                      label: 'Nombre del torneo',
+                      type: InputType.name,
+                      controller: _nameController,
+                      placeholder: 'Ej. Copa regional 2026',
+                      validator: FormValidations.validateName,
+                    ),
+                    const SizedBox(height: 20),
+                    CustomInput(
+                      width: double.infinity,
+                      label: 'Organizador / anfitrión',
+                      type: InputType.text,
+                      controller: _hostController,
+                      placeholder: 'Opcional',
+                    ),
+                    const SizedBox(height: 20),
+                    CustomInput(
+                      width: double.infinity,
+                      label: 'Lugar',
+                      type: InputType.text,
+                      controller: _locationController,
+                      placeholder: 'Ciudad, recinto o dirección',
+                      validator: (v) => FormValidations.required(v, field: 'Lugar'),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomDatePicker(
+                      width: double.infinity,
+                      label: 'Fecha de inicio',
+                      selected: _dateStart,
+                      onChanged: (v) => setState(() => _dateStart = v),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomDatePicker(
+                      width: double.infinity,
+                      label: 'Fecha de fin',
+                      selected: _dateEnd,
+                      onChanged: (v) => setState(() => _dateEnd = v),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomDropdown<String>(
+                      width: double.infinity,
+                      label: 'Modalidad',
+                      value: _discipline,
+                      items: TournamentFormOptions.disciplines
+                          .map(
+                            (item) => ComboBoxItem<String>(
+                              value: item['value']!,
+                              child: Text(item['label']!),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (v) => setState(() => _discipline = v!),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+
+            const SizedBox(height: 28),
+            Row(
+              children: [
+                const Spacer(),
+                FilledButton(
+                  onPressed: _onSave,
+                  child: Text(
+                    widget.isEditMode ? 'Actualizar torneo' : 'Guardar torneo',
+                    style: const TextStyle(
+                      fontWeight: AppTypography.regular,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
+    ),
+  ),
+],
     );
   }
 
@@ -313,9 +272,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
         location: _locationController.text,
         dateStart: startStr,
         dateEnd: endStr,
-        tournamentStatus: _tournamentStatus,
         discipline: _discipline,
-        setupPhase: _setupPhase,
       );
     } else {
       await controller.createTournament(
@@ -324,7 +281,6 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
         location: _locationController.text,
         dateStart: startStr,
         dateEnd: endStr,
-        tournamentStatus: _tournamentStatus,
         discipline: _discipline,
       );
     }

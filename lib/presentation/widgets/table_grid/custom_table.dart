@@ -125,6 +125,23 @@ class _CustomTableState extends State<CustomTable> {
     final fluentTheme = themeProvider.currentTheme;
     final headerTextColor = isDark ? Colors.white : Colors.black;
 
+    if (widget.data.isEmpty) {
+        return SizedBox(
+        height: 100,
+        child: Center(
+          child: Text(
+            'No hay datos disponibles',
+            style: fluentTheme.typography.body?.copyWith(
+              fontSize: 16,
+              color: isDark
+                  ? Colors.white.withOpacity(0.7)
+                  : Colors.black.withOpacity(0.8),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? fluentTheme.cardColor : Colors.white,

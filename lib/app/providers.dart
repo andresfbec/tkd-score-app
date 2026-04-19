@@ -57,6 +57,7 @@ class AppProviders {
           containerTournament.deleteTournament,
           containerTournament.findTournaments,
           containerTournament.watchTournaments,
+          containerTournament.startTournament,
         )..startListening(),
       ),
       ChangeNotifierProvider<StudentsController>(

@@ -1,23 +1,20 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app.dart';
-import '../../core/enums/status.dart';
-import '../../core/utils/status_handler.dart';
-import '../../domain/entities/tournament_entity.dart';
+import '../../../core/constants/app.dart';
+import '../../../core/enums/status.dart';
+import '../../../core/utils/status_handler.dart';
+import '../../../domain/entities/tournament_entity.dart';
 
-import '../controllers/tournaments_controller.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/input_search.dart';
-import 'Tournaments/create_tournament_page.dart';
-import 'Tournaments/edit_tournament_page.dart';
+import '../../controllers/tournaments_controller.dart';
+import '../../widgets/cards/tournament_card.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/input_search.dart';
+import 'create_tournament_page.dart';
+import 'edit_tournament_page.dart';
 
 class TournamentsPage extends StatelessWidget {
   const TournamentsPage({super.key});
-
-  String _formatDate(DateTime d) {
-    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-  }
 
   void _openCreate(BuildContext context) {
     Navigator.of(context).push(
@@ -31,6 +28,60 @@ class TournamentsPage extends StatelessWidget {
     Navigator.of(context).push(
       FluentPageRoute(
         builder: (_) => EditTournamentPage(tournament: t),
+      ),
+    );
+  }
+
+  void _openConfigurePlaceholder(BuildContext context, TournamentEntity t) {
+    showDialog(
+      context: context,
+      builder: (ctx) => ContentDialog(
+        title: const Text('Configurar torneo'),
+        content: Text(
+          'Aquí enlazarás las reglas de combate y la definición de grupos '
+          'para "${t.name}". (Pantalla en construcción.)',
+        ),
+        actions: [
+          FilledButton(
+            child: const Text('Entendido'),
+            onPressed: () => Navigator.pop(ctx),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmStart(
+    BuildContext context,
+    TournamentEntity t,
+  ) async {
+    if (t.id == null) return;
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => ContentDialog(
+        title: const Text('Iniciar torneo'),
+        content: Text(
+          '¿Pasar "${t.name}" a estado en curso? '
+          'Luego no podrás editarlo ni eliminarlo desde aquí.',
+        ),
+        actions: [
+          Button(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(dialogContext),
+          ),
+          FilledButton(
+            child: const Text('Iniciar'),
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              final ctrl = context.read<TournamentsController>();
+              await ctrl.startTournament(
+                t.id!,
+                hasCombatSettings: false,
+                hasGroupsDefined: false,
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -123,98 +174,20 @@ class TournamentsPage extends StatelessWidget {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.25,
+                        childAspectRatio: 1.02,
                       ),
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         final t = list[index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: isDark
-                                ? const Color(0xFF1E1E1E)
-                                : const Color(0xFFF9F9F9),
-                            border: Border.all(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.06)
-                                  : Colors.black.withOpacity(0.06),
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      t.name,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(FluentIcons.edit, size: 16),
-                                    onPressed: () => _openEdit(context, t),
-                                  ),
-                                  IconButton(
-                                    icon:
-                                        const Icon(FluentIcons.delete, size: 16),
-                                    onPressed: () => _confirmDelete(context, t),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                t.location,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.7)
-                                      : Colors.black.withOpacity(0.65),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${_formatDate(t.dateStart)} → ${_formatDate(t.dateEnd)}',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.55)
-                                      : Colors.black.withOpacity(0.5),
-                                ),
-                              ),
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  Icon(
-                                    FluentIcons.tag,
-                                    size: 14,
-                                    color: FluentTheme.of(context).accentColor,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Text(
-                                      '${t.status} · ${t.setupPhase}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color:
-                                            FluentTheme.of(context).accentColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        return TournamentCard(
+                          tournament: t,
+                          hasCombatSettings: false,
+                          hasGroupsDefined: false,
+                          onConfigure: () =>
+                              _openConfigurePlaceholder(context, t),
+                          onStart: () => _confirmStart(context, t),
+                          onEdit: () => _openEdit(context, t),
+                          onDelete: () => _confirmDelete(context, t),
                         );
                       },
                     ),

@@ -9,6 +9,7 @@ import '../../../domain/usecases/tournament/get_all_tournaments.dart';
 import '../../../domain/usecases/tournament/get_tournament_by_id.dart';
 import '../../../domain/usecases/tournament/find_tournaments.dart';
 import '../../../domain/usecases/tournament/watch_tournaments.dart';
+import '../../../domain/usecases/tournament/start_tournament.dart';
 
 class InjectionTournament {
   static final InjectionTournament _instance = InjectionTournament._internal();
@@ -30,4 +31,5 @@ class InjectionTournament {
   GetTournamentById get getTournamentById => GetTournamentById(tournamentRepository);
   FindTournaments get findTournaments => FindTournaments(tournamentRepository);
   WatchTournaments get watchTournaments => WatchTournaments(tournamentRepository);
+  StartTournament get startTournament => StartTournament(tournamentRepository);
 }

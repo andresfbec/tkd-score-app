@@ -66,23 +66,9 @@ Para generar el ejecutable ¡PRODUCCIÓN!
     flutter build windows
 ---
 
-## Equipo de desarrollo
-
-- Andrés Malaver
-- Ever Giraldo
-
----
-
 ## Roadmap
 
 - Finalización del ejecutable para Windows
 - Integración de más modalidades de Taekwondo
 - Exportación de resultados en PDF
 - Panel de administración avanzado para árbitros y jueces
-
----
-
-## Licencia
-
-Este proyecto se encuentra en desarrollo y será distribuido bajo licencia comercial.  
-Los detalles de costos y licenciamiento aún están en definición.
