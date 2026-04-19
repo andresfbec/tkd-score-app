@@ -5,5 +5,7 @@ enum InputType {
   number, // Números enteros
   password, // Contraseña
   phone, // Número de teléfono
-  alphanumeric // Letras y números
+  alphanumeric, // Letras y números
+  dropdown, // Para campos que se llenan con opciones predefinidas
+  date
 }

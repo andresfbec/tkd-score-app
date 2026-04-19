@@ -3,7 +3,9 @@ import 'sogis.dart';
 
 class Belts extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
+  TextColumn get name => text()(); // nombre del cinturón (ej: "Verde", "Rojo franja negra")
+  TextColumn get primaryColor => text()(); // color principal
+  TextColumn get secondaryColor => text()(); // color secundario (igual al principal si no hay franja)
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   IntColumn get synchronized => integer().withDefault(const Constant(0))();
@@ -19,6 +21,7 @@ class SogiBelts extends Table {
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,
   )();
+
   IntColumn get beltsId => integer().references(
     Belts,
     #id,

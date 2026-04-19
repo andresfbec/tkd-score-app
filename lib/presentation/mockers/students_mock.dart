@@ -98,7 +98,7 @@ Map<int, (Color, Color)> beltColorMap = {
 };
 
 
-final List<StudentMock> mockStudents = List.generate(4, (index) {
+final List<StudentMock> mockStudents = List.generate(20, (index) {
   final beltId = (index % 11) + 1;
 
   return StudentMock(

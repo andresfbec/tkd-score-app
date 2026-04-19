@@ -13,6 +13,9 @@ class CustomTable extends StatefulWidget {
   final Function(Map<String, dynamic>) onRowSelected;
   final Map<String, dynamic>? selectedRow;
   final bool Function(Map<String, dynamic>, Map<String, dynamic>) isSameRow;
+  final Function(Map<String, dynamic>)? onEdit;
+  final Function(Map<String, dynamic>)? onDelete;
+  final bool allowSorting;
 
   const CustomTable({
     super.key,
@@ -21,6 +24,9 @@ class CustomTable extends StatefulWidget {
     required this.onRowSelected,
     required this.isSameRow,
     this.selectedRow,
+    this.onEdit,
+    this.onDelete,
+    this.allowSorting = true,
   });
 
   @override
@@ -38,6 +44,8 @@ class _CustomTableState extends State<CustomTable> {
       data: widget.data,
       columns: widget.columns,
       onRowSelected: widget.onRowSelected,
+      onEdit: widget.onEdit,
+      onDelete: widget.onDelete,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -54,6 +62,8 @@ class _CustomTableState extends State<CustomTable> {
         data: widget.data,
         columns: widget.columns,
         onRowSelected: widget.onRowSelected,
+        onEdit: widget.onEdit,
+        onDelete: widget.onDelete,
       );
     }
 
@@ -94,7 +104,9 @@ class _CustomTableState extends State<CustomTable> {
       Future.delayed(const Duration(milliseconds: 50), () {
         if (mounted && _controller.selectedIndex != -1) {
           try {
-            _controller.scrollToRow(index.toDouble());
+            _controller.scrollToRow(
+              index.toDouble(),
+            ); // quitar para desactivar scroll automatico
           } catch (_) {}
         }
       });
@@ -113,10 +125,27 @@ class _CustomTableState extends State<CustomTable> {
     final fluentTheme = themeProvider.currentTheme;
     final headerTextColor = isDark ? Colors.white : Colors.black;
 
+    if (widget.data.isEmpty) {
+        return SizedBox(
+        height: 100,
+        child: Center(
+          child: Text(
+            'No hay datos disponibles',
+            style: fluentTheme.typography.body?.copyWith(
+              fontSize: 16,
+              color: isDark
+                  ? Colors.white.withOpacity(0.7)
+                  : Colors.black.withOpacity(0.8),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? fluentTheme.cardColor : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
@@ -127,7 +156,7 @@ class _CustomTableState extends State<CustomTable> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         child: SfDataGridTheme(
           data: SfDataGridThemeData(
             headerColor: isDark
@@ -170,7 +199,7 @@ class _CustomTableState extends State<CustomTable> {
                   selectionMode: SelectionMode.single,
                   navigationMode: GridNavigationMode.row,
                   columnWidthMode: ColumnWidthMode.fill,
-                  allowSorting: true,
+                  allowSorting: widget.allowSorting,
                   highlightRowOnHover: true,
                   headerRowHeight: 52,
                   rowHeight: 48,
@@ -181,6 +210,7 @@ class _CustomTableState extends State<CustomTable> {
                     ...widget.columns.map(
                       (column) => GridColumn(
                         columnName: column['key']!,
+                        allowSorting: column['allowSorting'] ?? true,
                         width: column['width'] != null
                             ? column['width'] as double
                             : double.nan,

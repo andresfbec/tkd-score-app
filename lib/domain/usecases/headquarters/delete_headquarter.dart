@@ -6,6 +6,8 @@ class DeleteHeadquarter {
 
   DeleteHeadquarter(this.repository);
 
+  // validar si la sede tiene estudiantes asociados, para evitar eliminarla mientras hay estudiantes vinculados
+
   Future<int> call(int pk) async {
     final validate = await repository.getById(pk);
     if (validate == null) {

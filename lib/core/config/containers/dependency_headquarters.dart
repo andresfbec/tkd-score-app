@@ -13,88 +13,28 @@ import '../../../domain/usecases/headquarters/watch_headquarters.dart';
 import '../../../domain/usecases/headquarters/get_headquarter_by_id.dart';
 
 class InjectionHeadquarters {
-  static final InjectionHeadquarters _instance =
-      InjectionHeadquarters._internal();
-
+  static final InjectionHeadquarters _instance = InjectionHeadquarters._internal();
   factory InjectionHeadquarters() => _instance;
-
   InjectionHeadquarters._internal();
 
-  late AppDatabase _database;
+  // 1. Repositorio privado que puede ser nulo al inicio
+  HeadquartersRepositoryImpl? _repository;
 
-  AppDatabase get database => _database;
-
-  //DAOS
-  late HeadquartersDao _headquartersDao;
-
-  //Repositorios
-  late HeadquartersRepositoryImpl _headquartersRepository;
-
-  // Usecases
-  late CreateHeadquarter _createHeadquarter;
-  late UpdateHeadquarter _updateHeadquarter;
-  late DeleteHeadquarter _deleteHeadquarter;
-  late GetAllHeadquarters _getAllHeadquarters;
-  late GetHeadquarterById _getHeadquarterById;
-  late FindHeadquarters _findHeadquarters;
-  late WatchHeadquarters _watchHeadquarters;
-
-  //Gettters
-  CreateHeadquarter get createHeadquarter => _createHeadquarter;
-  UpdateHeadquarter get updateHeadquarter => _updateHeadquarter;
-  DeleteHeadquarter get deleteHeadquarter => _deleteHeadquarter;
-  GetAllHeadquarters get getAllHeadquarters => _getAllHeadquarters;
-  GetHeadquarterById get getHeadquarterById => _getHeadquarterById;
-  FindHeadquarters get findHeadquarters => _findHeadquarters;
-  WatchHeadquarters get watchHeadquarters => _watchHeadquarters;
-
-  static bool initialized = false;
-
-  static Future<void> init() async {
-    if (initialized) return;
-
-    final container = InjectionHeadquarters();
-    // Drift maneja internamente la creación de la base de datos;
-    // solo necesitamos instanciar nuestra clase.
-    container._database = AppDatabaseProvider.instance;
-
-    // DAO
-    container._headquartersDao = HeadquartersDao(container._database);
-
-    // REPOSITORY
-    container._headquartersRepository = HeadquartersRepositoryImpl(
-      container._headquartersDao,
+  // 2. Getter inteligente para el Repositorio (Singleton)
+  HeadquartersRepositoryImpl get headquartersRepository {
+    return _repository ??= HeadquartersRepositoryImpl(
+      HeadquartersDao(AppDatabaseProvider.instance),
     );
-
-    // USECASES
-    container._createHeadquarter = CreateHeadquarter(
-      container._headquartersRepository,
-    );
-
-    container._updateHeadquarter = UpdateHeadquarter(
-      container._headquartersRepository,
-    );
-
-    container._deleteHeadquarter = DeleteHeadquarter(
-      container._headquartersRepository,
-    );
-
-    container._getAllHeadquarters = GetAllHeadquarters(
-      container._headquartersRepository,
-    );
-
-    container._getHeadquarterById = GetHeadquarterById(
-      container._headquartersRepository,
-    );
-
-    container._findHeadquarters = FindHeadquarters(
-      container._headquartersRepository,
-    );
-
-    container._watchHeadquarters = WatchHeadquarters(
-      container._headquartersRepository,
-    );
-
-    initialized = true;
   }
+
+  // 3. Getters de los Use Cases (se instancian solos al llamarlos)
+  CreateHeadquarter get createHeadquarter => CreateHeadquarter(headquartersRepository);
+  UpdateHeadquarter get updateHeadquarter => UpdateHeadquarter(headquartersRepository);
+  DeleteHeadquarter get deleteHeadquarter => DeleteHeadquarter(headquartersRepository);
+  GetAllHeadquarters get getAllHeadquarters => GetAllHeadquarters(headquartersRepository);
+  GetHeadquarterById get getHeadquarterById => GetHeadquarterById(headquartersRepository);
+  FindHeadquarters get findHeadquarters => FindHeadquarters(headquartersRepository);
+  WatchHeadquarters get watchHeadquarters => WatchHeadquarters(headquartersRepository);
+  
+  // 💡 El método static init() YA NO ES NECESARIO. Puedes borrarlo.
 }

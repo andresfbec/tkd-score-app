@@ -6,7 +6,7 @@ class FormValidations {
 
   static String? required(String? value, {String field = 'Este campo'}) {
     if (value == null || value.trim().isEmpty) {
-      return '$field es obligatorio';
+      return 'Campo $field es obligatorio';
     }
     return null;
   }
@@ -64,6 +64,16 @@ class FormValidations {
   // VALIDACIONES COMPUESTAS PARA CAMPOS ESPECÍFICOS  
   // ==========================
 
+  static String? isoDate(String? value, {String field = 'Fecha'}) {
+    final req = required(value, field: field);
+    if (req != null) return req;
+    final d = DateTime.tryParse(value!.trim());
+    if (d == null) {
+      return '$field inválida. Use AAAA-MM-DD';
+    }
+    return null;
+  }
+
   static String? validateName(String? value) {
 
     final requiredError = required(value, field: "Nombre");
@@ -111,6 +121,13 @@ class FormValidations {
     final maxError = maxLength(value, 15, field: "Teléfono");
     if (maxError != null) return maxError;
 
+    return null;
+  }
+
+  static String? validateNotNull<T>(T? value, {String field = 'Este campo'}) {
+    if (value == null) {
+      return '$field es obligatorio';
+    }
     return null;
   }
 

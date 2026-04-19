@@ -11,12 +11,18 @@ import 'package:tkd_score/data/tables/belts.dart';
 import 'package:tkd_score/data/tables/students.dart';
 import 'package:tkd_score/data/tables/tournament.dart';
 import 'package:tkd_score/data/tables/judge.dart';
-import 'package:tkd_score/data/tables/group.dart';
+import 'package:tkd_score/data/tables/groups.dart';
+import 'package:tkd_score/data/tables/combat_settings.dart';
+import 'package:tkd_score/data/tables/combat_rounds.dart';
+import 'package:tkd_score/data/tables/combat_events.dart';
 import '../../../core/constants/database.dart';
 import 'package:tkd_score/data/tables/inscription.dart';
 import 'package:tkd_score/data/tables/versus.dart';
 import 'package:tkd_score/data/tables/score.dart';
 import 'package:tkd_score/data/tables/winner.dart';
+
+// cinturones iniciales (se insertan en la migración onCreate)
+import '../../constants/initial_data.dart';
 
 part 'database.g.dart'; // se generará automáticamente
 
@@ -29,11 +35,14 @@ part 'database.g.dart'; // se generará automáticamente
     SogiBelts,
     Students,
     Tournament,
+    CombatSettings,
     Judge,
     JudgeTournament,
-    Group,
+    Groups,
     Inscription,
     Versus,
+    CombatRounds,
+    CombatEvents,
     Score,
     Winner,
   ],
@@ -43,6 +52,46 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => DatabaseConstants.databaseVersion;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) async {
+      await m.createAll();
+
+      await batch((batch) {
+        // Uso de lista externa
+        batch.insertAll(belts, InitialData.initialBelts);
+      });
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 3) {
+        await customStatement('PRAGMA foreign_keys = OFF');
+        await m.deleteTable('combat_events');
+        await m.deleteTable('combat_rounds');
+        await m.deleteTable('winner');
+        await m.deleteTable('score');
+        await m.deleteTable('versus');
+        await m.deleteTable('inscription');
+        await m.deleteTable('groups');
+        await m.deleteTable('combat_settings');
+        await m.deleteTable('judge_tournament');
+        await m.deleteTable('judge');
+        await m.deleteTable('tournament');
+        await m.deleteTable('sogi_belts');
+        await m.deleteTable('sogis');
+        await m.deleteTable('users');
+        await m.deleteTable('students');
+        await m.deleteTable('belts');
+        await m.deleteTable('headquarters');
+        await customStatement('PRAGMA foreign_keys = ON');
+
+        await m.createAll();
+        await batch((batch) {
+          batch.insertAll(belts, InitialData.initialBelts);
+        });
+      }
+    },
+  );
 
   // Opcional: puedes agregar métodos de utilidad
   Future<void> printDatabasePath() async {

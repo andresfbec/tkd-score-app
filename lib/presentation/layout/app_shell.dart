@@ -9,12 +9,12 @@ import '../widgets/calendars/date_badge.dart';
 import '../widgets/calendars/tournament_calendar.dart';
 
 // ----- PAGES -----
-import '../pages/tournaments_page.dart';
+import '../pages/Tournaments/tournaments_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/judges_page.dart';
 import '../pages/headquarters_page.dart';
 import '../pages/users_page_.dart';
-import '../pages/students_page.dart';
+import '../pages/Students/students_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -159,7 +159,7 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
         body: Builder(
-          builder: (_) => const UserPage(),
+          builder: (_) => const UsersPage(),
         ),
       ),
       PaneItem(

@@ -9,6 +9,9 @@ import '../../domain/usecases/headquarters/get_all_headquarters.dart';
 import '../../domain/usecases/headquarters/find_headquarters.dart';
 import '../../domain/usecases/headquarters/watch_headquarters.dart';
 
+import '../../core/enums/status.dart';
+
+
 class HeadquartersController extends ChangeNotifier {
   final CreateHeadquarter create;
   final UpdateHeadquarter update;
@@ -27,26 +30,43 @@ class HeadquartersController extends ChangeNotifier {
   );
 
   // STATE
-  List<HeadquartersEntity> headquarters = [];
-  bool isLoading = false;
-  String? errorMessage;
+  List<HeadquartersEntity> _allHeadquarters = [];
+
+  Status status = Status.idle;
+  String? message;
+
+  String _searchQuery = "";
 
   StreamSubscription<List<HeadquartersEntity>>? _subscription;
 
+  List<HeadquartersEntity> get headquarters => _allHeadquarters;
+
+  // Getter para la tabla (aplica filtros de búsqueda)
+  List<HeadquartersEntity> get filteredHeadquarters {
+    if (_searchQuery.isEmpty) return _allHeadquarters;
+
+    final query = _searchQuery.toLowerCase();
+    return _allHeadquarters.where((h) {
+      return h.name.toLowerCase().contains(query) ||
+          h.city.toLowerCase().contains(query) ||
+          h.address.toLowerCase().contains(query);
+    }).toList();
+  }
+
   // INIT (STREAM)
   void startListening() {
-    isLoading = true;
+    status = Status.loading;
     notifyListeners();
 
+    _subscription?.cancel(); // cancelar conexion previa (si existe)
     _subscription = watch().listen(
       (data) {
-        headquarters = data;
-        isLoading = false;
+        _allHeadquarters = data;
+        status = Status.success;
         notifyListeners();
       },
       onError: (error) {
-        errorMessage = error.toString();
-        isLoading = false;
+        status = Status.error;
         notifyListeners();
       },
     );
@@ -58,9 +78,10 @@ class HeadquartersController extends ChangeNotifier {
     required String address,
     required String city,
     required String phone,
+    required String master,
   }) async {
     try {
-      isLoading = true;
+      status = Status.loading;
       notifyListeners();
 
       await create(
@@ -70,15 +91,18 @@ class HeadquartersController extends ChangeNotifier {
           address: address,
           city: city,
           phoneNumber: phone,
+          master: master,
         ),
       );
 
-      errorMessage = null;
+      status = Status.success;
+      message = "Sede creada correctamente";
+
     } catch (e) {
-      errorMessage = e.toString();
+      status = Status.error;
+      message = 'No se pudo crear la sede: ${e.toString()}';
     }
 
-    isLoading = false;
     notifyListeners();
   }
 
@@ -89,68 +113,65 @@ class HeadquartersController extends ChangeNotifier {
     String? address,
     String? city,
     String? phone,
+    String? master,
   }) async {
     try {
-      isLoading = true;
+      status = Status.loading;
       notifyListeners();
 
-      await update(
-        id,
-        name: name,
-        address: address,
-        city: city,
-        phone: phone,
-      );
+      await update(id, name: name, address: address, city: city, phone: phone, master: master);
 
-      errorMessage = null;
+      status = Status.success;
+      message = "Sede actualizada correctamente";
     } catch (e) {
-      errorMessage = e.toString();
+      status = Status.error;
+      message = 'No se pudo actualizar la sede: ${e.toString()}';
     }
 
-    isLoading = false;
     notifyListeners();
   }
 
   // DELETE
   Future<void> deleteHeadquarter(int id) async {
     try {
-      isLoading = true;
+      status = Status.loading;
       notifyListeners();
 
       await delete(id);
 
-      errorMessage = null;
+      status = Status.success;
+      message = "Sede eliminada correctamente";
     } catch (e) {
-      errorMessage = e.toString();
+      status = Status.error;
+      message = 'No se pudo eliminar la sede: ${e.toString()}';
     }
 
-    isLoading = false;
     notifyListeners();
   }
 
   // FIND (FILTROS)
-  Future<void> search({
-    String? name,
-    String? city,
-    String? address,
-  }) async {
+  Future<void> search({String? name, String? city, String? address}) async {
+    // No usarlo ya que usamos updateSearch
     try {
-      isLoading = true;
       notifyListeners();
 
-      final result = await find(
-        name: name,
-        city: city,
-        address: address,
-      );
+      final result = await find(name: name, city: city, address: address);
 
-      headquarters = result;
-      errorMessage = null;
+      _allHeadquarters = result;
+      message = null;
     } catch (e) {
-      errorMessage = e.toString();
+      message = e.toString();
     }
 
-    isLoading = false;
+    notifyListeners();
+  }
+
+  ////////////////////////////
+  /// SECONDARY METHODS ///
+  ///////////////////////////
+
+  void updateSearch(String query) {
+    _searchQuery = query;
     notifyListeners();
   }
 
@@ -162,11 +183,19 @@ class HeadquartersController extends ChangeNotifier {
   // CLEANUP
   @override
   void dispose() {
-    _subscription?.cancel();
+    _subscription?.cancel(); // cancelar conexion activa al stream
     super.dispose();
   }
 
-  void clearError() { // Limpiar mensajes de error
-    errorMessage = null;
+  void clearError() {
+    status = Status.idle;
+    // Limpiar mensajes de error
+    message = null;
+    notifyListeners();
+  }
+
+  void clearMessages() {
+    status = Status.idle;
+    message = null;
   }
 }

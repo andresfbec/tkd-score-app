@@ -8,25 +8,29 @@ import '../../core/theme/theme_provider.dart';
 import '../core/config/containers/dependency_headquarters.dart';
 import '../core/config/containers/dependency_user.dart';
 import '../presentation/controllers/session_controller.dart';
+import '../core/config/containers/dependency_students.dart';
+import '../core/config/containers/dependency_tournament.dart';
+import '../presentation/controllers/students_controller.dart';
+import '../presentation/controllers/tournaments_controller.dart';
 import 'ui_state_provider.dart';
 
 class AppProviders {
   static Future<List<ChangeNotifierProvider>> init() async {
     // Inicializaciones necesarias
     await InjectionUser.init();
-    await InjectionHeadquarters.init();
+
 
     final containerUser = InjectionUser();
     final containerHeadquarters = InjectionHeadquarters();
+    final containerStudents = InjectionStudents();
+    final containerTournament = InjectionTournament();
 
     return [
       // ThemeProvider
       ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()),
 
       // UIStateProvider (para manejar estados de UI como modales, paneles, etc.)
-      ChangeNotifierProvider<UIStateProvider>(
-        create: (_) => UIStateProvider(),
-      ),
+      ChangeNotifierProvider<UIStateProvider>(create: (_) => UIStateProvider()),
 
       // LoginController
       ChangeNotifierProvider<LoginController>(
@@ -38,13 +42,31 @@ class AppProviders {
 
       ChangeNotifierProvider<HeadquartersController>(
         create: (_) => HeadquartersController(
-          containerHeadquarters.createHeadquarter, 
-          containerHeadquarters.updateHeadquarter, 
-          containerHeadquarters.deleteHeadquarter, 
-          containerHeadquarters.getAllHeadquarters, 
+          containerHeadquarters.createHeadquarter,
+          containerHeadquarters.updateHeadquarter,
+          containerHeadquarters.deleteHeadquarter,
+          containerHeadquarters.getAllHeadquarters,
           containerHeadquarters.findHeadquarters,
           containerHeadquarters.watchHeadquarters,
         )..startListening(), // empieza a escuchar el stream al crear el controller
+      ),
+      ChangeNotifierProvider<TournamentsController>(
+        create: (_) => TournamentsController(
+          containerTournament.createTournament,
+          containerTournament.updateTournament,
+          containerTournament.deleteTournament,
+          containerTournament.findTournaments,
+          containerTournament.watchTournaments,
+          containerTournament.startTournament,
+        )..startListening(),
+      ),
+      ChangeNotifierProvider<StudentsController>(
+        create: (_) => StudentsController(
+          createUseCase: containerStudents.createStudent,
+          updateUseCase: containerStudents.updateStudent,
+          deleteUseCase: containerStudents.deleteStudent,
+          watchUseCase: containerStudents.watchStudents,
+        )..startListening(),
       ),
       ChangeNotifierProvider<UserController>(
         create: (_) => UserController(

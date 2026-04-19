@@ -11,6 +11,7 @@ class HeadquartersMapper {
       address: data.address,
       city: data.city,
       phoneNumber: data.phone,
+      master: data.master,
     );
   }
 
@@ -21,6 +22,7 @@ class HeadquartersMapper {
     address: Value(entity.address),
     city: Value(entity.city),
     phone: Value(entity.phoneNumber),
+    master: Value(entity.master), 
   );
 }
 }

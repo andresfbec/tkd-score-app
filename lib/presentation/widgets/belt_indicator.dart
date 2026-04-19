@@ -12,31 +12,48 @@ class BeltIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = FluentTheme.of(context).brightness == Brightness.dark;
-
-    // Lógica para el color del borde
-    Color borderColor;
-    if (leftColor == Colors.black && rightColor == Colors.black) {
-      borderColor = const Color.fromARGB(255, 255, 217, 0); // Dorado
-    } else {
-      borderColor = const Color.fromARGB(255, 128, 128, 128); // Negro por defecto
-    }
-
     return Container(
-      width: 70,
-      height: 12,
+      width: 60,
+      height: 10,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(3),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(6),
-        child: Row(
+        borderRadius: BorderRadius.circular(3),
+        child: Stack(
           children: [
-            Expanded(child: Container(color: leftColor)),
-            Expanded(child: Container(color: rightColor)),
+            Row(
+              children: [
+                Expanded(child: _segment(leftColor)),
+                Expanded(child: _segment(rightColor)),
+              ],
+            ),
+
+            // "Nudo" del cinturón (detalle visual clave)
+            Center(
+              child: Container(
+                width: 2,
+                height: 10,
+                color: (leftColor == Colors.black && rightColor == Colors.black)
+                    ? const Color(0xFFFFD700)
+                    : Colors.black.withOpacity(0.4),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _segment(Color color) {
+    final isWhite = color == Colors.white;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        border: isWhite
+            ? Border.all(color: Colors.grey.withOpacity(0.6), width: 0.5)
+            : null,
       ),
     );
   }
