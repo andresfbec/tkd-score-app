@@ -40,12 +40,24 @@ class TournamentCard extends StatelessWidget {
     }
   }
 
+  int _getStepIndex(String phase) {
+    final p = TournamentLifecycle.normalize(phase);
+    if (p == TournamentLifecycle.created) return 0;
+    if (p == TournamentLifecycle.settingsReady) return 1;
+    if (p == TournamentLifecycle.groupsReady || p == TournamentLifecycle.readyToStart) return 2;
+    if (p == TournamentLifecycle.live) return 3;
+    if (p == TournamentLifecycle.finished) return 4;
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final phase = TournamentLifecycle.normalize(tournament.setupPhase);
-    final locked = TournamentLifecycle.isLockedForEditing(tournament.setupPhase);
+    final locked = TournamentLifecycle.isLockedForEditing(
+      tournament.setupPhase,
+    );
     final showConfigure = TournamentLifecycle.showConfigureButton(
       tournament.setupPhase,
     );
@@ -58,6 +70,12 @@ class TournamentCard extends StatelessWidget {
     final borderColor = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.06);
+    final headerBgColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
+    final secondaryTextColor = isDark
+        ? Colors.white.withValues(alpha: 0.65)
+        : Colors.black.withValues(alpha: 0.65);
 
     return Container(
       decoration: BoxDecoration(
@@ -65,130 +83,266 @@ class TournamentCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF9F9F9),
         border: Border.all(color: borderColor),
       ),
-      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  tournament.name,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
+          // Header con el título
+          Container(
+            decoration: BoxDecoration(
+              color: headerBgColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
               ),
-              if (!locked) ...[
-                IconButton(
-                  icon: const Icon(FluentIcons.edit, size: 16),
-                  onPressed: onEdit,
-                ),
-                IconButton(
-                  icon: const Icon(FluentIcons.delete, size: 16),
-                  onPressed: onDelete,
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            tournament.location,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.72)
-                  : Colors.black.withValues(alpha: 0.65),
+              border: Border(bottom: BorderSide(color: borderColor)),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${_formatDate(tournament.dateStart)} → ${_formatDate(tournament.dateEnd)}',
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.55)
-                  : Colors.black.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(
-                FluentIcons.info,
-                size: 14,
-                color: theme.accentColor,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  TournamentLifecycle.labelEs(tournament.setupPhase),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: theme.accentColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _disciplineLabel(tournament.discipline),
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.45)
-                  : Colors.black.withValues(alpha: 0.45),
-            ),
-          ),
-          const Spacer(),
-          if (!locked && (showConfigure || showStart)) ...[
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.end,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (showConfigure && onConfigure != null)
-                  FilledButton(
-                    onPressed: onConfigure,
-                    child: const Text('Configurar'),
+                Expanded(
+                  child: Text(
+                    tournament.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                if (showStart && onStart != null)
-                  Button(
-                    onPressed: onStart,
-                    child: const Text('Iniciar torneo'),
+                ),
+                if (!locked) ...[
+                  IconButton(
+                    icon: const Icon(FluentIcons.edit, size: 16),
+                    onPressed: onEdit,
                   ),
+                  IconButton(
+                    icon: const Icon(FluentIcons.delete, size: 16),
+                    onPressed: onDelete,
+                  ),
+                ],
               ],
             ),
-          ],
-          if (locked)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                phase == TournamentLifecycle.finished
-                    ? 'Torneo finalizado'
-                    : 'Torneo en curso — edición deshabilitada',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontStyle: FontStyle.italic,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.black.withValues(alpha: 0.5),
-                ),
+          ),
+          // Contenido principal
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Ubicación
+                  Row(
+                    children: [
+                      Icon(
+                        FluentIcons.location,
+                        size: 16,
+                        color: theme.accentColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          tournament.location,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: secondaryTextColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Fechas
+                  Row(
+                    children: [
+                      Icon(
+                        FluentIcons.calendar,
+                        size: 16,
+                        color: theme.accentColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${_formatDate(tournament.dateStart)} → ${_formatDate(tournament.dateEnd)}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: secondaryTextColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Disciplina
+                  Row(
+                    children: [
+                      Icon(FluentIcons.event, size: 16, color: theme.accentColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _disciplineLabel(tournament.discipline),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: secondaryTextColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Estado
+                  Row(
+                    children: [
+                      Icon(FluentIcons.info, size: 16, color: theme.accentColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          TournamentLifecycle.labelEs(tournament.setupPhase),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: theme.accentColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _StepIndicator(
+                    currentStep: _getStepIndex(tournament.setupPhase),
+                  ),
+                  if (locked)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            FluentIcons.lock,
+                            size: 16,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : Colors.black.withValues(alpha: 0.3),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              phase == TournamentLifecycle.finished
+                                  ? 'Torneo finalizado'
+                                  : 'Torneo en curso',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.5)
+                                    : Colors.black.withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const Spacer(),
+                  if (!locked && (showConfigure || showStart)) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        if (showConfigure && onConfigure != null)
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: onConfigure,
+                              child: const Text('Configurar'),
+                            ),
+                          ),
+                        if (showStart && onStart != null) ...[
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Button(
+                              onPressed: onStart,
+                              child: const Text('Iniciar'),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ],
               ),
             ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _StepIndicator extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+
+  const _StepIndicator({required this.currentStep, this.totalSteps = 5});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final inactiveColor = isDark
+        ? Colors.white.withValues(alpha: 0.1)
+        : Colors.black.withValues(alpha: 0.1);
+    final activeColor = theme.accentColor;
+
+    final stepNames = [
+      'Creado',
+      'Configuración definida',
+      'Grupos definidos',
+      'En ejecución',
+      'Finalizado'
+    ];
+
+    List<Widget> children = [];
+    for (int i = 0; i < totalSteps; i++) {
+      final isActive = i <= currentStep;
+      final isLast = i == totalSteps - 1;
+
+      // Dot
+      children.add(
+        Tooltip(
+          message: stepNames[i],
+          child: Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isActive ? activeColor : inactiveColor,
+            ),
+          ),
+        ),
+      );
+
+      // Line
+      if (!isLast) {
+        final isLineActive = i < currentStep;
+        children.add(
+          Expanded(
+            child: Container(
+              height: 2,
+              color: isLineActive ? activeColor : inactiveColor,
+            ),
+          ),
+        );
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(children: children),
     );
   }
 }

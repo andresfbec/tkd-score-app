@@ -12,6 +12,7 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/input_search.dart';
 import 'create_tournament_page.dart';
 import 'edit_tournament_page.dart';
+import 'combat_settings_page.dart';
 
 class TournamentsPage extends StatelessWidget {
   const TournamentsPage({super.key});
@@ -32,21 +33,10 @@ class TournamentsPage extends StatelessWidget {
     );
   }
 
-  void _openConfigurePlaceholder(BuildContext context, TournamentEntity t) {
-    showDialog(
-      context: context,
-      builder: (ctx) => ContentDialog(
-        title: const Text('Configurar torneo'),
-        content: Text(
-          'Aquí enlazarás las reglas de combate y la definición de grupos '
-          'para "${t.name}". (Pantalla en construcción.)',
-        ),
-        actions: [
-          FilledButton(
-            child: const Text('Entendido'),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-        ],
+  void _openConfigure(BuildContext context, TournamentEntity t) {
+    Navigator.of(context).push(
+      FluentPageRoute(
+        builder: (_) => CombatSettingsPage(tournament: t),
       ),
     );
   }
@@ -174,7 +164,7 @@ class TournamentsPage extends StatelessWidget {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.02,
+                        childAspectRatio: 1.3,
                       ),
                       itemCount: list.length,
                       itemBuilder: (context, index) {
@@ -184,7 +174,7 @@ class TournamentsPage extends StatelessWidget {
                           hasCombatSettings: false,
                           hasGroupsDefined: false,
                           onConfigure: () =>
-                              _openConfigurePlaceholder(context, t),
+                              _openConfigure(context, t),
                           onStart: () => _confirmStart(context, t),
                           onEdit: () => _openEdit(context, t),
                           onDelete: () => _confirmDelete(context, t),
