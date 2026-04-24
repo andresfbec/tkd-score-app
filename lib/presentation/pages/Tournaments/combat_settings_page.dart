@@ -5,6 +5,8 @@ import '../../../core/constants/app.dart';
 import '../../../core/utils/status_handler.dart';
 import '../../../domain/entities/tournament_entity.dart';
 import '../../controllers/combat_settings_controller.dart';
+import 'groups_tournament.dart';
+import 'inscriptions_tournament.dart';
 import 'settings_tournament.dart';
 
 class CombatSettingsPage extends StatefulWidget {
@@ -57,7 +59,7 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
               ),
               const TextSpan(text: '  >  '),
               TextSpan(
-                text: 'Configurar: ${widget.tournament.name}',
+                text: 'Configuración de Torneo ${widget.tournament.name}',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,
                   fontWeight: AppTypography.semiBold,
@@ -72,16 +74,41 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
       content: TabView(
         currentIndex: _currentIndex,
         onChanged: (index) => setState(() => _currentIndex = index),
+        tabWidthBehavior: TabWidthBehavior.equal,
+        closeButtonVisibility: CloseButtonVisibilityMode.never,
         tabs: [
           Tab(
-            text: const Text('Configuración'),
+            text: Text(
+              'Reglas de Torneo',
+              style: TextStyle(
+                fontSize: AppTypography.titleMedium,
+                fontWeight: _currentIndex == 0 ? AppTypography.semiBold : AppTypography.regular,
+                color: _currentIndex == 0 ? theme.accentColor : AppColors.getTextSecondary(isDark),
+              ),
+            ),
             body: SettingsTournament(tournament: widget.tournament),
           ),
           Tab(
-            text: const Text('Grupos'),
-            body: const Center(
-              child: Text('Grupos en construcción', style: TextStyle(fontSize: 18)),
+            text: Text(
+              'Inscripciones',
+              style: TextStyle(
+                fontSize: AppTypography.titleMedium,
+                fontWeight: _currentIndex == 1 ? AppTypography.semiBold : AppTypography.regular,
+                color: _currentIndex == 1 ? theme.accentColor : AppColors.getTextSecondary(isDark),
+              ),
             ),
+            body: InscriptionsTournament(tournament: widget.tournament),
+          ),
+          Tab(
+            text: Text(
+              'Grupos',
+              style: TextStyle(
+                fontSize: AppTypography.titleMedium,
+                fontWeight: _currentIndex == 2 ? AppTypography.semiBold : AppTypography.regular,
+                color: _currentIndex == 2 ? theme.accentColor : AppColors.getTextSecondary(isDark),
+              ),
+            ),
+            body: GroupsTournament(tournament: widget.tournament),
           ),
         ],
       ),

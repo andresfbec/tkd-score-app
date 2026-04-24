@@ -9,6 +9,7 @@ import '../../../domain/usecases/combat_settings/update_combat_setting.dart';
 import '../../../domain/usecases/combat_settings/delete_combat_setting.dart';
 import '../../../domain/usecases/combat_settings/watch_combat_settings.dart';
 import '../../../domain/usecases/combat_settings/get_combat_setting_by_tournament_id.dart';
+import '../../../domain/usecases/combat_settings/get_combat_setting_by_id.dart';
 
 class InjectionCombatSettings {
   static final InjectionCombatSettings _instance = InjectionCombatSettings._internal();
@@ -28,4 +29,5 @@ class InjectionCombatSettings {
   DeleteCombatSetting get deleteCombatSetting => DeleteCombatSetting(_getRepo);
   WatchCombatSettings get watchCombatSettings => WatchCombatSettings(_getRepo);
   GetCombatSettingByTournamentId get getCombatSettingByTournamentId => GetCombatSettingByTournamentId(_getRepo);
+  GetCombatSettingById get getCombatSettingById => GetCombatSettingById(_getRepo);
 }

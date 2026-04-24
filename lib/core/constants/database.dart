@@ -4,7 +4,7 @@ class DatabaseConstants {
   static const String databaseName = 'tkd_.db';
 
   // Version of database incrementation in every change of the structure
-  static const int databaseVersion = 3;
+  static const int databaseVersion = 4;
 
   // Configuration of backups (if needed in the future)
   static const int maBackupFiles = 10;

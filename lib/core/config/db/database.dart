@@ -64,7 +64,7 @@ class AppDatabase extends _$AppDatabase {
       });
     },
     onUpgrade: (m, from, to) async {
-      if (from < 3) {
+      if (from < 4) {
         await customStatement('PRAGMA foreign_keys = OFF');
         await m.deleteTable('combat_events');
         await m.deleteTable('combat_rounds');

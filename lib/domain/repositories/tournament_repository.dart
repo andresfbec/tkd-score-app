@@ -13,4 +13,5 @@ abstract class TournamentRepository {
     DateTime? dateStart,
   });
   Stream<List<TournamentEntity>> watchAll();
+  Future<void> syncSetupPhase(int tournamentId);
 }

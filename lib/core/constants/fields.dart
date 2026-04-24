@@ -23,6 +23,20 @@ class TournamentFilter {
   });
 }
 
+class InscriptionFilter {
+  final int? id;
+  final int? studentId;
+  final int? tournamentId;
+  final int? groupId;
+
+  const InscriptionFilter({
+    this.id,
+    this.studentId,
+    this.tournamentId,
+    this.groupId,
+  });
+}
+
 class DatabaseFields {
   DatabaseFields._(); // Constructor privado para evitar instancias
 

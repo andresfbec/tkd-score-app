@@ -7,6 +7,8 @@ import '../../domain/usecases/combat_settings/update_combat_setting.dart';
 import '../../domain/usecases/combat_settings/delete_combat_setting.dart';
 import '../../domain/usecases/combat_settings/watch_combat_settings.dart';
 import '../../domain/usecases/combat_settings/get_combat_setting_by_tournament_id.dart';
+import '../../domain/usecases/combat_settings/get_combat_setting_by_id.dart';
+import '../../domain/usecases/tournament/sync_tournament_setup_phase.dart';
 
 import '../../core/enums/status.dart';
 
@@ -16,6 +18,8 @@ class CombatSettingsController extends ChangeNotifier {
   final DeleteCombatSetting deleteUseCase;
   final WatchCombatSettings watchUseCase;
   final GetCombatSettingByTournamentId getByTournamentIdUseCase;
+  final GetCombatSettingById getByIdUseCase;
+  final SyncTournamentSetupPhase syncUseCase;
 
   CombatSettingsController({
     required this.createUseCase,
@@ -23,6 +27,8 @@ class CombatSettingsController extends ChangeNotifier {
     required this.deleteUseCase,
     required this.watchUseCase,
     required this.getByTournamentIdUseCase,
+    required this.getByIdUseCase,
+    required this.syncUseCase,
   });
 
   // ===============================
@@ -97,6 +103,7 @@ class CombatSettingsController extends ChangeNotifier {
       notifyListeners();
 
       await createUseCase(setting);
+      await syncUseCase(setting.tournamentId);
 
       status = Status.success;
       message = "Configuración de combate registrada correctamente";
@@ -114,6 +121,7 @@ class CombatSettingsController extends ChangeNotifier {
       notifyListeners();
 
       await updateUseCase(setting);
+      await syncUseCase(setting.tournamentId);
 
       status = Status.success;
       message = "Configuración actualizada correctamente";
@@ -130,7 +138,14 @@ class CombatSettingsController extends ChangeNotifier {
       status = Status.loading;
       notifyListeners();
 
+      // Para remover, necesitamos saber de qué torneo era para sincronizar
+      final existing = await getByIdUseCase(id);
+      
       await deleteUseCase(id);
+      
+      if (existing != null) {
+        await syncUseCase(existing.tournamentId);
+      }
 
       status = Status.success;
       message = "Configuración eliminada o inactivada con éxito";

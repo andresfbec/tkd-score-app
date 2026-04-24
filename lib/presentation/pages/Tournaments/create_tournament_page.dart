@@ -96,7 +96,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
               const TextSpan(text: '  >  '),
               TextSpan(
                 text: widget.isEditMode
-                    ? 'Editar: ${widget.existing!.name}'
+                    ? 'Editar ${widget.existing!.name}'
                     : 'Crear torneo',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,

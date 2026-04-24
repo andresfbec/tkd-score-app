@@ -6913,11 +6913,11 @@ class $InscriptionTable extends Inscription
   late final GeneratedColumn<int> groupId = GeneratedColumn<int>(
     'group_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES "groups" (id) ON UPDATE CASCADE ON DELETE RESTRICT',
+      'REFERENCES "groups" (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
@@ -7025,8 +7025,6 @@ class $InscriptionTable extends Inscription
         _groupIdMeta,
         groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_groupIdMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -7083,7 +7081,7 @@ class $InscriptionTable extends Inscription
       groupId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}group_id'],
-      )!,
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -7114,7 +7112,7 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
   final DateTime date;
   final int studentId;
   final int tournamentId;
-  final int groupId;
+  final int? groupId;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int synchronized;
@@ -7124,7 +7122,7 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
     required this.date,
     required this.studentId,
     required this.tournamentId,
-    required this.groupId,
+    this.groupId,
     required this.createdAt,
     required this.updatedAt,
     required this.synchronized,
@@ -7137,7 +7135,9 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
     map['date'] = Variable<DateTime>(date);
     map['student_id'] = Variable<int>(studentId);
     map['tournament_id'] = Variable<int>(tournamentId);
-    map['group_id'] = Variable<int>(groupId);
+    if (!nullToAbsent || groupId != null) {
+      map['group_id'] = Variable<int>(groupId);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['synchronized'] = Variable<int>(synchronized);
@@ -7151,7 +7151,9 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
       date: Value(date),
       studentId: Value(studentId),
       tournamentId: Value(tournamentId),
-      groupId: Value(groupId),
+      groupId: groupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupId),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       synchronized: Value(synchronized),
@@ -7169,7 +7171,7 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
       date: serializer.fromJson<DateTime>(json['date']),
       studentId: serializer.fromJson<int>(json['studentId']),
       tournamentId: serializer.fromJson<int>(json['tournamentId']),
-      groupId: serializer.fromJson<int>(json['groupId']),
+      groupId: serializer.fromJson<int?>(json['groupId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       synchronized: serializer.fromJson<int>(json['synchronized']),
@@ -7184,7 +7186,7 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
       'date': serializer.toJson<DateTime>(date),
       'studentId': serializer.toJson<int>(studentId),
       'tournamentId': serializer.toJson<int>(tournamentId),
-      'groupId': serializer.toJson<int>(groupId),
+      'groupId': serializer.toJson<int?>(groupId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'synchronized': serializer.toJson<int>(synchronized),
@@ -7197,7 +7199,7 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
     DateTime? date,
     int? studentId,
     int? tournamentId,
-    int? groupId,
+    Value<int?> groupId = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
     int? synchronized,
@@ -7207,7 +7209,7 @@ class InscriptionData extends DataClass implements Insertable<InscriptionData> {
     date: date ?? this.date,
     studentId: studentId ?? this.studentId,
     tournamentId: tournamentId ?? this.tournamentId,
-    groupId: groupId ?? this.groupId,
+    groupId: groupId.present ? groupId.value : this.groupId,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     synchronized: synchronized ?? this.synchronized,
@@ -7279,7 +7281,7 @@ class InscriptionCompanion extends UpdateCompanion<InscriptionData> {
   final Value<DateTime> date;
   final Value<int> studentId;
   final Value<int> tournamentId;
-  final Value<int> groupId;
+  final Value<int?> groupId;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
@@ -7300,14 +7302,13 @@ class InscriptionCompanion extends UpdateCompanion<InscriptionData> {
     this.date = const Value.absent(),
     required int studentId,
     required int tournamentId,
-    required int groupId,
+    this.groupId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   }) : studentId = Value(studentId),
-       tournamentId = Value(tournamentId),
-       groupId = Value(groupId);
+       tournamentId = Value(tournamentId);
   static Insertable<InscriptionData> custom({
     Expression<int>? id,
     Expression<DateTime>? date,
@@ -7337,7 +7338,7 @@ class InscriptionCompanion extends UpdateCompanion<InscriptionData> {
     Value<DateTime>? date,
     Value<int>? studentId,
     Value<int>? tournamentId,
-    Value<int>? groupId,
+    Value<int?>? groupId,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? synchronized,
@@ -11243,6 +11244,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       on: TableUpdateQuery.onTableName(
         'tournament',
         limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('inscription', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'groups',
+        limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('inscription', kind: UpdateKind.update)],
     ),
@@ -17523,7 +17531,7 @@ typedef $$InscriptionTableCreateCompanionBuilder =
       Value<DateTime> date,
       required int studentId,
       required int tournamentId,
-      required int groupId,
+      Value<int?> groupId,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -17535,7 +17543,7 @@ typedef $$InscriptionTableUpdateCompanionBuilder =
       Value<DateTime> date,
       Value<int> studentId,
       Value<int> tournamentId,
-      Value<int> groupId,
+      Value<int?> groupId,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -17588,9 +17596,9 @@ final class $$InscriptionTableReferences
     $_aliasNameGenerator(db.inscription.groupId, db.groups.id),
   );
 
-  $$GroupsTableProcessedTableManager get groupId {
-    final $_column = $_itemColumn<int>('group_id')!;
-
+  $$GroupsTableProcessedTableManager? get groupId {
+    final $_column = $_itemColumn<int>('group_id');
+    if ($_column == null) return null;
     final manager = $$GroupsTableTableManager(
       $_db,
       $_db.groups,
@@ -18316,7 +18324,7 @@ class $$InscriptionTableTableManager
                 Value<DateTime> date = const Value.absent(),
                 Value<int> studentId = const Value.absent(),
                 Value<int> tournamentId = const Value.absent(),
-                Value<int> groupId = const Value.absent(),
+                Value<int?> groupId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -18338,7 +18346,7 @@ class $$InscriptionTableTableManager
                 Value<DateTime> date = const Value.absent(),
                 required int studentId,
                 required int tournamentId,
-                required int groupId,
+                Value<int?> groupId = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),

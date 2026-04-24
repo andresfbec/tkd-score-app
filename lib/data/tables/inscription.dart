@@ -21,10 +21,10 @@ class Inscription extends Table {
     onUpdate: KeyAction.cascade,
   )();
 
-  IntColumn get groupId => integer().references(
+  IntColumn get groupId => integer().nullable().references(
     Groups,
     #id,
-    onDelete: KeyAction.restrict,
+    onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,
   )();
 

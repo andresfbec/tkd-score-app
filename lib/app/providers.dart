@@ -13,7 +13,9 @@ import '../core/config/containers/dependency_tournament.dart';
 import '../presentation/controllers/students_controller.dart';
 import '../presentation/controllers/tournaments_controller.dart';
 import '../presentation/controllers/combat_settings_controller.dart';
+import '../presentation/controllers/inscriptions_controller.dart';
 import '../core/config/containers/dependency_combat_settings.dart';
+import '../core/config/containers/dependency_inscriptions.dart';
 import 'ui_state_provider.dart';
 
 class AppProviders {
@@ -27,6 +29,7 @@ class AppProviders {
     final containerStudents = InjectionStudents();
     final containerTournament = InjectionTournament();
     final containerCombatSettings = InjectionCombatSettings();
+    final containerInscriptions = InjectionInscriptions();
 
     return [
       // ThemeProvider
@@ -78,6 +81,8 @@ class AppProviders {
           deleteUseCase: containerCombatSettings.deleteCombatSetting,
           watchUseCase: containerCombatSettings.watchCombatSettings,
           getByTournamentIdUseCase: containerCombatSettings.getCombatSettingByTournamentId,
+          getByIdUseCase: containerCombatSettings.getCombatSettingById,
+          syncUseCase: containerTournament.syncTournamentSetupPhase,
         ), // No usamos ..startListening() a menos que lo requieras globalmente.
       ),
       ChangeNotifierProvider<UserController>(
@@ -88,6 +93,13 @@ class AppProviders {
       ),
       ChangeNotifierProvider<SessionController>(
         create: (_) => containerUser.sessionController,
+      ),
+      ChangeNotifierProvider<InscriptionsController>(
+        create: (_) => InscriptionsController(
+          createUseCase: containerInscriptions.createInscription,
+          deleteUseCase: containerInscriptions.deleteInscription,
+          getByTournamentUseCase: containerInscriptions.getInscriptionsByTournament,
+        ),
       ),
     ];
   }

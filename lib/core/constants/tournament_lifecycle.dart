@@ -40,7 +40,7 @@ abstract class TournamentLifecycle {
 
   static bool showConfigureButton(String phase) {
     final p = normalize(phase);
-    return p == created;
+    return p == created || p == settingsReady || p == groupsReady;
   }
 
   /// Puede iniciarse si la fase lo indica o si hay señal explícita de reglas + grupos (cuando conectes DAOs).
