@@ -23,6 +23,7 @@ class _InscriptionsTournamentState extends State<InscriptionsTournament> {
     // Cargamos las inscripciones actuales al iniciar la pestaña
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InscriptionsController>().loadInscriptions(widget.tournament.id!);
+      context.read<StudentsController>().startListening(); // Aseguramos que se vean todos los alumnos de todas las sedes
     });
   }
 

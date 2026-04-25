@@ -52,7 +52,15 @@ class StudentsPage extends StatefulWidget {
 }
 
 class _StudentsPageState extends State<StudentsPage> {
-  late StudentsController studentsController;
+  @override
+  void initState() {
+    super.initState();
+    // Al entrar a la página de alumnos, nos aseguramos de que el stream esté limpio (mostrando todos)
+    // Esto evita que si venimos de "Sedes", la tabla aparezca filtrada por la sede que seleccionamos allá.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StudentsController>().startListening();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

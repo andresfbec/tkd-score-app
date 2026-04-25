@@ -79,7 +79,7 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
         tabs: [
           Tab(
             text: Text(
-              'Reglas de Torneo',
+              'Reglas',
               style: TextStyle(
                 fontSize: AppTypography.titleMedium,
                 fontWeight: _currentIndex == 0 ? AppTypography.semiBold : AppTypography.regular,

@@ -8,7 +8,6 @@ import '../../app/ui_state_provider.dart';
 
 // Mockers
 import '../mockers/headquarters_mock.dart';
-import '../mockers/students_card_mock.dart';
 
 // Widgets
 import '../widgets/table_grid/custom_table.dart';
@@ -17,9 +16,20 @@ import '../widgets/input_search.dart';
 import '../widgets/dropdown_filter.dart';
 import '../widgets/cards/student_card.dart';
 import '../widgets/modals/custom_form_modal.dart';
+import 'Students/create_student_page.dart';
+import 'Students/edit_students_page.dart';
 
 // Controller
 import '../controllers/headquarters_controller.dart';
+import '../controllers/students_controller.dart';
+
+// Entities
+import '../../domain/entities/headquarters_entity.dart';
+import '../../domain/entities/students_entity.dart';
+
+// Utils
+import '../../core/utils/format_date.dart';
+import '../../core/utils/parse_color.dart';
 
 import '../../core/enums/input_type.dart';
 import '../forms/validators.dart';
@@ -211,6 +221,39 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Cuando la página vuelve a estar activa (ej. al cambiar de pestaña),
+    // si hay una sede seleccionada en el UIStateProvider, nos aseguramos
+    // de que el StudentsController tenga aplicado el filtro correcto.
+    final ui = Provider.of<UIStateProvider>(context);
+    final studentsController = Provider.of<StudentsController>(context, listen: false);
+    final selectedHq = ui.selectedHeadquarter as HeadquartersEntity?;
+    
+    if (selectedHq != null) {
+      // Solo disparamos el stream si el filtro actual del controlador es diferente
+      // (así evitamos bucles infinitos y peticiones innecesarias)
+      final currentHqIds = studentsController.currentHqIds;
+      final isAlreadyFiltered = currentHqIds != null && 
+                                currentHqIds.isNotEmpty && 
+                                currentHqIds.first == selectedHq.id;
+
+      if (!isAlreadyFiltered) {
+        Future.microtask(() {
+          if (mounted) {
+             studentsController.startListening(hqIds: [selectedHq.id!]);
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(
       context,
@@ -218,10 +261,15 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
     final bool isDark = themeProvider.isDarkMode; // tema oscuro o claro
     final ui = context.watch<UIStateProvider>();
     final controller = context.watch<HeadquartersController>();
+    final studentsController = context.watch<StudentsController>();
+
+    final HeadquartersEntity? selectedHq = ui.selectedHeadquarter as HeadquartersEntity?;
+    final studentsForHq = selectedHq != null ? studentsController.students : [];
     
     
     // mensajes de error y estados
-    handleStatus(context, controller); // maneja estados y notificaciones
+    handleStatus(context, controller); // maneja estados y notificaciones de sedes
+    handleStatus(context, studentsController); // maneja estados y notificaciones de alumnos
 
      /// CLAVE: cada vez que se reconstruya el widget (ej. por un cambio en el provider) sincronizamos la selección del DataGrid con el selectedRow del provider
 
@@ -300,7 +348,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
 
                 const Spacer(), // empuja el dropdown hacia la derecha
 
-                if (ui.showHeadquartersDetail) ...[
+                if (ui.showHeadquartersDetail && studentsForHq.isNotEmpty) ...[
                   const SizedBox(width: 12),
 
                   Container(
@@ -326,7 +374,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '24', // numero de alumnos en la sede seleccionada (ponerlo mas adelante dinámico)
+                          '${studentsForHq.length}', 
                           style: FluentTheme.of(context).typography.body
                               ?.copyWith(
                                 fontSize: 13,
@@ -342,11 +390,22 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
 
                 const SizedBox(width: 12),
 
-                if (ui.showHeadquartersDetail)
+                if (ui.showHeadquartersDetail &&  studentsForHq.isNotEmpty)
                   FluentActionButton(
                     icon: FluentIcons.people_add,
                     label: "Añadir alumno",
-                    onPressed: () {},
+                    onPressed: () {
+                      if (selectedHq != null) {
+                        Navigator.push(
+                          context,
+                          FluentPageRoute(
+                            builder: (context) => StudentFormPage(
+                              initialHeadquarterId: selectedHq.id,
+                            ),
+                          ),
+                        );
+                      }
+                    },
                     filled: true,
                   ),
 
@@ -386,11 +445,16 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                         isSameRow: (row1, row2) =>
                             row1['headquarter'].id == row2['headquarter'].id,
                         onRowSelected: (selectedRow) {
-                          final hq = selectedRow['headquarter'];
+                          final hq = selectedRow['headquarter'] as HeadquartersEntity;
 
                           context.read<UIStateProvider>().selectHeadquarter(
                             hq,
                             selectedRow,
+                          );
+
+                          // Filtrado dinámico a través del stream (Backend/Data Layer)
+                          context.read<StudentsController>().startListening(
+                            hqIds: [hq.id!],
                           );
                         },
                         onEdit: (row) => showEditHeadquarterModal(row),
@@ -431,23 +495,58 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                                 padding: const EdgeInsets.only(
                                   right: 12,
                                 ), // espacio para scrollbar
-                                itemCount: mockStudents.length,
+                                itemCount: studentsForHq.length,
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(height: 12),
                                 itemBuilder: (context, index) {
-                                  final student = mockStudents[index];
+                                  final student = studentsForHq[index];
                                   return StudentCard(
-                                    fullName: student.fullName,
-                                    age: student.age,
-                                    idNumber: student.idNumber,
-                                    leftBeltColor: student.leftBelt,
-                                    rightBeltColor: student.rightBelt,
-                                    onEdit: () =>
-                                        print("Editar: ${student.fullName}"),
-                                    onDelete: () =>
-                                        print("Borrar: ${student.fullName}"),
-                                    onCopy: () =>
-                                        print("Copiar ID: ${student.idNumber}"),
+                                    fullName: "${student.names} ${student.surnames}",
+                                    age: DateHelper.calculateAge(student.birthDate),
+                                    idNumber: student.numberIdentify,
+                                    leftBeltColor: ColorParser.fromName(student.beltPrimaryColor),
+                                    rightBeltColor: ColorParser.fromName(student.beltSecondaryColor),
+                                    onEdit: () {
+                                      Navigator.push(
+                                        context,
+                                        FluentPageRoute(
+                                          builder: (context) => StudentEditPage(
+                                            student: student,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    onDelete: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => ContentDialog(
+                                          title: const Text('¿Eliminar alumno?'),
+                                          content: Text(
+                                            '¿Estás seguro de que deseas eliminar a ${student.names}? Esta acción no se puede deshacer.',
+                                          ),
+                                          actions: [
+                                            Button(
+                                              child: const Text('Cancelar'),
+                                              onPressed: () => Navigator.pop(context),
+                                            ),
+                                            FilledButton(
+                                              style: ButtonStyle(
+                                                backgroundColor: ButtonState.all(Colors.red),
+                                              ),
+                                              child: const Text('Eliminar'),
+                                              onPressed: () {
+                                                studentsController.removeStudent(student.id!);
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    onCopy: () {
+                                       // Copiar al portapapeles o algo similar
+                                       print("Copiar ID: ${student.numberIdentify}");
+                                    },
                                   );
                                 },
                               ),

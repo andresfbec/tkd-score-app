@@ -29,10 +29,12 @@ class StudentsController extends ChangeNotifier {
   Status status = Status.idle;
   String? message;
   String _searchQuery = "";
+  List<int>? _currentHqIds;
 
   StreamSubscription<List<StudentsEntity>>? _subscription;
 
   List<StudentsEntity> get students => _allStudents;
+  List<int>? get currentHqIds => _currentHqIds;
 
   // ===============================
   // GETTERS
@@ -68,6 +70,7 @@ class StudentsController extends ChangeNotifier {
     double? maxWeight,
     bool onlyActive = true,
   }) {
+    _currentHqIds = hqIds;
     status = Status.loading;
     notifyListeners();
 
