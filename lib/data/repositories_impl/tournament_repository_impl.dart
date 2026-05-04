@@ -6,14 +6,18 @@ import '../../domain/entities/tournament_entity.dart';
 import '../../domain/repositories/tournament_repository.dart';
 import '../datasources/tournament_dao.dart';
 import '../datasources/combat_settings_dao.dart';
+import '../datasources/groups_dao.dart';
+import '../datasources/inscriptions_dao.dart';
 import '../mappers/tournament_mapper.dart';
 import '../../core/constants/fields.dart';
 
 class TournamentRepositoryImpl implements TournamentRepository {
   final TournamentDao dao;
   final CombatSettingsDao combatSettingsDao;
+  final GroupsDao groupsDao;
+  final InscriptionsDao inscriptionsDao;
 
-  TournamentRepositoryImpl(this.dao, this.combatSettingsDao);
+  TournamentRepositoryImpl(this.dao, this.combatSettingsDao, this.groupsDao, this.inscriptionsDao);
 
   @override
   Future<int> create(TournamentEntity tournament) {
@@ -99,10 +103,19 @@ class TournamentRepositoryImpl implements TournamentRepository {
       newPhase = TournamentLifecycle.settingsReady;
     }
     
-    // TODO: Cuando los grupos estén listos, añadir verificación aquí
-    // if (groupsExist) {
-    //   newPhase = (settings != null) ? TournamentLifecycle.readyToStart : TournamentLifecycle.groupsReady;
-    // }
+    // Verificación de grupos e inscripciones
+    final groups = await groupsDao.getGroupsByTournament(tournamentId);
+    final inscriptions = await inscriptionsDao.getInscriptionsByTournament(tournamentId);
+    
+    final unassignedCount = inscriptions.where((ins) => ins.groupId == null).length;
+
+    if (TournamentLifecycle.canAdvanceToGroupsReady(
+      totalInscriptions: inscriptions.length,
+      totalGroups: groups.length,
+      unassignedInscriptionsCount: unassignedCount,
+    )) {
+      newPhase = TournamentLifecycle.groupsReady;
+    }
 
     if (newPhase != phase) {
       await dao.update(

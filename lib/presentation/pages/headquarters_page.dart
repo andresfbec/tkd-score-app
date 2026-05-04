@@ -493,7 +493,7 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                             Expanded(
                               child: ListView.separated(
                                 padding: const EdgeInsets.only(
-                                  right: 12,
+                                  right: 0,
                                 ), // espacio para scrollbar
                                 itemCount: studentsForHq.length,
                                 separatorBuilder: (context, index) =>

@@ -4,16 +4,19 @@ import '../../domain/entities/inscriptions_entity.dart';
 import '../../domain/usecases/inscriptions/create_inscription.dart';
 import '../../domain/usecases/inscriptions/delete_inscription.dart';
 import '../../domain/usecases/inscriptions/get_inscriptions_by_tournament.dart';
+import '../../domain/usecases/tournament/sync_tournament_setup_phase.dart';
 
 class InscriptionsController extends ChangeNotifier {
   final CreateInscription createUseCase;
   final DeleteInscription deleteUseCase;
   final GetInscriptionsByTournament getByTournamentUseCase;
+  final SyncTournamentSetupPhase syncTournamentSetupPhaseUseCase;
 
   InscriptionsController({
     required this.createUseCase,
     required this.deleteUseCase,
     required this.getByTournamentUseCase,
+    required this.syncTournamentSetupPhaseUseCase,
   });
 
   Status status = Status.idle;
@@ -25,6 +28,7 @@ class InscriptionsController extends ChangeNotifier {
   List<InscriptionsEntity> _existingInscriptions = [];
 
   Set<int> get selectedStudentIds => _selectedStudentIds;
+  List<InscriptionsEntity> get inscriptions => _existingInscriptions;
   bool get hasChanges => _checkIfChangesExist();
 
   /// Carga las inscripciones actuales del torneo para pre-seleccionar los checkboxes
@@ -100,6 +104,8 @@ class InscriptionsController extends ChangeNotifier {
       message = "Inscripciones actualizadas correctamente";
       // Recargamos para refrescar la lista de 'existing'
       await loadInscriptions(tournamentId);
+      // Sincronizar fase del torneo (puede que ahora esté listo para grupos o iniciar)
+      await syncTournamentSetupPhaseUseCase(tournamentId);
     } catch (e) {
       status = Status.error;
       message = "Error al sincronizar: $e";

@@ -33,6 +33,7 @@ import '../../../core/utils/status_handler.dart';
 // modals forms crud
 import 'create_student_page.dart';
 import 'edit_students_page.dart';
+import 'widgets/students_filter_panel.dart';
 
 //injections
 import '../../../core/config/containers/dependency_students.dart';
@@ -55,10 +56,19 @@ class _StudentsPageState extends State<StudentsPage> {
   @override
   void initState() {
     super.initState();
-    // Al entrar a la página de alumnos, nos aseguramos de que el stream esté limpio (mostrando todos)
-    // Esto evita que si venimos de "Sedes", la tabla aparezca filtrada por la sede que seleccionamos allá.
+    // Al entrar a la página de alumnos, mantenemos los filtros actuales del controlador
+    // para evitar que se desincronice el panel de filtros con la tabla.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<StudentsController>().startListening();
+      final controller = context.read<StudentsController>();
+      controller.startListening(
+        hqIds: controller.currentHqIds,
+        beltIds: controller.currentBeltIds,
+        gender: controller.currentGender,
+        minAge: controller.currentMinAge,
+        maxAge: controller.currentMaxAge,
+        minWeight: controller.currentMinWeight,
+        maxWeight: controller.currentMaxWeight,
+      );
     });
   }
 
@@ -110,268 +120,285 @@ class _StudentsPageState extends State<StudentsPage> {
 
     final headquartersMap = {1: 'Centro', 2: 'Norte', 3: 'Sur'};
 
-    return ScaffoldPage(
-      header: PageHeader(
-        title: Text(
-          'Alumnos',
-          style: TextStyle(
-            fontSize: AppTypography.titleView,
-            fontWeight: AppTypography.semiBold,
-            fontFamily: AppTypography.fontFamily,
-            color: AppColors.getTextPrimary(isDark),
-          ),
-        ),
-        commandBar: Row(
-          children: [
-            const Spacer(),
-            FluentActionButton(
-              icon: FluentIcons.contact_info,
-              label: 'Detalles',
-              onPressed: () {
-                context.read<UIStateProvider>().toggleStudentsDetail();
-              },
-              filled: false,
+    return Stack(
+      children: [
+        ScaffoldPage(
+          header: PageHeader(
+            title: Text(
+              'Alumnos',
+              style: TextStyle(
+                fontSize: AppTypography.titleView,
+                fontWeight: AppTypography.semiBold,
+                fontFamily: AppTypography.fontFamily,
+                color: AppColors.getTextPrimary(isDark),
+              ),
             ),
-          ],
-        ),
-      ),
-
-      content: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            //  TOP BAR
-            Row(
+            commandBar: Row(
               children: [
-                const SizedBox(width: 8),
-
-                /// Crear
-                FluentActionButton(
-                  icon: FluentIcons.add,
-                  label: 'Crear alumno',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      FluentPageRoute(
-                        builder: (context) => const StudentFormPage(),
-                      ),
-                    );
-                  },
-                  filled: true,
-                ),
-
-                const SizedBox(width: 16),
-
-                ///  Search
-                SizedBox(
-                  width: 250,
-                  child: FluentSearchBox(
-                    placeholder: 'Buscar alumno...',
-                    onChanged: (value) {
-                      studentsController.updateSearch(value);
-                    },
-                  ),
-                ),
-
-                const SizedBox(width: 16),
-
-                FluentActionButton(
-                  icon: FluentIcons.filter,
-                  label: 'Filtros',
-                  onPressed: () {},
-                ),
-
                 const Spacer(),
-
-                ///  Acciones lado derecho
-                if (ui.showStudentsDetail && ui.selectedStudent != null) ...[
-                  const SizedBox(width: 12),
-
-                  /// Info compacta
-                  // Container(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 10,
-                  //     vertical: 6,
-                  //   ),
-                  //   decoration: BoxDecoration(
-                  //     color: isDark
-                  //         ? Colors.white.withOpacity(0.04)
-                  //         : Colors.black.withOpacity(0.04),
-                  //     borderRadius: BorderRadius.circular(6),
-                  //   ),
-                  //   child: Row(
-                  //     mainAxisSize: MainAxisSize.min,
-                  //     children: const [
-                  //       Icon(FluentIcons.info, size: 14),
-                  //       SizedBox(width: 6),
-                  //       Text('0'),
-                  //     ],
-                  //   ),
-                  // ),
-                  const SizedBox(width: 16),
-
-                  /// Botón para llevar a estadísticas del alumno
-                  FluentActionButton(
-                    icon: FluentIcons.chart_series,
-                    label: "Estadisticas",
-                    onPressed: () {},
-                    filled: true,
-                  ),
-                  const SizedBox(width: 12),
-                ],
+                FluentActionButton(
+                  icon: FluentIcons.contact_info,
+                  label: 'Detalles',
+                  onPressed: () {
+                    context.read<UIStateProvider>().toggleStudentsDetail();
+                  },
+                  filled: false,
+                ),
               ],
             ),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                //  TOP BAR
+                Row(
+                  children: [
+                    const SizedBox(width: 8),
 
-            const SizedBox(height: 12),
-
-            ///  TABLA + PANEL DERECHO
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ///  TABLA
-                  Expanded(
-                    flex: ui.showStudentsDetail ? 5 : 1,
-                    child: CustomTable(
-                      columns: columns,
-                      data: data,
-                      selectedRow: ui.selectedStudentRow,
-                      isSameRow: (row1, row2) =>
-                          row1['student'].id == row2['student'].id,
-                      onRowSelected: (selectedRow) {
-                        final student = selectedRow['student'];
-
-                        if (student is StudentsEntity) {
-                          context.read<UIStateProvider>().selectStudent(
-                            student,
-                            selectedRow,
-                          );
-                        } else {
-                          print(
-                            'Error: No se pudo obtener el estudiante de la fila seleccionada',
-                          );
-                        }
-                      },
-                      onEdit: (row) {
-                        final alumnoEditar = row['student'] as StudentsEntity;
-
+                    /// Crear
+                    FluentActionButton(
+                      icon: FluentIcons.add,
+                      label: 'Crear alumno',
+                      onPressed: () {
                         Navigator.push(
                           context,
                           FluentPageRoute(
-                            builder: (context) =>
-                                StudentEditPage(student: alumnoEditar),
+                            builder: (context) => const StudentFormPage(),
                           ),
                         );
+                      },
+                      filled: true,
+                    ),
 
-                        final studentActualizado = studentsController.students
-                            .firstWhere(
-                              (s) => s.id == alumnoEditar.id,
-                              orElse: () => alumnoEditar,
+                    const SizedBox(width: 16),
+
+                    ///  Search
+                    SizedBox(
+                      width: 250,
+                      child: FluentSearchBox(
+                        placeholder: 'Buscar alumno...',
+                        onChanged: (value) {
+                          studentsController.updateSearch(value);
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(width: 16),
+
+                    FluentActionButton(
+                      icon: FluentIcons.filter,
+                      label: studentsController.activeFiltersCount > 0
+                          ? 'Filtros (${studentsController.activeFiltersCount})'
+                          : 'Filtros',
+                      onPressed: () {
+                        ui.toggleStudentsFilter();
+                      },
+                    ),
+
+                    const Spacer(),
+
+                    ///  Acciones lado derecho
+                    if (ui.showStudentsDetail && ui.selectedStudent != null) ...[
+                      const SizedBox(width: 12),
+
+                      /// Info compacta
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(
+                      //     horizontal: 10,
+                      //     vertical: 6,
+                      //   ),
+                      //   decoration: BoxDecoration(
+                      //     color: isDark
+                      //         ? Colors.white.withOpacity(0.04)
+                      //         : Colors.black.withOpacity(0.04),
+                      //     borderRadius: BorderRadius.circular(6),
+                      //   ),
+                      //   child: Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: const [
+                      //       Icon(FluentIcons.info, size: 14),
+                      //       SizedBox(width: 6),
+                      //       Text('0'),
+                      //     ],
+                      //   ),
+                      // ),
+                      const SizedBox(width: 16),
+
+                      /// Botón para llevar a estadísticas del alumno
+                      FluentActionButton(
+                        icon: FluentIcons.chart_series,
+                        label: "Estadisticas",
+                        onPressed: () {},
+                        filled: true,
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                ///  TABLA + PANEL DERECHO
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ///  TABLA
+                      Expanded(
+                        flex: ui.showStudentsDetail ? 5 : 1,
+                        child: CustomTable(
+                          columns: columns,
+                          data: data,
+                          selectedRow: ui.selectedStudentRow,
+                          isSameRow: (row1, row2) =>
+                              row1['student'].id == row2['student'].id,
+                          onRowSelected: (selectedRow) {
+                            final student = selectedRow['student'];
+
+                            if (student is StudentsEntity) {
+                              context.read<UIStateProvider>().selectStudent(
+                                student,
+                                selectedRow,
+                              );
+                            } else {
+                              print(
+                                'Error: No se pudo obtener el estudiante de la fila seleccionada',
+                              );
+                            }
+                          },
+                          onEdit: (row) {
+                            final alumnoEditar = row['student'] as StudentsEntity;
+
+                            Navigator.push(
+                              context,
+                              FluentPageRoute(
+                                builder: (context) =>
+                                    StudentEditPage(student: alumnoEditar),
+                              ),
                             );
 
-                        // 3. Actualizamos la selección en la UI para que la Card se refresque
-                        // Pasamos el objeto nuevo y la misma fila (row) para mantener el highlight
-                        context.read<UIStateProvider>().selectStudent(
-                          studentActualizado,
-                          row,
-                        );
-                      },
-                      onDelete: (row) {
-                        final student = row['student'] as StudentsEntity;
+                            final studentActualizado = studentsController.students
+                                .firstWhere(
+                                  (s) => s.id == alumnoEditar.id,
+                                  orElse: () => alumnoEditar,
+                                );
 
-                        showDialog(
-                          context: context,
-                          builder: (context) => ContentDialog(
-                            title: const Text('¿Eliminar alumno?'),
-                            content: Text(
-                              '¿Estás seguro de que deseas eliminar a ${student.names}? Esta acción no se puede deshacer.',
-                            ),
-                            actions: [
-                              Button(
-                                child: const Text('Cancelar'),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                              FilledButton(
-                                style: ButtonStyle(
-                                  backgroundColor: ButtonState.all(Colors.red),
+                            // 3. Actualizamos la selección en la UI para que la Card se refresque
+                            // Pasamos el objeto nuevo y la misma fila (row) para mantener el highlight
+                            context.read<UIStateProvider>().selectStudent(
+                              studentActualizado,
+                              row,
+                            );
+                          },
+                          onDelete: (row) {
+                            final student = row['student'] as StudentsEntity;
+
+                            showDialog(
+                              context: context,
+                              builder: (context) => ContentDialog(
+                                title: const Text('¿Eliminar alumno?'),
+                                content: Text(
+                                  '¿Estás seguro de que deseas eliminar a ${student.names}? Esta acción no se puede deshacer.',
                                 ),
-                                child: const Text('Eliminar'),
-                                onPressed: () {
-                                  // Tu lógica directa:
-                                  studentsController.removeStudent(student.id!);
+                                actions: [
+                                  Button(
+                                    child: const Text('Cancelar'),
+                                    onPressed: () => Navigator.pop(context),
+                                  ),
+                                  FilledButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: ButtonState.all(Colors.red),
+                                    ),
+                                    child: const Text('Eliminar'),
+                                    onPressed: () {
+                                      // Tu lógica directa:
+                                      studentsController.removeStudent(student.id!);
 
-                                  // Limpiar la selección en la UI si el alumno borrado estaba seleccionado
-                                  if (context
-                                          .read<UIStateProvider>()
-                                          .selectedStudent
-                                          ?.id ==
-                                      student.id) {
-                                    context
-                                        .read<UIStateProvider>()
-                                        .selectStudent(null, {});
-                                  }
+                                      // Limpiar la selección en la UI si el alumno borrado estaba seleccionado
+                                      if (context
+                                              .read<UIStateProvider>()
+                                              .selectedStudent
+                                              ?.id ==
+                                          student.id) {
+                                        context
+                                            .read<UIStateProvider>()
+                                            .selectStudent(null, {});
+                                      }
 
-                                  Navigator.pop(context);
-                                },
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      ///  PANEL DERECHO
+                      if (ui.showStudentsDetail) ...[
+                        const SizedBox(width: 12),
+
+                        Expanded(
+                          flex: 2,
+                          child: ui.selectedStudent == null
+                              ? Center(
+                                  child: Text(
+                                    "Selecciona un alumno para ver detalles",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: isDark
+                                          ? const Color.fromARGB(255, 236, 236, 236)
+                                          : const Color.fromARGB(255, 8, 8, 8),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: isDark
+                                        ? const Color(0xFF1E1E1E)
+                                        : const Color(0xFFF9F9F9),
+                                  ),
+
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 12, // separación del scroll
+                                      ),
+                                      child: StudentCard(
+                                        student:
+                                            ui.selectedStudent as StudentsEntity,
+                                        headquarters:
+                                            headquartersMap[ui
+                                                .selectedStudent!
+                                                .headquarterId] ??
+                                            'N/A',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ],
                   ),
-
-                  ///  PANEL DERECHO
-                  if (ui.showStudentsDetail) ...[
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      flex: 2,
-                      child: ui.selectedStudent == null
-                          ? Center(
-                              child: Text(
-                                "Selecciona un alumno para ver detalles",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: isDark
-                                      ? const Color.fromARGB(255, 236, 236, 236)
-                                      : const Color.fromARGB(255, 8, 8, 8),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: isDark
-                                    ? const Color(0xFF1E1E1E)
-                                    : const Color(0xFFF9F9F9),
-                              ),
-
-                              child: SingleChildScrollView(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 12, // separación del scroll
-                                  ),
-                                  child: StudentCard(
-                                    student:
-                                        ui.selectedStudent as StudentsEntity,
-                                    headquarters:
-                                        headquartersMap[ui
-                                            .selectedStudent!
-                                            .headquarterId] ??
-                                        'N/A',
-                                  ),
-                                ),
-                              ),
-                            ),
-                    ),
-                  ],
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+
+        // Panel de filtros (Sobre toda la página y con slide)
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          top: 0,
+          bottom: 0,
+          right: ui.showStudentsFilter ? 0 : -310,
+          child: const StudentsFilterPanel(),
+        ),
+      ],
     );
   }
 }

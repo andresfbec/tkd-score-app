@@ -44,7 +44,7 @@ class TournamentCard extends StatelessWidget {
     final p = TournamentLifecycle.normalize(phase);
     if (p == TournamentLifecycle.created) return 0;
     if (p == TournamentLifecycle.settingsReady) return 1;
-    if (p == TournamentLifecycle.groupsReady || p == TournamentLifecycle.readyToStart) return 2;
+    if (p == TournamentLifecycle.groupsReady) return 2;
     if (p == TournamentLifecycle.live) return 3;
     if (p == TournamentLifecycle.finished) return 4;
     return 0;

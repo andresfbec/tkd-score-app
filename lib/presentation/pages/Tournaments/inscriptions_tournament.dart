@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../../core/enums/status.dart';
 import '../../../core/utils/status_handler.dart';
+import '../../../core/utils/format_date.dart';
 import '../../../domain/entities/tournament_entity.dart';
 import '../../../domain/entities/students_entity.dart';
 import '../../controllers/students_controller.dart';
@@ -101,7 +102,9 @@ class _InscriptionsTournamentState extends State<InscriptionsTournament> {
                                   onChanged: (v) => insCtrl.toggleStudentSelection(student.id!),
                                 ),
                                 title: Text('${student.names} ${student.surnames}'),
-                                subtitle: Text('ID: ${student.numberIdentify}'),
+                                subtitle: Text(
+                                  'ID: ${student.numberIdentify} • Edad: ${DateHelper.calculateAge(student.birthDate)} años • Cinturón: ${student.beltName ?? "Sin cinturón"}',
+                                ),
                                 onPressed: () => insCtrl.toggleStudentSelection(student.id!),
                               );
                             }).toList(),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class UIStateProvider extends ChangeNotifier {
   bool _showHeadquartersDetail = false;
   bool _showStudentsDetail = false;
+  bool _showStudentsFilter = false;
 
   // Estado para almacenar el estudiante seleccionado y su fila original
   dynamic _selectedStudent;
@@ -14,6 +15,7 @@ class UIStateProvider extends ChangeNotifier {
 
   bool get showHeadquartersDetail => _showHeadquartersDetail;
   bool get showStudentsDetail => _showStudentsDetail;
+  bool get showStudentsFilter => _showStudentsFilter;
 
   // Getters para estudiante seleccionado
   dynamic get selectedStudent => _selectedStudent;
@@ -30,6 +32,11 @@ class UIStateProvider extends ChangeNotifier {
 
   void toggleStudentsDetail() {
     _showStudentsDetail = !_showStudentsDetail;
+    notifyListeners();
+  }
+
+  void toggleStudentsFilter() {
+    _showStudentsFilter = !_showStudentsFilter;
     notifyListeners();
   }
 

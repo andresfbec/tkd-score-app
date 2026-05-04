@@ -1,58 +1,74 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:drift/drift.dart';
+import '../../core/config/db/database.dart';
 
-/// DAO legacy (sqflite); reservado para CRUD de jueces cuando lo conectes a Drift.
 class JudgesDao {
-  final Database db;
+  final AppDatabase _db;
 
-  JudgesDao(this.db);
+  JudgesDao(this._db);
 
-  Future<int> insert({
-    required String name,
-    required String description,
-    required int headquartersId,
-  }) async {
-    return await db.insert('tournaments', {
-      'name': name,
-      'description': description,
-      'headquartersId': headquartersId,
-      'createdAt': DateTime.now().toIso8601String(),
+  Future<int> insert(JudgeCompanion entry) async {
+    return await _db.into(_db.judge).insert(entry);
+  }
+
+  Future<bool> update(JudgeCompanion entry) async {
+    if (!entry.id.present) {
+      throw ArgumentError('ID requerido para actualización');
+    }
+    return await (_db.update(_db.judge)
+          ..where((tbl) => tbl.id.equals(entry.id.value)))
+        .write(entry) > 0;
+  }
+
+  Future<int> delete(int id) async {
+    // Borrado lógico siguiendo el estándar del proyecto
+    return await (_db.update(_db.judge)..where((tbl) => tbl.id.equals(id)))
+        .write(const JudgeCompanion(isActive: Value(0)));
+  }
+
+  Stream<List<JudgeData>> watchJudges({bool onlyActive = true}) {
+    final query = _db.select(_db.judge);
+    if (onlyActive) {
+      query.where((tbl) => tbl.isActive.equals(1));
+    }
+    return query.watch();
+  }
+
+  Future<JudgeData?> getJudgeById(int id) async {
+    return await (_db.select(_db.judge)..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
+  }
+
+  // --- Relación con Torneos ---
+
+  Future<int> assignToTournament(int judgeId, int tournamentId) async {
+    return await _db.into(_db.judgeTournament).insert(
+          JudgeTournamentCompanion(
+            judgeId: Value(judgeId),
+            tournamentId: Value(tournamentId),
+          ),
+        );
+  }
+
+  Future<int> removeFromTournament(int judgeId, int tournamentId) async {
+    return await (_db.delete(_db.judgeTournament)
+          ..where((tbl) =>
+              tbl.judgeId.equals(judgeId) &
+              tbl.tournamentId.equals(tournamentId)))
+        .go();
+  }
+
+  Stream<List<JudgeData>> watchJudgesByTournament(int tournamentId) {
+    final query = _db.select(_db.judge).join([
+      innerJoin(
+        _db.judgeTournament,
+        _db.judgeTournament.judgeId.equalsExp(_db.judge.id),
+      ),
+    ])
+      ..where(_db.judgeTournament.tournamentId.equals(tournamentId))
+      ..where(_db.judge.isActive.equals(1));
+
+    return query.watch().map((rows) {
+      return rows.map((row) => row.readTable(_db.judge)).toList();
     });
-  }
-
-  Future<int> update({
-    required int id,
-    required String name,
-    required String description,
-    required int headquartersId,
-  }) async {
-    return await db.update(
-      'tournaments',
-      {
-        'name': name,
-        'description': description,
-        'headquartersId': headquartersId,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<int> delete(int pk) async {
-    return await db.delete('tournaments', where: 'id = ?', whereArgs: [pk]);
-  }
-
-  Future<List<Map<String, dynamic>>> findAll() async {
-    return await db.query('tournaments');
-  }
-
-  Future<Map<String, dynamic>?> findById(int id) async {
-    final result = await db.query(
-      'tournaments',
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
-    return result.isNotEmpty ? result.first : null;
   }
 }

@@ -151,7 +151,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
                   ),
 
                   const SizedBox(height: 45),
-                  _buildSectionTitle('Detalles Técnicos y Físicos'),
+                  _buildSectionTitle('Información Adicional'),
                   const SizedBox(height: 20),
 
                   Wrap(

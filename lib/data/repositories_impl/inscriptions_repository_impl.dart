@@ -34,6 +34,11 @@ class InscriptionsRepositoryImpl implements InscriptionsRepository {
   }
 
   @override
+  Future<void> setGroupId(int inscriptionId, int? groupId) {
+    return inscriptionsDao.setGroupId(inscriptionId, groupId);
+  }
+
+  @override
   Future<int> delete(int id) {
     return inscriptionsDao.delete(id);
   }
@@ -45,26 +50,22 @@ class InscriptionsRepositoryImpl implements InscriptionsRepository {
     int? groupId,
     bool onlyActive = true,
   }) {
-    return inscriptionsDao
-        .watchInscriptions(
-          tournamentId: tournamentId,
-          studentId: studentId,
-          groupId: groupId,
-          onlyActive: onlyActive,
-        )
-        .map((list) => InscriptionsMapper.fromDataList(list));
+    // El DAO ya retorna List<InscriptionsEntity> directamente según mi última edición
+    return inscriptionsDao.watchInscriptions(
+      tournamentId: tournamentId,
+      studentId: studentId,
+      groupId: groupId,
+      onlyActive: onlyActive,
+    );
   }
 
   @override
   Future<InscriptionsEntity?> getById(int id) async {
-    final data = await inscriptionsDao.getInscriptionById(id);
-    if (data == null) return null;
-    return InscriptionsMapper.fromData(data);
+    return await inscriptionsDao.getById(id);
   }
 
   @override
   Future<List<InscriptionsEntity>> getByTournament(int tournamentId) async {
-    final data = await inscriptionsDao.getInscriptionsByTournament(tournamentId);
-    return InscriptionsMapper.fromDataList(data);
+    return await inscriptionsDao.getInscriptionsByTournament(tournamentId);
   }
 }

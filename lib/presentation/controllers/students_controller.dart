@@ -30,11 +30,35 @@ class StudentsController extends ChangeNotifier {
   String? message;
   String _searchQuery = "";
   List<int>? _currentHqIds;
+  List<int>? _currentBeltIds;
+  String? _currentGender;
+  int? _currentMinAge;
+  int? _currentMaxAge;
+  double? _currentMinWeight;
+  double? _currentMaxWeight;
 
   StreamSubscription<List<StudentsEntity>>? _subscription;
 
   List<StudentsEntity> get students => _allStudents;
   List<int>? get currentHqIds => _currentHqIds;
+  List<int>? get currentBeltIds => _currentBeltIds;
+  String? get currentGender => _currentGender;
+  int? get currentMinAge => _currentMinAge;
+  int? get currentMaxAge => _currentMaxAge;
+  double? get currentMinWeight => _currentMinWeight;
+  double? get currentMaxWeight => _currentMaxWeight;
+
+  int get activeFiltersCount {
+    int count = 0;
+    if (_currentHqIds != null && _currentHqIds!.isNotEmpty) count++;
+    if (_currentBeltIds != null && _currentBeltIds!.isNotEmpty) count++;
+    if (_currentGender != null && _currentGender!.isNotEmpty) count++;
+    if (_currentMinAge != null) count++;
+    if (_currentMaxAge != null) count++;
+    if (_currentMinWeight != null) count++;
+    if (_currentMaxWeight != null) count++;
+    return count;
+  }
 
   // ===============================
   // GETTERS
@@ -56,10 +80,6 @@ class StudentsController extends ChangeNotifier {
   // MÉTODOS DE FLUJO (STREAM)
   // ===============================
 
-  // ===============================
-  // MÉTODOS DE FLUJO (STREAM) - CORREGIDO
-  // ===============================
-
   void startListening({
     List<int>? hqIds,
     List<int>? beltIds,
@@ -71,6 +91,13 @@ class StudentsController extends ChangeNotifier {
     bool onlyActive = true,
   }) {
     _currentHqIds = hqIds;
+    _currentBeltIds = beltIds;
+    _currentGender = gender;
+    _currentMinAge = minAge;
+    _currentMaxAge = maxAge;
+    _currentMinWeight = minWeight;
+    _currentMaxWeight = maxWeight;
+
     status = Status.loading;
     notifyListeners();
 

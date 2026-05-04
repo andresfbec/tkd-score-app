@@ -1,6 +1,8 @@
 import '../db/app_database_provider.dart';
 import '../../../data/datasources/tournament_dao.dart';
 import '../../../data/datasources/combat_settings_dao.dart';
+import '../../../data/datasources/groups_dao.dart';
+import '../../../data/datasources/inscriptions_dao.dart';
 import '../../../data/repositories_impl/tournament_repository_impl.dart';
 
 import '../../../domain/usecases/tournament/create_tournament.dart';
@@ -24,6 +26,8 @@ class InjectionTournament {
     return _repository ??= TournamentRepositoryImpl(
       TournamentDao(AppDatabaseProvider.instance),
       CombatSettingsDao(AppDatabaseProvider.instance),
+      GroupsDao(AppDatabaseProvider.instance),
+      InscriptionsDao(AppDatabaseProvider.instance),
     );
   }
 
