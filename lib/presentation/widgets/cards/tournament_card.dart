@@ -13,6 +13,7 @@ class TournamentCard extends StatelessWidget {
   final VoidCallback? onStart;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onManageMatches;
 
   const TournamentCard({
     super.key,
@@ -23,6 +24,7 @@ class TournamentCard extends StatelessWidget {
     this.onStart,
     this.onEdit,
     this.onDelete,
+    this.onManageMatches,
   });
 
   String _formatDate(DateTime d) {
@@ -271,6 +273,23 @@ class TournamentCard extends StatelessWidget {
                           ),
                         ],
                       ],
+                    ),
+                  ],
+                  if (phase == TournamentLifecycle.live && onManageMatches != null) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: onManageMatches,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(FluentIcons.play, size: 14),
+                            SizedBox(width: 8),
+                            Text('Gestionar Combates'),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ],

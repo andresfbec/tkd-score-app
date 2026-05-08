@@ -71,6 +71,10 @@ class InscriptionsDao {
         _db.belts,
         _db.belts.id.equalsExp(_db.students.beltId),
       ),
+      leftOuterJoin(
+        _db.headquarters,
+        _db.headquarters.id.equalsExp(_db.students.headquarterId),
+      ),
     ]);
 
     if (tournamentId != null) {
@@ -111,6 +115,10 @@ class InscriptionsDao {
         _db.belts,
         _db.belts.id.equalsExp(_db.students.beltId),
       ),
+      leftOuterJoin(
+        _db.headquarters,
+        _db.headquarters.id.equalsExp(_db.students.headquarterId),
+      ),
     ])
       ..where(_db.inscription.tournamentId.equals(tournamentId) & _db.inscription.isActive.equals(1));
 
@@ -138,6 +146,7 @@ class InscriptionsDao {
     final tournament = row.readTable(_db.tournament);
     final group = row.readTableOrNull(_db.groups);
     final belt = row.readTableOrNull(_db.belts);
+    final headquarters = row.readTableOrNull(_db.headquarters);
 
     return InscriptionsEntity(
       id: inscription.id,
@@ -150,6 +159,7 @@ class InscriptionsDao {
       studentWeight: student.weightKg,
       studentBirthDate: student.birthDate,
       studentBeltName: belt?.name,
+      headquartersName: headquarters?.name,
       tournamentName: tournament.name,
       groupName: group?.name,
     );

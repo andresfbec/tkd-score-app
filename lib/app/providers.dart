@@ -22,6 +22,12 @@ import '../core/config/containers/dependency_judges.dart';
 import '../core/config/containers/dependency_belts.dart';
 import '../core/config/containers/dependency_groups.dart';
 import '../presentation/controllers/groups_controller.dart';
+import '../presentation/controllers/versus_controller.dart';
+import '../presentation/controllers/combat_rounds_controller.dart';
+import '../presentation/controllers/combat_events_controller.dart';
+import '../core/config/containers/dependency_versus.dart';
+import '../core/config/containers/dependency_combat_rounds.dart';
+import '../core/config/containers/dependency_combat_events.dart';
 import 'ui_state_provider.dart';
 
 class AppProviders {
@@ -39,6 +45,9 @@ class AppProviders {
     final containerJudges = InjectionJudges();
     final containerBelts = InjectionBelts();
     final containerGroups = InjectionGroups();
+    final containerVersus = InjectionVersus();
+    final containerCombatRounds = InjectionCombatRounds();
+    final containerCombatEvents = InjectionCombatEvents();
 
     return [
       // ThemeProvider
@@ -139,6 +148,59 @@ class AppProviders {
           syncTournamentSetupPhaseUseCase: containerTournament.syncTournamentSetupPhase,
         ),
       ),
+      ChangeNotifierProvider<VersusController>(
+        create: (_) => VersusController(
+          createUseCase: containerVersus.createVersus,
+          createBatchUseCase: containerVersus.createBatchVersus,
+          updateUseCase: containerVersus.updateVersus,
+          deleteUseCase: containerVersus.deleteVersus,
+          deleteAllByGroupUseCase: containerVersus.deleteAllVersusByGroup,
+          getByIdUseCase: containerVersus.getVersusById,
+          getByGroupIdUseCase: containerVersus.getVersusByGroupId,
+          getByGroupAndRoundUseCase: containerVersus.getVersusByGroupAndRound,
+          getByTournamentIdUseCase: containerVersus.getVersusByTournamentId,
+          watchByGroupIdUseCase: containerVersus.watchVersusByGroupId,
+          watchByGroupAndRoundUseCase: containerVersus.watchVersusByGroupAndRound,
+          updateStateUseCase: containerVersus.updateVersusState,
+          setWinnerUseCase: containerVersus.setVersusWinner,
+          swapParticipantsUseCase: containerVersus.swapVersusParticipants,
+          isRoundCompleteUseCase: containerVersus.isVersusRoundComplete,
+          getMaxBracketRoundUseCase: containerVersus.getMaxBracketRound,
+        ),
+      ),
+      ChangeNotifierProvider<CombatRoundsController>(
+        create: (_) => CombatRoundsController(
+          createUseCase: containerCombatRounds.createCombatRound,
+          createBatchUseCase: containerCombatRounds.createBatchCombatRounds,
+          updateUseCase: containerCombatRounds.updateCombatRound,
+          deleteUseCase: containerCombatRounds.deleteCombatRound,
+          getByIdUseCase: containerCombatRounds.getCombatRoundById,
+          getByVersusIdUseCase: containerCombatRounds.getCombatRoundsByVersusId,
+          watchByVersusIdUseCase: containerCombatRounds.watchCombatRoundsByVersusId,
+          updateStateUseCase: containerCombatRounds.updateCombatRoundState,
+          updatePointsUseCase: containerCombatRounds.updateCombatRoundPoints,
+          setWinnerUseCase: containerCombatRounds.setCombatRoundWinner,
+          areAllRoundsCompleteUseCase: containerCombatRounds.areAllRoundsComplete,
+          getActiveRoundUseCase: containerCombatRounds.getActiveCombatRound,
+          deleteAllByVersusUseCase: containerCombatRounds.deleteAllCombatRoundsByVersus,
+        ),
+      ),
+      ChangeNotifierProvider<CombatEventsController>(
+        create: (_) => CombatEventsController(
+          createUseCase: containerCombatEvents.createCombatEvent,
+          createBatchUseCase: containerCombatEvents.createBatchCombatEvents,
+          updateUseCase: containerCombatEvents.updateCombatEvent,
+          deleteUseCase: containerCombatEvents.deleteCombatEvent,
+          getByIdUseCase: containerCombatEvents.getCombatEventById,
+          getByRoundIdUseCase: containerCombatEvents.getCombatEventsByRoundId,
+          watchByRoundIdUseCase: containerCombatEvents.watchCombatEventsByRoundId,
+          invalidateUseCase: containerCombatEvents.invalidateCombatEvent,
+          insertCorrectionUseCase: containerCombatEvents.insertCombatEventCorrection,
+          calculatePointsUseCase: containerCombatEvents.calculateRoundPoints,
+          deleteAllByRoundUseCase: containerCombatEvents.deleteAllCombatEventsByRound,
+        ),
+      ),
     ];
   }
 }
+

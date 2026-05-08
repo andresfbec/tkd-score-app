@@ -13,9 +13,18 @@ import '../../widgets/input_search.dart';
 import 'create_tournament_page.dart';
 import 'edit_tournament_page.dart';
 import 'combat_settings_page.dart';
+import 'tournament_execution_page.dart';
 
 class TournamentsPage extends StatelessWidget {
   const TournamentsPage({super.key});
+
+  void _openExecution(BuildContext context, TournamentEntity t) {
+    Navigator.of(context).push(
+      FluentPageRoute(
+        builder: (_) => TournamentExecutionPage(tournament: t),
+      ),
+    );
+  }
 
   void _openCreate(BuildContext context) {
     Navigator.of(context).push(
@@ -178,6 +187,7 @@ class TournamentsPage extends StatelessWidget {
                           onStart: () => _confirmStart(context, t),
                           onEdit: () => _openEdit(context, t),
                           onDelete: () => _confirmDelete(context, t),
+                          onManageMatches: () => _openExecution(context, t),
                         );
                       },
                     ),

@@ -38,6 +38,7 @@ class InscriptionsController extends ChangeNotifier {
 
     try {
       _existingInscriptions = await getByTournamentUseCase(tournamentId);
+      print('Inscripciones cargadas: ${_existingInscriptions}');
       _selectedStudentIds.clear();
       for (var ins in _existingInscriptions) {
         _selectedStudentIds.add(ins.studentId);

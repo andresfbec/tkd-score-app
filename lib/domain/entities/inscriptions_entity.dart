@@ -15,6 +15,7 @@ class InscriptionsEntity extends Equatable {
   final double? studentWeight;
   final DateTime? studentBirthDate;
   final String? studentBeltName;
+  final String? headquartersName;
 
   const InscriptionsEntity({
     this.id,
@@ -29,6 +30,7 @@ class InscriptionsEntity extends Equatable {
     this.studentWeight,
     this.studentBirthDate,
     this.studentBeltName,
+    this.headquartersName,
   });
 
   InscriptionsEntity copyWith({
@@ -44,6 +46,7 @@ class InscriptionsEntity extends Equatable {
     double? studentWeight,
     DateTime? studentBirthDate,
     String? studentBeltName,
+    String? headquartersName,
   }) {
     return InscriptionsEntity(
       id: id ?? this.id,
@@ -58,6 +61,7 @@ class InscriptionsEntity extends Equatable {
       studentWeight: studentWeight ?? this.studentWeight,
       studentBirthDate: studentBirthDate ?? this.studentBirthDate,
       studentBeltName: studentBeltName ?? this.studentBeltName,
+      headquartersName: headquartersName ?? this.headquartersName,
     );
   }
 
@@ -75,5 +79,6 @@ class InscriptionsEntity extends Equatable {
         studentWeight,
         studentBirthDate,
         studentBeltName,
+        headquartersName,
       ];
 }
