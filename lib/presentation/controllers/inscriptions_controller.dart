@@ -31,15 +31,18 @@ class InscriptionsController extends ChangeNotifier {
   List<InscriptionsEntity> get inscriptions => _existingInscriptions;
   bool get hasChanges => _checkIfChangesExist();
 
+  /// Obtiene los inscritos de un grupo específico
+  List<InscriptionsEntity> getInscriptionsByGroup(int groupId) {
+    return _existingInscriptions.where((ins) => ins.groupId == groupId).toList();
+  }
+
   /// Carga las inscripciones actuales del torneo para pre-seleccionar los checkboxes
   Future<void> loadInscriptions(int tournamentId) async {
     status = Status.loading;
     notifyListeners();
 
     try {
-      _existingInscriptions = await getByTournamentUseCase(tournamentId);
-      print('Inscripciones cargadas: ${_existingInscriptions}');
-      _selectedStudentIds.clear();
+      _existingInscriptions = await getByTournamentUseCase(tournamentId);      _selectedStudentIds.clear();
       for (var ins in _existingInscriptions) {
         _selectedStudentIds.add(ins.studentId);
       }

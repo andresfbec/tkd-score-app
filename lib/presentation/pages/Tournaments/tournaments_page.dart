@@ -14,38 +14,39 @@ import 'create_tournament_page.dart';
 import 'edit_tournament_page.dart';
 import 'combat_settings_page.dart';
 import 'tournament_execution_page.dart';
+import '../../../core/utils/no_transition_route.dart';
 
 class TournamentsPage extends StatelessWidget {
   const TournamentsPage({super.key});
 
   void _openExecution(BuildContext context, TournamentEntity t) {
     Navigator.of(context).push(
-      FluentPageRoute(
-        builder: (_) => TournamentExecutionPage(tournament: t),
+      NoTransitionPageRoute(
+        child: TournamentExecutionPage(tournament: t),
       ),
     );
   }
 
   void _openCreate(BuildContext context) {
     Navigator.of(context).push(
-      FluentPageRoute(
-        builder: (_) => const CreateTournamentPage(),
+      NoTransitionPageRoute(
+        child: const CreateTournamentPage(),
       ),
     );
   }
 
   void _openEdit(BuildContext context, TournamentEntity t) {
     Navigator.of(context).push(
-      FluentPageRoute(
-        builder: (_) => EditTournamentPage(tournament: t),
+      NoTransitionPageRoute(
+        child: EditTournamentPage(tournament: t),
       ),
     );
   }
 
   void _openConfigure(BuildContext context, TournamentEntity t) {
     Navigator.of(context).push(
-      FluentPageRoute(
-        builder: (_) => CombatSettingsPage(tournament: t),
+      NoTransitionPageRoute(
+        child: CombatSettingsPage(tournament: t),
       ),
     );
   }

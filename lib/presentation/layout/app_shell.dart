@@ -8,6 +8,8 @@ import '../widgets/user_badge.dart';
 import '../widgets/calendars/date_badge.dart';
 import '../widgets/calendars/tournament_calendar.dart';
 
+import '../../core/utils/no_transition_route.dart';
+
 // ----- PAGES -----
 import '../pages/Tournaments/tournaments_page.dart';
 import '../pages/settings_page.dart';
@@ -26,6 +28,9 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int index = 0;
 
+  final _tournamentsNavigatorKey = GlobalKey<NavigatorState>();
+  final _studentsNavigatorKey = GlobalKey<NavigatorState>();
+
   // Datos simulados
   final String userName = 'AdminTKD05';
   final bool isCloudSynced = true;
@@ -38,29 +43,15 @@ class _AppShellState extends State<AppShell> {
       appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
         title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Izquierda: UserBadge
+            // Izquierda: UserBadge minimalista
             UserBadge(firstName: nombres, lastName: apellidos),
 
-            const SizedBox(width: 20),
-
-            // Centro: DateBadge (expandido y centrado)
+            // Centro: Calendario centrado
             Expanded(
               child: Center(
-                child: TournamentCalendar(
-                  // Para cuando la pagina de crear el torneo exista pasarle el date
-                  //   onDateSelected: (date) {
-                  //   Navigator.push(
-                  //     context,
-                  //     FluentPageRoute(
-                  //       builder: (_) => CreateTournamentPage(
-                  //         startDate: date,
-                  //       ),
-                  //     ),
-                  //   );
-
-                  // },
-                ),
+                child: TournamentCalendar(),
               ),
             ),
 
@@ -68,15 +59,17 @@ class _AppShellState extends State<AppShell> {
             _buildHeaderRight(),
           ],
         ),
-        actions: null, // Importante: poner actions en null
+        actions: null,
       ),
       pane: NavigationPane(
         selected: index,
         onChanged: (i) => setState(() => index = i),
-        displayMode: MediaQuery.of(context).size.width < 1200
-      ? PaneDisplayMode.top      // cuando la ventana es angosta
-      : PaneDisplayMode.auto,
-        size: const NavigationPaneSize(openMaxWidth: 200, openMinWidth: 48),
+        displayMode: PaneDisplayMode.compact,
+        toggleable: false,
+        menuButton: const SizedBox.shrink(),
+        size: const NavigationPaneSize(
+          compactWidth: 78.0,
+        ),
         items: _buildSidebarItems(),
       ),
     );
@@ -86,91 +79,100 @@ class _AppShellState extends State<AppShell> {
   // ITEMS DEL SIDEBAR/MENÚ
   // ============================================================
   List<NavigationPaneItem> _buildSidebarItems() {
-    return [
-      PaneItem(
-        icon: Icon(FluentIcons.trophy2, size: AppTypography.iconLarge), // 16.0
-        title: Text(
-          'Torneos',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall, // 14.0
-            fontWeight: AppTypography.medium, // w500
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    Widget buildIcon(IconData icon, String label, bool isSelected) {
+      final baseColor = isDark ? Colors.white.withOpacity(0.85) : Colors.black.withOpacity(0.8);
+      return SizedBox(
+        width: 60.0, // Ancho constante para garantizar alineación vertical perfecta
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 20,
+                color: isSelected ? theme.accentColor : baseColor,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  color: isSelected ? theme.accentColor : baseColor,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
-        body: Builder(
-          builder: (_) => const TournamentsPage(),
+      );
+    }
+
+    return [
+      PaneItem(
+        icon: buildIcon(FluentIcons.trophy2, 'Torneos', index == 0),
+        title: const Text('Torneos'),
+        body: Navigator(
+          key: _tournamentsNavigatorKey,
+          onGenerateRoute: (settings) {
+            Widget page;
+            if (settings.name == '/') {
+              page = const TournamentsPage();
+            } else {
+              throw Exception('Unknown route: ${settings.name}');
+            }
+            return NoTransitionPageRoute(child: page, settings: settings);
+          },
         ),
       ),
       PaneItem(
-        icon: Icon(
-          FluentIcons.city_next2,
-          size: AppTypography.iconLarge,
-        ), // 16.0
-        title: Text(
-          'Sedes',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall,
-            fontWeight: AppTypography.medium,
-          ),
-        ),
+        icon: buildIcon(FluentIcons.city_next2, 'Sedes', index == 1),
+        title: const Text('Sedes'),
         body: Builder(
           builder: (_) => const HeadquartersPage(),
         ),
       ),
       PaneItem(
-        icon: Icon(
-          // FluentIcons.fabric_user_folder,
-          FluentIcons.education,
-          size: AppTypography.iconLarge,
-        ), // 16.0
-        title: Text(
-          'Alumnos',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall,
-            fontWeight: AppTypography.medium,
-          ),
+        icon: buildIcon(FluentIcons.education, 'Alumnos', index == 2),
+        title: const Text('Alumnos'),
+        body: Navigator(
+          key: _studentsNavigatorKey,
+          onGenerateRoute: (settings) {
+            Widget page;
+            if (settings.name == '/') {
+              page = const StudentsPage();
+            } else {
+              throw Exception('Unknown route: ${settings.name}');
+            }
+            return NoTransitionPageRoute(child: page, settings: settings);
+          },
         ),
-        body: Builder(
-          builder: (_) => const StudentsPage(),
-        ),
-      ),
-            PaneItem(
-        icon: Icon(
-          FluentIcons.contact_card,
-          size: AppTypography.iconLarge,
-        ), // 16.0
-        title: Text(
-          'Jueces',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall,
-            fontWeight: AppTypography.medium,
-          ),
-        ),
-        body: Builder(
-          builder: (context) => const JudgesPage(),
-          ),
       ),
       PaneItem(
-        icon: Icon(FluentIcons.people, size: AppTypography.iconLarge), // 16.0
-        title: Text(
-          'Usuarios',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall,
-            fontWeight: AppTypography.medium,
-          ),
+        icon: buildIcon(FluentIcons.contact_card, 'Jueces', index == 3),
+        title: const Text('Jueces'),
+        body: Builder(
+          builder: (context) => const JudgesPage(),
         ),
+      ),
+      PaneItem(
+        icon: buildIcon(FluentIcons.people, 'Usuarios', index == 4),
+        title: const Text('Usuarios'),
         body: Builder(
           builder: (_) => const UsersPage(),
         ),
       ),
       PaneItem(
-        icon: Icon(FluentIcons.settings, size: AppTypography.iconLarge), // 16.0
-        title: Text(
-          'Ajustes',
-          style: TextStyle(
-            fontSize: AppTypography.titleSmall,
-            fontWeight: AppTypography.medium,
-          ),
-        ),
+        icon: buildIcon(FluentIcons.settings, 'Ajustes', index == 5),
+        title: const Text('Ajustes'),
         body: Builder(
           builder: (_) => const SettingsPage(),
         ),
@@ -178,110 +180,145 @@ class _AppShellState extends State<AppShell> {
     ];
   }
 
+
   // ============================================================
-  // IZQUIERDA — USUARIO
+  // DERECHA — ESTADO DEL SISTEMA (Minimalista)
   // ============================================================
-  // ============================================================
-  // BOTÓN DE USUARIO (HEADER IZQUIERDO) - SOLO ESTO CAMBIA
-  // ============================================================
-  Widget _buildHeaderLeft() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Avatar con AppColors.info
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.15), // Usando tu constante
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.info.withOpacity(0.4),
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                userName.substring(0, 1).toUpperCase(),
+  Widget _buildHeaderRight() {
+    final Color syncColor = isCloudSynced
+        ? const Color(0xFF1466D1)
+        : AppColors.warning;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Sincronización
+        _HoverChip(
+          icon: FluentIcons.cloud,
+          label: isCloudSynced ? 'Sincronizado' : 'Sin sincronizar',
+          color: syncColor,
+          onTap: () {},
+        ),
+
+        const SizedBox(width: 4),
+
+        // Estado de conexión
+        const _ConnectionChip(),
+
+        const SizedBox(width: 4),
+
+        // Notificaciones
+        _HoverChip(
+          icon: FluentIcons.ringer,
+          label: 'Alertas',
+          onTap: () {
+            // TODO: abrir notificaciones
+          },
+        ),
+
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+}
+
+// ============================================================
+// WIDGET AUXILIAR: Chip con hover sin bordes
+// ============================================================
+class _HoverChip extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final Color? color;
+  final VoidCallback onTap;
+
+  const _HoverChip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color,
+  });
+
+  @override
+  State<_HoverChip> createState() => _HoverChipState();
+}
+
+class _HoverChipState extends State<_HoverChip> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final defaultColor = widget.color ??
+        (isDark ? Colors.white.withOpacity(0.75) : Colors.black.withOpacity(0.65));
+    final hoverBg = isDark ? Colors.white.withOpacity(0.06) : Colors.black.withOpacity(0.04);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          decoration: BoxDecoration(
+            color: _hovered ? hoverBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(widget.icon, size: 14, color: defaultColor),
+              const SizedBox(width: 5),
+              Text(
+                widget.label,
                 style: TextStyle(
-                  fontSize: AppTypography.bodySmall,
-                  fontWeight: AppTypography.bold,
-                  color: AppColors.info, // Azul de constantes
+                  fontSize: 12,
+                  color: defaultColor,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Text(
-            userName,
-            style: TextStyle(
-              fontSize: AppTypography.bodySmall,
-              fontWeight: AppTypography.semiBold,
-              color: Colors.grey[190],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
+}
 
-  // ============================================================
-  // DERECHA — ESTADO DEL SISTEMA
-  // ============================================================
-  Widget _buildHeaderRight() {
-    // Usar AppColors en lugar de Colors.blue
-    final Color syncColor = isCloudSynced
-        ? const Color.fromARGB(255, 20, 102, 209) // Azul de constantes
-        : AppColors.warning; // Naranja de constantes
+// ============================================================
+// WIDGET AUXILIAR: Estado de conexión con hover
+// ============================================================
+class _ConnectionChip extends StatefulWidget {
+  const _ConnectionChip();
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 12, right: 10),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Estado de sincronización
-          Icon(
-            FluentIcons.cloud,
-            size: AppTypography.iconMedium, // 16.0
-            color: syncColor,
-          ),
-          const SizedBox(width: 4),
-          Text(
-            isCloudSynced ? 'Datos sincronizados' : 'Sin sincronizar',
-            style: TextStyle(
-              fontSize: AppTypography.caption, // 11.0
-              color: syncColor,
-              fontWeight: AppTypography.regular,
-            ),
-          ),
+  @override
+  State<_ConnectionChip> createState() => _ConnectionChipState();
+}
 
-          const SizedBox(width: 12),
+class _ConnectionChipState extends State<_ConnectionChip> {
+  bool _hovered = false;
 
-          // Widget de conexión
-          const ConnectionStatus(),
+  @override
+  Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final hoverBg = isDark ? Colors.white.withOpacity(0.06) : Colors.black.withOpacity(0.04);
 
-          const SizedBox(width: 8),
-
-          // Botón de notificaciones
-          IconButton(
-            icon: Icon(
-              FluentIcons.ringer,
-              size: AppTypography.bodyMedium, // 16.0
-            ),
-            onPressed: () {
-              // TODO: abrir notificaciones
-            },
-          ),
-        ],
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          color: _hovered ? hoverBg : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: const ConnectionStatus(),
       ),
     );
   }

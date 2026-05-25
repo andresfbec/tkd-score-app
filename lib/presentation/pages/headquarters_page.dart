@@ -18,6 +18,7 @@ import '../widgets/cards/student_card.dart';
 import '../widgets/modals/custom_form_modal.dart';
 import 'Students/create_student_page.dart';
 import 'Students/edit_students_page.dart';
+import '../../core/config/containers/dependency_students.dart';
 
 // Controller
 import '../controllers/headquarters_controller.dart';
@@ -39,14 +40,32 @@ import '../../core/utils/notifications.dart';
 import '../../core/enums/status.dart';
 import '../../core/utils/status_handler.dart';
 
-class HeadquartersPage extends StatefulWidget {
+class HeadquartersPage extends StatelessWidget {
   const HeadquartersPage({super.key});
 
   @override
-  State<HeadquartersPage> createState() => _HeadquartersPageState();
+  Widget build(BuildContext context) {
+    final containerStudents = InjectionStudents();
+    return ChangeNotifierProvider<StudentsController>(
+      create: (_) => StudentsController(
+        createUseCase: containerStudents.createStudent,
+        updateUseCase: containerStudents.updateStudent,
+        deleteUseCase: containerStudents.deleteStudent,
+        watchUseCase: containerStudents.watchStudents,
+      ),
+      child: const _HeadquartersPageContent(),
+    );
+  }
 }
 
-class _HeadquartersPageState extends State<HeadquartersPage> {
+class _HeadquartersPageContent extends StatefulWidget {
+  const _HeadquartersPageContent({super.key});
+
+  @override
+  State<_HeadquartersPageContent> createState() => _HeadquartersPageContentState();
+}
+
+class _HeadquartersPageContentState extends State<_HeadquartersPageContent> {
   // Create
   void showCreateHeadquarterModal(BuildContext context) {
     showDialog(
@@ -466,7 +485,8 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       flex: 2,
-                      child: Container(
+                      child: ui.selectedHeadquarterRow != null ?
+                      Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: isDark
@@ -552,6 +572,19 @@ class _HeadquartersPageState extends State<HeadquartersPage> {
                               ),
                             ),
                           ],
+                        ),
+                      ) 
+                      :
+                      Center(
+                        child: Text(
+                          'Sin datos disponibles.',
+                          style: FluentTheme.of(context).typography.body
+                              ?.copyWith(
+                                fontSize: 13,
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.7)
+                                    : Colors.black.withOpacity(0.7),
+                              ),
                         ),
                       ),
                     ),

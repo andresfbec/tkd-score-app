@@ -9,6 +9,8 @@ import '../../../core/enums/status.dart';
 import '../../../core/utils/status_handler.dart';
 import '../../../core/utils/format_date.dart';
 import '../../../core/constants/app.dart';
+import 'combat_visualization_page.dart';
+import '../../../core/utils/no_transition_route.dart';
 
 class TournamentExecutionPage extends StatefulWidget {
   final TournamentEntity tournament;
@@ -102,9 +104,7 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
                         itemCount: groupsCtrl.groups.length,
                         itemBuilder: (context, index) {
                           final group = groupsCtrl.groups[index];
-                          final groupInscriptions = insCtrl.inscriptions
-                              .where((ins) => ins.groupId == group.id)
-                              .toList();
+                          final groupInscriptions = insCtrl.getInscriptionsByGroup(group.id!);
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12),
@@ -112,7 +112,7 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
                               group: group,
                               participants: groupInscriptions,
                               onExecuteMatches: () {
-                                _showExecuteMatchesDialog(context, group);
+                                _showExecuteMatchesDialog(context, group, groupInscriptions);
                               },
                             ),
                           );
@@ -124,7 +124,7 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
     );
   }
 
-  void _showExecuteMatchesDialog(BuildContext context, GroupsEntity group) {
+  void _showExecuteMatchesDialog(BuildContext context, GroupsEntity group, List<InscriptionsEntity> participants) {
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
@@ -142,12 +142,13 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
             child: const Text('Comenzar'),
             onPressed: () {
               Navigator.pop(context);
-              displayInfoBar(
+              Navigator.push(
                 context,
-                builder: (context, close) => const InfoBar(
-                  title: Text('Próximamente'),
-                  content: Text('El módulo de arbitraje está en desarrollo.'),
-                  severity: InfoBarSeverity.warning,
+                NoTransitionPageRoute(
+                  child: CombatVisualizationPage(
+                    group: group,
+                    participants: participants,
+                  ),
                 ),
               );
             },

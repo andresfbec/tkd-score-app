@@ -85,7 +85,8 @@ class _TournamentCalendarState extends State<TournamentCalendar> {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: _isHovering
-                          ? accent.withOpacity(0.6)
+                          ? theme.resources.controlStrokeColorDefault
+                                .withOpacity(0.6)
                           : theme.resources.controlStrokeColorDefault
                                 .withOpacity(0.4),
                       width: 1,
@@ -196,36 +197,27 @@ class _TournamentCalendarState extends State<TournamentCalendar> {
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
     final accent = theme.accentColor;
+    final isDark = theme.brightness == Brightness.dark;
+    final hoverColor = isDark
+        ? Colors.white.withOpacity(0.12)
+        : Colors.black.withOpacity(0.08);
 
     return MouseRegion(
-      onEnter: (_) {
-        setState(() => _isHovering = true);
-      },
-
-      onExit: (_) {
-        setState(() => _isHovering = false);
-      },
-
+      cursor: SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
       child: GestureDetector(
         key: _badgeKey,
         onTap: _toggleCalendar,
-
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: (_isOpen || _isHovering)
-                ? accent.withOpacity(.08)
-                : theme.resources.cardBackgroundFillColorSecondary,
-
+                ? hoverColor
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
-
-            border: Border.all(
-              color: theme.resources.controlStrokeColorDefault.withOpacity(0.4),
-              width: 1,
-            ),
           ),
-
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -233,7 +225,7 @@ class _TournamentCalendarState extends State<TournamentCalendar> {
                 _formattedDate,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: AppTypography.semiBold,
+                  fontWeight: AppTypography.medium,
                   color: theme.typography.body?.color,
                 ),
               ),

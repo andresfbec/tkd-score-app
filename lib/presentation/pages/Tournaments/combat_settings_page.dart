@@ -20,12 +20,37 @@ class CombatSettingsPage extends StatefulWidget {
 
 class _CombatSettingsPageState extends State<CombatSettingsPage> {
   int _currentIndex = 0;
+  late final PageController _pageController;
+
+  static const _tabs = ['Reglas', 'Inscripciones', 'Grupos'];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    if (index == _currentIndex) return;
+    setState(() => _currentIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeInOutCubic,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     final controller = context.watch<CombatSettingsController>();
     handleStatus(context, controller);
 
@@ -59,7 +84,7 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
               ),
               const TextSpan(text: '  >  '),
               TextSpan(
-                text: 'Configuración de Torneo ${widget.tournament.name}',
+                text: 'Configuración: ${widget.tournament.name}',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,
                   fontWeight: AppTypography.semiBold,
@@ -71,44 +96,76 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
           ),
         ),
       ),
-      content: TabView(
-        currentIndex: _currentIndex,
-        onChanged: (index) => setState(() => _currentIndex = index),
-        tabWidthBehavior: TabWidthBehavior.equal,
-        closeButtonVisibility: CloseButtonVisibilityMode.never,
-        tabs: [
-          Tab(
-            text: Text(
-              'Reglas',
-              style: TextStyle(
-                fontSize: AppTypography.titleMedium,
-                fontWeight: _currentIndex == 0 ? AppTypography.semiBold : AppTypography.regular,
-                color: _currentIndex == 0 ? theme.accentColor : AppColors.getTextSecondary(isDark),
-              ),
+      content: Column(
+        children: [
+          // ── Tab bar personalizado ─────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+            child: Row(
+              children: List.generate(_tabs.length, (i) {
+                final isSelected = _currentIndex == i;
+                return GestureDetector(
+                  onTap: () => _onTabTapped(i),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.only(right: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? theme.accentColor.withOpacity(0.12)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: isSelected ? theme.accentColor : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      _tabs[i],
+                      style: TextStyle(
+                        fontSize: AppTypography.titleMedium,
+                        fontWeight: isSelected ? AppTypography.semiBold : AppTypography.regular,
+                        color: isSelected
+                            ? theme.accentColor
+                            : AppColors.getTextSecondary(isDark),
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
-            body: SettingsTournament(tournament: widget.tournament),
           ),
-          Tab(
-            text: Text(
-              'Inscripciones',
-              style: TextStyle(
-                fontSize: AppTypography.titleMedium,
-                fontWeight: _currentIndex == 1 ? AppTypography.semiBold : AppTypography.regular,
-                color: _currentIndex == 1 ? theme.accentColor : AppColors.getTextSecondary(isDark),
+
+          // ── Divider sutil ──────────────────────────────────────────────
+          Divider(
+            style: DividerThemeData(
+              thickness: 1,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withOpacity(0.08)
+                    : Colors.black.withOpacity(0.08),
               ),
             ),
-            body: InscriptionsTournament(tournament: widget.tournament),
           ),
-          Tab(
-            text: Text(
-              'Grupos',
-              style: TextStyle(
-                fontSize: AppTypography.titleMedium,
-                fontWeight: _currentIndex == 2 ? AppTypography.semiBold : AppTypography.regular,
-                color: _currentIndex == 2 ? theme.accentColor : AppColors.getTextSecondary(isDark),
-              ),
+
+          // ── Contenido animado con PageView ────────────────────────────
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(), // Solo navegamos por tab tap
+              onPageChanged: (index) {
+                if (_currentIndex != index) {
+                  setState(() => _currentIndex = index);
+                }
+              },
+              children: [
+                SettingsTournament(tournament: widget.tournament),
+                InscriptionsTournament(tournament: widget.tournament),
+                GroupsTournament(tournament: widget.tournament),
+              ],
             ),
-            body: GroupsTournament(tournament: widget.tournament),
           ),
         ],
       ),

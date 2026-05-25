@@ -86,7 +86,7 @@ class _GroupsTournamentState extends State<GroupsTournament> {
                 : groupsCtrl.groups.isEmpty
                     ? const Center(
                         child: Text(
-                            'No hay grupos creados. Usa el botón "Crear Grupo Manual".'))
+                            'No hay grupos creados.'))
                     : GridView.builder(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24.0, vertical: 8),
