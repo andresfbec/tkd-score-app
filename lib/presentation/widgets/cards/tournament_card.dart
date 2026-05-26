@@ -88,7 +88,7 @@ class TournamentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header con el título
+          // Header con el título y estado
           Container(
             decoration: BoxDecoration(
               color: headerBgColor,
@@ -113,16 +113,21 @@ class TournamentCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (!locked) ...[
-                  IconButton(
-                    icon: const Icon(FluentIcons.edit, size: 16),
-                    onPressed: onEdit,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: theme.accentColor,
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                  IconButton(
-                    icon: const Icon(FluentIcons.delete, size: 16),
-                    onPressed: onDelete,
+                  child: Text(
+                    TournamentLifecycle.labelEs(tournament.setupPhase),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -137,7 +142,7 @@ class TournamentCard extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        FluentIcons.location,
+                        FluentIcons.p_o_i_solid,
                         size: 16,
                         color: theme.accentColor,
                       ),
@@ -160,7 +165,7 @@ class TournamentCard extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        FluentIcons.calendar,
+                        FluentIcons.calendar_agenda,
                         size: 16,
                         color: theme.accentColor,
                       ),
@@ -182,7 +187,7 @@ class TournamentCard extends StatelessWidget {
                   // Disciplina
                   Row(
                     children: [
-                      Icon(FluentIcons.event, size: 16, color: theme.accentColor),
+                      Icon(FluentIcons.user_event, size: 16, color: theme.accentColor),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -198,25 +203,6 @@ class TournamentCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Estado
-                  Row(
-                    children: [
-                      Icon(FluentIcons.info, size: 16, color: theme.accentColor),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          TournamentLifecycle.labelEs(tournament.setupPhase),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: theme.accentColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 8),
                   _StepIndicator(
                     currentStep: _getStepIndex(tournament.setupPhase),
@@ -252,19 +238,47 @@ class TournamentCard extends StatelessWidget {
                       ),
                     ),
                   const Spacer(),
-                  if (!locked && (showConfigure || showStart)) ...[
+                  // Footer con botones de acción
+                  if (!locked || phase == TournamentLifecycle.live) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Edit y Delete a la izquierda
+                        Row(
+                          children: [
+                            if (!locked) ...[
+                              IconButton(
+                                icon: const Icon(FluentIcons.edit, size: 16),
+                                onPressed: onEdit,
+                              ),
+                              const SizedBox(width: 4),
+                              IconButton(
+                                icon: const Icon(FluentIcons.delete, size: 16),
+                                onPressed: onDelete,
+                              ),
+                            ],
+                          ],
+                        ),
+                        // Botones principales a la derecha
+                        if (phase == TournamentLifecycle.live && onManageMatches != null)
+                          FilledButton(
+                            onPressed: onManageMatches,
+                            child: const Text('Configurar'),
+                          )
+                        else if (showConfigure && onConfigure != null)
+                          FilledButton(
+                            onPressed: onConfigure,
+                            child: const Text('Configurar'),
+                          ),
+                      ],
+                    ),
+                  ],
+                  if (!locked && (showConfigure || showStart) && phase != TournamentLifecycle.live) ...[
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        if (showConfigure && onConfigure != null)
-                          Expanded(
-                            child: FilledButton(
-                              onPressed: onConfigure,
-                              child: const Text('Configurar'),
-                            ),
-                          ),
                         if (showStart && onStart != null) ...[
-                          const SizedBox(width: 8),
                           Expanded(
                             child: Button(
                               onPressed: onStart,
@@ -273,23 +287,6 @@ class TournamentCard extends StatelessWidget {
                           ),
                         ],
                       ],
-                    ),
-                  ],
-                  if (phase == TournamentLifecycle.live && onManageMatches != null) ...[
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: onManageMatches,
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(FluentIcons.play, size: 14),
-                            SizedBox(width: 8),
-                            Text('Gestionar Combates'),
-                          ],
-                        ),
-                      ),
                     ),
                   ],
                 ],

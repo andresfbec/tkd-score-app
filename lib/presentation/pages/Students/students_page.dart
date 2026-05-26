@@ -411,16 +411,17 @@ class _StudentsPageState extends State<StudentsPage> {
             flex: 2,
             child: ui.selectedStudent == null
                 ? Center(
-                    child: Text(
-                      'Selecciona un alumno para ver detalles',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: isDark
-                            ? const Color.fromARGB(255, 236, 236, 236)
-                            : const Color.fromARGB(255, 8, 8, 8),
-                      ),
-                    ),
-                  )
+                        child: Text(
+                          'Sin datos disponibles.',
+                          style: FluentTheme.of(context).typography.body
+                              ?.copyWith(
+                                fontSize: 13,
+                                color: isDark
+                                    ? Colors.white.withOpacity(0.7)
+                                    : Colors.black.withOpacity(0.7),
+                              ),
+                        ),
+                      )
                 : Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
