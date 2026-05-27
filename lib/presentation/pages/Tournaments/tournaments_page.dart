@@ -174,7 +174,7 @@ class TournamentsPage extends StatelessWidget {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.3,
+                        childAspectRatio: 1.6,
                       ),
                       itemCount: list.length,
                       itemBuilder: (context, index) {

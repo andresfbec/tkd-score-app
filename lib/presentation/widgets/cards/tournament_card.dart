@@ -79,6 +79,13 @@ class TournamentCard extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.65)
         : Colors.black.withValues(alpha: 0.65);
 
+    // Condición exacta para usar nuestro botón unificado (SplitButton)
+    final useSplitButton = phase == TournamentLifecycle.groupsReady &&
+        showStart &&
+        showConfigure &&
+        onStart != null &&
+        onConfigure != null;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -203,7 +210,6 @@ class TournamentCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const SizedBox(height: 8),
                   _StepIndicator(
                     currentStep: _getStepIndex(tournament.setupPhase),
                   ),
@@ -238,13 +244,39 @@ class TournamentCard extends StatelessWidget {
                       ),
                     ),
                   const Spacer(),
-                  // Footer con botones de acción
-                  if (!locked || phase == TournamentLifecycle.live) ...[
+                  
+                  // SECCIÓN DE BOTONES OPTIMIZADA
+                  if (useSplitButton) ...[
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Edit y Delete a la izquierda
+                        // Edit y Delete a la izquierda si no está bloqueado
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(FluentIcons.edit, size: 16),
+                              onPressed: onEdit,
+                            ),
+                            const SizedBox(width: 4),
+                            IconButton(
+                              icon: const Icon(FluentIcons.delete, size: 16),
+                              onPressed: onDelete,
+                            ),
+                          ],
+                        ),
+                        // Nuestro SplitButton unificado a la derecha
+                        _StartDropdownButton(
+                          onStart: onStart!,
+                          onConfigure: onConfigure!,
+                        ),
+                      ],
+                    ),
+                  ] else if (!locked || phase == TournamentLifecycle.live) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Row(
                           children: [
                             if (!locked) ...[
@@ -260,11 +292,10 @@ class TournamentCard extends StatelessWidget {
                             ],
                           ],
                         ),
-                        // Botones principales a la derecha
                         if (phase == TournamentLifecycle.live && onManageMatches != null)
                           FilledButton(
                             onPressed: onManageMatches,
-                            child: const Text('Configurar'),
+                            child: const Text('Continuar'),
                           )
                         else if (showConfigure && onConfigure != null)
                           FilledButton(
@@ -274,26 +305,53 @@ class TournamentCard extends StatelessWidget {
                       ],
                     ),
                   ],
-                  if (!locked && (showConfigure || showStart) && phase != TournamentLifecycle.live) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        if (showStart && onStart != null) ...[
-                          Expanded(
-                            child: Button(
-                              onPressed: onStart,
-                              child: const Text('Iniciar'),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// COMPONENTE SPLITBUTTON PRIVADO ADAPTADO A FLUENT_UI v4.9.0
+class _StartDropdownButton extends StatelessWidget {
+  final VoidCallback onStart;
+  final VoidCallback onConfigure;
+
+  const _StartDropdownButton({
+    required this.onStart,
+    required this.onConfigure,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Usamos el constructor .toggle nativo con checked: true para heredar el estilo Filled en todo el widget
+    return SplitButton.toggle(
+      checked: true,
+      onInvoked: onStart, // Acción principal al hacer clic en "Iniciar"
+      flyout: FlyoutContent(
+        constraints: const BoxConstraints(maxWidth: 150),
+        child: MenuFlyout(
+          items: [
+            MenuFlyoutItem(
+              leading: const Icon(FluentIcons.settings, size: 14),
+              text: const Text('Configurar'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el menú desplegable
+                onConfigure();
+              },
+            ),
+          ],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+        child: const Text(
+          'Iniciar',
+          // style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
@@ -327,7 +385,6 @@ class _StepIndicator extends StatelessWidget {
       final isActive = i <= currentStep;
       final isLast = i == totalSteps - 1;
 
-      // Dot
       children.add(
         Tooltip(
           message: stepNames[i],
@@ -342,7 +399,6 @@ class _StepIndicator extends StatelessWidget {
         ),
       );
 
-      // Line
       if (!isLast) {
         final isLineActive = i < currentStep;
         children.add(
