@@ -81,7 +81,7 @@ class _InscriptionsTournamentState extends State<InscriptionsTournament> {
                               const SizedBox(width: 12),
                               Text(
                                 sedeName,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -101,7 +101,7 @@ class _InscriptionsTournamentState extends State<InscriptionsTournament> {
                                   checked: isSelected,
                                   onChanged: (v) => insCtrl.toggleStudentSelection(student.id!),
                                 ),
-                                title: Text('${student.names} ${student.surnames}'),
+                                title: Text('${student.names} ${student.surnames}', style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16)),
                                 subtitle: Text(
                                   'ID: ${student.numberIdentify} • Edad: ${DateHelper.calculateAge(student.birthDate)} años • Cinturón: ${student.beltName ?? "Sin cinturón"}',
                                 ),

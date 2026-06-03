@@ -7446,9 +7446,9 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
   late final GeneratedColumn<int> inscriptionAId = GeneratedColumn<int>(
     'inscription_a_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES inscription (id) ON UPDATE CASCADE ON DELETE RESTRICT',
     ),
@@ -7460,9 +7460,9 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
   late final GeneratedColumn<int> inscriptionBId = GeneratedColumn<int>(
     'inscription_b_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES inscription (id) ON UPDATE CASCADE ON DELETE RESTRICT',
     ),
@@ -7556,6 +7556,18 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
     requiredDuringInsert: false,
     defaultValue: const Constant('pending'),
   );
+  static const VerificationMeta _roundStateMeta = const VerificationMeta(
+    'roundState',
+  );
+  @override
+  late final GeneratedColumn<String> roundState = GeneratedColumn<String>(
+    'round_state',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('draft'),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -7617,6 +7629,7 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
     nextVsWinnerId,
     nextVsLoserId,
     state,
+    roundState,
     createdAt,
     updatedAt,
     synchronized,
@@ -7656,8 +7669,6 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
           _inscriptionAIdMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_inscriptionAIdMeta);
     }
     if (data.containsKey('inscription_b_id')) {
       context.handle(
@@ -7667,8 +7678,6 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
           _inscriptionBIdMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_inscriptionBIdMeta);
     }
     if (data.containsKey('group_id')) {
       context.handle(
@@ -7729,6 +7738,12 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
         state.isAcceptableOrUnknown(data['state']!, _stateMeta),
       );
     }
+    if (data.containsKey('round_state')) {
+      context.handle(
+        _roundStateMeta,
+        roundState.isAcceptableOrUnknown(data['round_state']!, _roundStateMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -7776,11 +7791,11 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
       inscriptionAId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}inscription_a_id'],
-      )!,
+      ),
       inscriptionBId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}inscription_b_id'],
-      )!,
+      ),
       groupId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}group_id'],
@@ -7808,6 +7823,10 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
       state: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}state'],
+      )!,
+      roundState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}round_state'],
       )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -7837,8 +7856,8 @@ class $VersusTable extends Versus with TableInfo<$VersusTable, VersusData> {
 class VersusData extends DataClass implements Insertable<VersusData> {
   final int id;
   final int tournamentId;
-  final int inscriptionAId;
-  final int inscriptionBId;
+  final int? inscriptionAId;
+  final int? inscriptionBId;
   final int groupId;
   final int? winnerInscriptionId;
   final int bracketRound;
@@ -7846,6 +7865,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
   final int? nextVsWinnerId;
   final int? nextVsLoserId;
   final String state;
+  final String roundState;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int synchronized;
@@ -7853,8 +7873,8 @@ class VersusData extends DataClass implements Insertable<VersusData> {
   const VersusData({
     required this.id,
     required this.tournamentId,
-    required this.inscriptionAId,
-    required this.inscriptionBId,
+    this.inscriptionAId,
+    this.inscriptionBId,
     required this.groupId,
     this.winnerInscriptionId,
     required this.bracketRound,
@@ -7862,6 +7882,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     this.nextVsWinnerId,
     this.nextVsLoserId,
     required this.state,
+    required this.roundState,
     required this.createdAt,
     required this.updatedAt,
     required this.synchronized,
@@ -7872,8 +7893,12 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['tournament_id'] = Variable<int>(tournamentId);
-    map['inscription_a_id'] = Variable<int>(inscriptionAId);
-    map['inscription_b_id'] = Variable<int>(inscriptionBId);
+    if (!nullToAbsent || inscriptionAId != null) {
+      map['inscription_a_id'] = Variable<int>(inscriptionAId);
+    }
+    if (!nullToAbsent || inscriptionBId != null) {
+      map['inscription_b_id'] = Variable<int>(inscriptionBId);
+    }
     map['group_id'] = Variable<int>(groupId);
     if (!nullToAbsent || winnerInscriptionId != null) {
       map['winner_inscription_id'] = Variable<int>(winnerInscriptionId);
@@ -7887,6 +7912,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
       map['next_vs_loser_id'] = Variable<int>(nextVsLoserId);
     }
     map['state'] = Variable<String>(state);
+    map['round_state'] = Variable<String>(roundState);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['synchronized'] = Variable<int>(synchronized);
@@ -7898,8 +7924,12 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     return VersusCompanion(
       id: Value(id),
       tournamentId: Value(tournamentId),
-      inscriptionAId: Value(inscriptionAId),
-      inscriptionBId: Value(inscriptionBId),
+      inscriptionAId: inscriptionAId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(inscriptionAId),
+      inscriptionBId: inscriptionBId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(inscriptionBId),
       groupId: Value(groupId),
       winnerInscriptionId: winnerInscriptionId == null && nullToAbsent
           ? const Value.absent()
@@ -7913,6 +7943,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
           ? const Value.absent()
           : Value(nextVsLoserId),
       state: Value(state),
+      roundState: Value(roundState),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       synchronized: Value(synchronized),
@@ -7928,8 +7959,8 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     return VersusData(
       id: serializer.fromJson<int>(json['id']),
       tournamentId: serializer.fromJson<int>(json['tournamentId']),
-      inscriptionAId: serializer.fromJson<int>(json['inscriptionAId']),
-      inscriptionBId: serializer.fromJson<int>(json['inscriptionBId']),
+      inscriptionAId: serializer.fromJson<int?>(json['inscriptionAId']),
+      inscriptionBId: serializer.fromJson<int?>(json['inscriptionBId']),
       groupId: serializer.fromJson<int>(json['groupId']),
       winnerInscriptionId: serializer.fromJson<int?>(
         json['winnerInscriptionId'],
@@ -7939,6 +7970,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
       nextVsWinnerId: serializer.fromJson<int?>(json['nextVsWinnerId']),
       nextVsLoserId: serializer.fromJson<int?>(json['nextVsLoserId']),
       state: serializer.fromJson<String>(json['state']),
+      roundState: serializer.fromJson<String>(json['roundState']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       synchronized: serializer.fromJson<int>(json['synchronized']),
@@ -7951,8 +7983,8 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'tournamentId': serializer.toJson<int>(tournamentId),
-      'inscriptionAId': serializer.toJson<int>(inscriptionAId),
-      'inscriptionBId': serializer.toJson<int>(inscriptionBId),
+      'inscriptionAId': serializer.toJson<int?>(inscriptionAId),
+      'inscriptionBId': serializer.toJson<int?>(inscriptionBId),
       'groupId': serializer.toJson<int>(groupId),
       'winnerInscriptionId': serializer.toJson<int?>(winnerInscriptionId),
       'bracketRound': serializer.toJson<int>(bracketRound),
@@ -7960,6 +7992,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
       'nextVsWinnerId': serializer.toJson<int?>(nextVsWinnerId),
       'nextVsLoserId': serializer.toJson<int?>(nextVsLoserId),
       'state': serializer.toJson<String>(state),
+      'roundState': serializer.toJson<String>(roundState),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'synchronized': serializer.toJson<int>(synchronized),
@@ -7970,8 +8003,8 @@ class VersusData extends DataClass implements Insertable<VersusData> {
   VersusData copyWith({
     int? id,
     int? tournamentId,
-    int? inscriptionAId,
-    int? inscriptionBId,
+    Value<int?> inscriptionAId = const Value.absent(),
+    Value<int?> inscriptionBId = const Value.absent(),
     int? groupId,
     Value<int?> winnerInscriptionId = const Value.absent(),
     int? bracketRound,
@@ -7979,6 +8012,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     Value<int?> nextVsWinnerId = const Value.absent(),
     Value<int?> nextVsLoserId = const Value.absent(),
     String? state,
+    String? roundState,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? synchronized,
@@ -7986,8 +8020,12 @@ class VersusData extends DataClass implements Insertable<VersusData> {
   }) => VersusData(
     id: id ?? this.id,
     tournamentId: tournamentId ?? this.tournamentId,
-    inscriptionAId: inscriptionAId ?? this.inscriptionAId,
-    inscriptionBId: inscriptionBId ?? this.inscriptionBId,
+    inscriptionAId: inscriptionAId.present
+        ? inscriptionAId.value
+        : this.inscriptionAId,
+    inscriptionBId: inscriptionBId.present
+        ? inscriptionBId.value
+        : this.inscriptionBId,
     groupId: groupId ?? this.groupId,
     winnerInscriptionId: winnerInscriptionId.present
         ? winnerInscriptionId.value
@@ -8001,6 +8039,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
         ? nextVsLoserId.value
         : this.nextVsLoserId,
     state: state ?? this.state,
+    roundState: roundState ?? this.roundState,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     synchronized: synchronized ?? this.synchronized,
@@ -8035,6 +8074,9 @@ class VersusData extends DataClass implements Insertable<VersusData> {
           ? data.nextVsLoserId.value
           : this.nextVsLoserId,
       state: data.state.present ? data.state.value : this.state,
+      roundState: data.roundState.present
+          ? data.roundState.value
+          : this.roundState,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       synchronized: data.synchronized.present
@@ -8058,6 +8100,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
           ..write('nextVsWinnerId: $nextVsWinnerId, ')
           ..write('nextVsLoserId: $nextVsLoserId, ')
           ..write('state: $state, ')
+          ..write('roundState: $roundState, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synchronized: $synchronized, ')
@@ -8079,6 +8122,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
     nextVsWinnerId,
     nextVsLoserId,
     state,
+    roundState,
     createdAt,
     updatedAt,
     synchronized,
@@ -8099,6 +8143,7 @@ class VersusData extends DataClass implements Insertable<VersusData> {
           other.nextVsWinnerId == this.nextVsWinnerId &&
           other.nextVsLoserId == this.nextVsLoserId &&
           other.state == this.state &&
+          other.roundState == this.roundState &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.synchronized == this.synchronized &&
@@ -8108,8 +8153,8 @@ class VersusData extends DataClass implements Insertable<VersusData> {
 class VersusCompanion extends UpdateCompanion<VersusData> {
   final Value<int> id;
   final Value<int> tournamentId;
-  final Value<int> inscriptionAId;
-  final Value<int> inscriptionBId;
+  final Value<int?> inscriptionAId;
+  final Value<int?> inscriptionBId;
   final Value<int> groupId;
   final Value<int?> winnerInscriptionId;
   final Value<int> bracketRound;
@@ -8117,6 +8162,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
   final Value<int?> nextVsWinnerId;
   final Value<int?> nextVsLoserId;
   final Value<String> state;
+  final Value<String> roundState;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> synchronized;
@@ -8133,6 +8179,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
     this.nextVsWinnerId = const Value.absent(),
     this.nextVsLoserId = const Value.absent(),
     this.state = const Value.absent(),
+    this.roundState = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
@@ -8141,8 +8188,8 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
   VersusCompanion.insert({
     this.id = const Value.absent(),
     required int tournamentId,
-    required int inscriptionAId,
-    required int inscriptionBId,
+    this.inscriptionAId = const Value.absent(),
+    this.inscriptionBId = const Value.absent(),
     required int groupId,
     this.winnerInscriptionId = const Value.absent(),
     this.bracketRound = const Value.absent(),
@@ -8150,13 +8197,12 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
     this.nextVsWinnerId = const Value.absent(),
     this.nextVsLoserId = const Value.absent(),
     this.state = const Value.absent(),
+    this.roundState = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   }) : tournamentId = Value(tournamentId),
-       inscriptionAId = Value(inscriptionAId),
-       inscriptionBId = Value(inscriptionBId),
        groupId = Value(groupId);
   static Insertable<VersusData> custom({
     Expression<int>? id,
@@ -8170,6 +8216,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
     Expression<int>? nextVsWinnerId,
     Expression<int>? nextVsLoserId,
     Expression<String>? state,
+    Expression<String>? roundState,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? synchronized,
@@ -8188,6 +8235,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
       if (nextVsWinnerId != null) 'next_vs_winner_id': nextVsWinnerId,
       if (nextVsLoserId != null) 'next_vs_loser_id': nextVsLoserId,
       if (state != null) 'state': state,
+      if (roundState != null) 'round_state': roundState,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (synchronized != null) 'synchronized': synchronized,
@@ -8198,8 +8246,8 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
   VersusCompanion copyWith({
     Value<int>? id,
     Value<int>? tournamentId,
-    Value<int>? inscriptionAId,
-    Value<int>? inscriptionBId,
+    Value<int?>? inscriptionAId,
+    Value<int?>? inscriptionBId,
     Value<int>? groupId,
     Value<int?>? winnerInscriptionId,
     Value<int>? bracketRound,
@@ -8207,6 +8255,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
     Value<int?>? nextVsWinnerId,
     Value<int?>? nextVsLoserId,
     Value<String>? state,
+    Value<String>? roundState,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? synchronized,
@@ -8224,6 +8273,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
       nextVsWinnerId: nextVsWinnerId ?? this.nextVsWinnerId,
       nextVsLoserId: nextVsLoserId ?? this.nextVsLoserId,
       state: state ?? this.state,
+      roundState: roundState ?? this.roundState,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       synchronized: synchronized ?? this.synchronized,
@@ -8267,6 +8317,9 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
     if (state.present) {
       map['state'] = Variable<String>(state.value);
     }
+    if (roundState.present) {
+      map['round_state'] = Variable<String>(roundState.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -8296,6 +8349,7 @@ class VersusCompanion extends UpdateCompanion<VersusData> {
           ..write('nextVsWinnerId: $nextVsWinnerId, ')
           ..write('nextVsLoserId: $nextVsLoserId, ')
           ..write('state: $state, ')
+          ..write('roundState: $roundState, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synchronized: $synchronized, ')
@@ -18596,8 +18650,8 @@ typedef $$VersusTableCreateCompanionBuilder =
     VersusCompanion Function({
       Value<int> id,
       required int tournamentId,
-      required int inscriptionAId,
-      required int inscriptionBId,
+      Value<int?> inscriptionAId,
+      Value<int?> inscriptionBId,
       required int groupId,
       Value<int?> winnerInscriptionId,
       Value<int> bracketRound,
@@ -18605,6 +18659,7 @@ typedef $$VersusTableCreateCompanionBuilder =
       Value<int?> nextVsWinnerId,
       Value<int?> nextVsLoserId,
       Value<String> state,
+      Value<String> roundState,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -18614,8 +18669,8 @@ typedef $$VersusTableUpdateCompanionBuilder =
     VersusCompanion Function({
       Value<int> id,
       Value<int> tournamentId,
-      Value<int> inscriptionAId,
-      Value<int> inscriptionBId,
+      Value<int?> inscriptionAId,
+      Value<int?> inscriptionBId,
       Value<int> groupId,
       Value<int?> winnerInscriptionId,
       Value<int> bracketRound,
@@ -18623,6 +18678,7 @@ typedef $$VersusTableUpdateCompanionBuilder =
       Value<int?> nextVsWinnerId,
       Value<int?> nextVsLoserId,
       Value<String> state,
+      Value<String> roundState,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> synchronized,
@@ -18657,9 +18713,9 @@ final class $$VersusTableReferences
         $_aliasNameGenerator(db.versus.inscriptionAId, db.inscription.id),
       );
 
-  $$InscriptionTableProcessedTableManager get inscriptionAId {
-    final $_column = $_itemColumn<int>('inscription_a_id')!;
-
+  $$InscriptionTableProcessedTableManager? get inscriptionAId {
+    final $_column = $_itemColumn<int>('inscription_a_id');
+    if ($_column == null) return null;
     final manager = $$InscriptionTableTableManager(
       $_db,
       $_db.inscription,
@@ -18676,9 +18732,9 @@ final class $$VersusTableReferences
         $_aliasNameGenerator(db.versus.inscriptionBId, db.inscription.id),
       );
 
-  $$InscriptionTableProcessedTableManager get inscriptionBId {
-    final $_column = $_itemColumn<int>('inscription_b_id')!;
-
+  $$InscriptionTableProcessedTableManager? get inscriptionBId {
+    final $_column = $_itemColumn<int>('inscription_b_id');
+    if ($_column == null) return null;
     final manager = $$InscriptionTableTableManager(
       $_db,
       $_db.inscription,
@@ -18827,6 +18883,11 @@ class $$VersusTableFilterComposer
 
   ColumnFilters<String> get state => $composableBuilder(
     column: $table.state,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get roundState => $composableBuilder(
+    column: $table.roundState,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19091,6 +19152,11 @@ class $$VersusTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get roundState => $composableBuilder(
+    column: $table.roundState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -19297,6 +19363,11 @@ class $$VersusTableAnnotationComposer
 
   GeneratedColumn<String> get state =>
       $composableBuilder(column: $table.state, builder: (column) => column);
+
+  GeneratedColumn<String> get roundState => $composableBuilder(
+    column: $table.roundState,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -19564,8 +19635,8 @@ class $$VersusTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> tournamentId = const Value.absent(),
-                Value<int> inscriptionAId = const Value.absent(),
-                Value<int> inscriptionBId = const Value.absent(),
+                Value<int?> inscriptionAId = const Value.absent(),
+                Value<int?> inscriptionBId = const Value.absent(),
                 Value<int> groupId = const Value.absent(),
                 Value<int?> winnerInscriptionId = const Value.absent(),
                 Value<int> bracketRound = const Value.absent(),
@@ -19573,6 +19644,7 @@ class $$VersusTableTableManager
                 Value<int?> nextVsWinnerId = const Value.absent(),
                 Value<int?> nextVsLoserId = const Value.absent(),
                 Value<String> state = const Value.absent(),
+                Value<String> roundState = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -19589,6 +19661,7 @@ class $$VersusTableTableManager
                 nextVsWinnerId: nextVsWinnerId,
                 nextVsLoserId: nextVsLoserId,
                 state: state,
+                roundState: roundState,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synchronized: synchronized,
@@ -19598,8 +19671,8 @@ class $$VersusTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int tournamentId,
-                required int inscriptionAId,
-                required int inscriptionBId,
+                Value<int?> inscriptionAId = const Value.absent(),
+                Value<int?> inscriptionBId = const Value.absent(),
                 required int groupId,
                 Value<int?> winnerInscriptionId = const Value.absent(),
                 Value<int> bracketRound = const Value.absent(),
@@ -19607,6 +19680,7 @@ class $$VersusTableTableManager
                 Value<int?> nextVsWinnerId = const Value.absent(),
                 Value<int?> nextVsLoserId = const Value.absent(),
                 Value<String> state = const Value.absent(),
+                Value<String> roundState = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> synchronized = const Value.absent(),
@@ -19623,6 +19697,7 @@ class $$VersusTableTableManager
                 nextVsWinnerId: nextVsWinnerId,
                 nextVsLoserId: nextVsLoserId,
                 state: state,
+                roundState: roundState,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synchronized: synchronized,

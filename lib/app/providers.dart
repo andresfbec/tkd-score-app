@@ -166,6 +166,7 @@ class AppProviders {
           swapParticipantsUseCase: containerVersus.swapVersusParticipants,
           isRoundCompleteUseCase: containerVersus.isVersusRoundComplete,
           getMaxBracketRoundUseCase: containerVersus.getMaxBracketRound,
+          generateGroupBracketUseCase: containerVersus.generateGroupBracket,
         ),
       ),
       ChangeNotifierProvider<CombatRoundsController>(

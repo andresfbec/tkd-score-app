@@ -128,7 +128,8 @@ class _HeadquartersPageContentState extends State<_HeadquartersPageContent> {
     showDialog(
       context: context,
       builder: (dialogContext) => CustomFormModal(
-        title: "Editar sede: ${row['name']}",
+        // title: "Editar sede: ${row['name']}",
+        title: "Editar sede",
         initialValues: {
           "name": row["name"],
           "address": row["address"],

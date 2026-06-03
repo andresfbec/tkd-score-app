@@ -112,13 +112,13 @@ class _GroupsTournamentState extends State<GroupsTournament> {
                                       child: Text(
                                         group.name,
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold, fontSize: 14),
+                                            fontWeight: FontWeight.w600, fontSize: 16),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(FluentIcons.delete, size: 14),
+                                      icon: const Icon(FluentIcons.delete, size: 18),
                                       onPressed: () => groupsCtrl.deleteGroup(group.id!),
                                     ),
                                   ],

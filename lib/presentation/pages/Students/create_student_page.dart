@@ -237,7 +237,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
               ),
               const TextSpan(text: '  >  '),
               TextSpan(
-                text: 'Crear Alumno',
+                text: 'Crear alumno',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,
                   fontWeight: AppTypography.semiBold,

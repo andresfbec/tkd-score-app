@@ -18,6 +18,7 @@ import '../../domain/usecases/versus/set_versus_winner.dart';
 import '../../domain/usecases/versus/swap_versus_participants.dart';
 import '../../domain/usecases/versus/is_versus_round_complete.dart';
 import '../../domain/usecases/versus/get_max_bracket_round.dart';
+import '../../domain/usecases/versus/generate_group_bracket_usecase.dart';
 
 import '../../core/enums/status.dart';
 
@@ -38,6 +39,7 @@ class VersusController extends ChangeNotifier {
   final SwapVersusParticipants swapParticipantsUseCase;
   final IsVersusRoundComplete isRoundCompleteUseCase;
   final GetMaxBracketRound getMaxBracketRoundUseCase;
+  final GenerateGroupBracketUseCase generateGroupBracketUseCase;
 
   VersusController({
     required this.createUseCase,
@@ -56,6 +58,7 @@ class VersusController extends ChangeNotifier {
     required this.swapParticipantsUseCase,
     required this.isRoundCompleteUseCase,
     required this.getMaxBracketRoundUseCase,
+    required this.generateGroupBracketUseCase,
   });
 
   List<VersusEntity> _versusList = [];
@@ -233,6 +236,25 @@ class VersusController extends ChangeNotifier {
   Future<int> getMaxRound(int groupId) async {
     return await getMaxBracketRoundUseCase(groupId);
   }
+
+
+  // eliminado porque es redundante con el metodo combate_visualization_controller.loadBracket, que a su vez es mas especifico para el caso de uso de visualizacion de combates. Ademas, este metodo no se estaba utilizando en ningun lugar del codigo.
+  // Future<List<VersusEntity>> generateGroupBracket(int groupId, int tournamentId) async {
+  //   try {
+  //     status = Status.loading;
+  //     notifyListeners();
+  //     final result = await generateGroupBracketUseCase(groupId, tournamentId);
+  //     status = Status.success;
+  //     notifyListeners();
+  //     return result;
+  //   } catch (e) {
+  //     status = Status.error;
+  //     message = e.toString();
+  //     notifyListeners();
+  //     rethrow;
+  //   }
+  // }
+
 
   @override
   void dispose() {

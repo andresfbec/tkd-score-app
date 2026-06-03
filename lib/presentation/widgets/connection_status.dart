@@ -49,25 +49,18 @@ class _ConnectionStatusState extends State<ConnectionStatus> {
 
   @override
   Widget build(BuildContext context) {
+    // Definimos el texto del estado de conexión para reusarlo
+    final statusMessage = isOnline ? 'Conectado' : 'Sin conexión';
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-            children: [
-        Icon(
-          isOnline ? FluentIcons.wifi : FluentIcons.warning,
-          size: AppTypography.iconMedium, // 16.0
-          color: isOnline ? AppColors.wifiIcon : AppColors.error,
-        ),
-        const SizedBox(width: 4),
-        Text(
-          isOnline ? 'Conectado' : 'Sin conexión',
-          style: TextStyle(
-            fontSize: AppTypography.caption,
-            color: isOnline ? AppColors.wifiIcon : AppColors.error,
-            fontWeight: AppTypography.regular,
-          ),
-        ),
-      ],
+    return Tooltip(
+      message: statusMessage,
+      // Fluent UI maneja una propiedad llamada 'displayHorizon' o 'style' 
+      // si quisieras tunearlo, pero por defecto funciona al hacer hover.
+      child: Icon(
+        isOnline ? FluentIcons.wifi : FluentIcons.warning,
+        size: AppTypography.iconMedium, // 16.0
+        color: isOnline ? AppColors.wifiIcon : AppColors.error,
+      ),
     );
   }
 }

@@ -30,6 +30,8 @@ class InjectionCombatRounds {
     );
   }
 
+  CombatRoundsRepositoryImpl get repository => _getRepo;
+
   CreateCombatRound get createCombatRound => CreateCombatRound(_getRepo);
   CreateBatchCombatRounds get createBatchCombatRounds => CreateBatchCombatRounds(_getRepo);
   UpdateCombatRound get updateCombatRound => UpdateCombatRound(_getRepo);

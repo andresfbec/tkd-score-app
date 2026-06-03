@@ -16,6 +16,7 @@ class VersusMapper {
       nextVsWinnerId: data.nextVsWinnerId,
       nextVsLoserId: data.nextVsLoserId,
       state: data.state,
+      roundState: data.roundState,
     );
   }
 
@@ -32,6 +33,7 @@ class VersusMapper {
       nextVsWinnerId: entity.nextVsWinnerId != null ? Value(entity.nextVsWinnerId!) : const Value.absent(),
       nextVsLoserId: entity.nextVsLoserId != null ? Value(entity.nextVsLoserId!) : const Value.absent(),
       state: Value(entity.state),
+      roundState: Value(entity.roundState),
     );
   }
 }

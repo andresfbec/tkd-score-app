@@ -13,14 +13,14 @@ class Versus extends Table {
   )();
 
   @ReferenceName('inscription1')
-  IntColumn get inscriptionAId => integer().references(
+  IntColumn get inscriptionAId => integer().nullable().references(
     Inscription,
     #id,
     onDelete: KeyAction.restrict,
     onUpdate: KeyAction.cascade,
   )();
   @ReferenceName('inscription2')
-  IntColumn get inscriptionBId => integer().references(
+  IntColumn get inscriptionBId => integer().nullable().references(
     Inscription,
     #id,
     onDelete: KeyAction.restrict,
@@ -54,6 +54,7 @@ class Versus extends Table {
     onUpdate: KeyAction.cascade,
   )();
   TextColumn get state => text().withDefault(const Constant('pending'))();
+  TextColumn get roundState => text().withDefault(const Constant('draft'))();
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();

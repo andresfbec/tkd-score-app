@@ -24,6 +24,8 @@ class InjectionCombatSettings {
     );
   }
 
+  CombatSettingsRepositoryImpl get repository => _getRepo;
+
   CreateCombatSetting get createCombatSetting => CreateCombatSetting(_getRepo);
   UpdateCombatSetting get updateCombatSetting => UpdateCombatSetting(_getRepo);
   DeleteCombatSetting get deleteCombatSetting => DeleteCombatSetting(_getRepo);

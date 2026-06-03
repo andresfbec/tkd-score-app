@@ -61,8 +61,8 @@ class TournamentsPage extends StatelessWidget {
       builder: (dialogContext) => ContentDialog(
         title: const Text('Iniciar torneo'),
         content: Text(
-          '¿Pasar "${t.name}" a estado en curso? '
-          'Luego no podrás editarlo ni eliminarlo desde aquí.',
+          '¿Deseas iniciar el torneo "${t.name}"? '
+          'Luego no podrás editar las reglas, grupos ni participantes. Por favor verifica los datos antes de iniciar el torneo.',
         ),
         actions: [
           Button(

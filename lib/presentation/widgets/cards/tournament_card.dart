@@ -95,7 +95,7 @@ class TournamentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header con el título y estado
+          // Header con el título modificado y sin la línea inferior
           Container(
             decoration: BoxDecoration(
               color: headerBgColor,
@@ -103,9 +103,9 @@ class TournamentCard extends StatelessWidget {
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
-              border: Border(bottom: BorderSide(color: borderColor)),
+              // CORRECCIÓN: Se eliminó el parámetro 'border' que dibujaba la línea divisoria
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -115,8 +115,9 @@ class TournamentCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w500, // Un poco más grueso para balancear el tamaño
+                      fontSize: 19,               // Aumentado de 16 a 19 para mayor jerarquía
+                      letterSpacing: 0.1,
                     ),
                   ),
                 ),
@@ -194,7 +195,7 @@ class TournamentCard extends StatelessWidget {
                   // Disciplina
                   Row(
                     children: [
-                      Icon(FluentIcons.user_event, size: 16, color: theme.accentColor),
+                      Icon(FluentIcons.shield, size: 16, color: theme.accentColor),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -251,21 +252,19 @@ class TournamentCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Edit y Delete a la izquierda si no está bloqueado
                         Row(
                           children: [
                             IconButton(
-                              icon: const Icon(FluentIcons.edit, size: 16),
+                              icon: const Icon(FluentIcons.edit, size: 18),
                               onPressed: onEdit,
                             ),
                             const SizedBox(width: 4),
                             IconButton(
-                              icon: const Icon(FluentIcons.delete, size: 16),
+                              icon: const Icon(FluentIcons.delete, size: 18),
                               onPressed: onDelete,
                             ),
                           ],
                         ),
-                        // Nuestro SplitButton unificado a la derecha
                         _StartDropdownButton(
                           onStart: onStart!,
                           onConfigure: onConfigure!,
@@ -315,7 +314,6 @@ class TournamentCard extends StatelessWidget {
   }
 }
 
-// COMPONENTE SPLITBUTTON PRIVADO ADAPTADO A FLUENT_UI v4.9.0
 class _StartDropdownButton extends StatelessWidget {
   final VoidCallback onStart;
   final VoidCallback onConfigure;
@@ -327,19 +325,18 @@ class _StartDropdownButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos el constructor .toggle nativo con checked: true para heredar el estilo Filled en todo el widget
     return SplitButton.toggle(
       checked: true,
-      onInvoked: onStart, // Acción principal al hacer clic en "Iniciar"
+      onInvoked: onStart,
       flyout: FlyoutContent(
-        constraints: const BoxConstraints(maxWidth: 150),
+        constraints: const BoxConstraints(maxWidth: 125), // Ajustado previamente a 170
         child: MenuFlyout(
           items: [
             MenuFlyoutItem(
-              leading: const Icon(FluentIcons.settings, size: 14),
+              // leading: const Icon(FluentIcons.settings, size: 14),
               text: const Text('Configurar'),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el menú desplegable
+                Navigator.of(context).pop();
                 onConfigure();
               },
             ),
@@ -350,7 +347,6 @@ class _StartDropdownButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
         child: const Text(
           'Iniciar',
-          // style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
     );

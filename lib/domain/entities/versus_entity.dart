@@ -3,8 +3,8 @@ import 'package:equatable/equatable.dart';
 class VersusEntity extends Equatable {
   final int? id;
   final int tournamentId;
-  final int inscriptionAId;
-  final int inscriptionBId;
+  final int? inscriptionAId;
+  final int? inscriptionBId;
   final int groupId;
   final int? winnerInscriptionId;
   final int bracketRound;
@@ -12,12 +12,13 @@ class VersusEntity extends Equatable {
   final int? nextVsWinnerId;
   final int? nextVsLoserId;
   final String state;
+  final String roundState;
 
   const VersusEntity({
     this.id,
     required this.tournamentId,
-    required this.inscriptionAId,
-    required this.inscriptionBId,
+    this.inscriptionAId,
+    this.inscriptionBId,
     required this.groupId,
     this.winnerInscriptionId,
     this.bracketRound = 1,
@@ -25,6 +26,7 @@ class VersusEntity extends Equatable {
     this.nextVsWinnerId,
     this.nextVsLoserId,
     this.state = 'pending',
+    this.roundState = 'draft',
   });
 
   VersusEntity copyWith({
@@ -39,6 +41,7 @@ class VersusEntity extends Equatable {
     int? nextVsWinnerId,
     int? nextVsLoserId,
     String? state,
+    String? roundState,
   }) {
     return VersusEntity(
       id: id ?? this.id,
@@ -52,6 +55,7 @@ class VersusEntity extends Equatable {
       nextVsWinnerId: nextVsWinnerId ?? this.nextVsWinnerId,
       nextVsLoserId: nextVsLoserId ?? this.nextVsLoserId,
       state: state ?? this.state,
+      roundState: roundState ?? this.roundState,
     );
   }
 
@@ -68,5 +72,6 @@ class VersusEntity extends Equatable {
         nextVsWinnerId,
         nextVsLoserId,
         state,
+        roundState,
       ];
 }

@@ -20,6 +20,7 @@ class CombatSettingsPage extends StatefulWidget {
 
 class _CombatSettingsPageState extends State<CombatSettingsPage> {
   int _currentIndex = 0;
+  int? _hoveredIndex;
   late final PageController _pageController;
 
   static const _tabs = ['Reglas', 'Inscripciones', 'Grupos'];
@@ -84,7 +85,8 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
               ),
               const TextSpan(text: '  >  '),
               TextSpan(
-                text: 'Configuración: ${widget.tournament.name}',
+                // text: 'Configuración: ${widget.tournament.name}',
+                text: 'Configuración de torneo',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,
                   fontWeight: AppTypography.semiBold,
@@ -99,44 +101,76 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
       content: Column(
         children: [
           // ── Tab bar personalizado ─────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-            child: Row(
-              children: List.generate(_tabs.length, (i) {
-                final isSelected = _currentIndex == i;
-                return GestureDetector(
-                  onTap: () => _onTabTapped(i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.only(right: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? theme.accentColor.withOpacity(0.12)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border(
-                        bottom: BorderSide(
-                          color: isSelected ? theme.accentColor : Colors.transparent,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      _tabs[i],
-                      style: TextStyle(
-                        fontSize: AppTypography.titleMedium,
-                        fontWeight: isSelected ? AppTypography.semiBold : AppTypography.regular,
-                        color: isSelected
-                            ? theme.accentColor
-                            : AppColors.getTextSecondary(isDark),
-                      ),
-                    ),
+// ── Tab bar minimalista con Nombre de Torneo a la derecha ─────────────────────
+Padding(
+  padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 0, bottom: 0), // Ajustado padding derecho a 25.0 para simetría
+  child: Row(
+    children: [
+      // Bloque de pestañas (Reglas, Inscripciones, Grupos)
+      ...List.generate(_tabs.length, (i) {
+        final isSelected = _currentIndex == i;
+        final isHovered = _hoveredIndex == i;
+
+        return GestureDetector(
+          onTap: () => _onTabTapped(i),
+          child: MouseRegion(
+            cursor: SystemMouseCursors.basic, 
+            onEnter: (_) => setState(() => _hoveredIndex = i), 
+            onExit: (_) => setState(() => _hoveredIndex = null), 
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              margin: const EdgeInsets.only(right: 24),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: isSelected
+                        ? theme.accentColor
+                        : (isHovered 
+                            ? theme.accentColor.withOpacity(0.3) 
+                            : Colors.transparent),
+                    width: 2.5,
                   ),
-                );
-              }),
+                ),
+              ),
+              child: Text(
+                _tabs[i],
+                style: TextStyle(
+                  fontSize: AppTypography.titleMedium,
+                  fontWeight: isSelected ? AppTypography.semiBold : AppTypography.regular,
+                  color: isSelected
+                      ? theme.accentColor
+                      : (isHovered
+                          ? AppColors.getTextPrimary(isDark).withOpacity(0.5)
+                          : AppColors.getTextSecondary(isDark).withOpacity(0.6)),
+                ),
+              ),
             ),
           ),
+        );
+      }),
+
+      // ── El Spacer empuja todo lo que viene después al extremo derecho ──
+      const Spacer(),
+
+      // ── Nombre del Torneo alineado a la derecha ─────────────────────────
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8), // Mismo padding vertical para alinear la línea base del texto
+        child: Text(
+          widget.tournament.name, // Accede directamente al objeto del torneo pasado a la página
+          style: TextStyle(
+            fontSize: AppTypography.titleLarge, // Mismo tamaño para mantener armonía visual
+            fontWeight: AppTypography.medium,  // Regular o semiBold según prefieras
+            fontFamily: AppTypography.fontFamily,
+            color: AppColors.getTextPrimary(isDark).withOpacity(0.8), // Un poco más suave que el título principal
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis, // Si el nombre es muy largo, añade '...' para no romper el diseño
+        ),
+      ),
+    ],
+  ),
+),
 
           // ── Divider sutil ──────────────────────────────────────────────
           Divider(

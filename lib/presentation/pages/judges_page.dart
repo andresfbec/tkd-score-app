@@ -39,7 +39,7 @@ class _JudgesPageState extends State<JudgesPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => CustomFormModal(
-        title: "Crear nuevo juez",
+        title: "Crear juez",
         fields: [
           FormFieldConfig(
             name: "names",
@@ -88,7 +88,8 @@ class _JudgesPageState extends State<JudgesPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => CustomFormModal(
-        title: "Editar juez: ${judge.names}",
+        // title: "Editar juez: ${judge.names}",
+        title: "Editar juez",
         initialValues: {
           "names": judge.names,
           "document": judge.document,
@@ -232,8 +233,8 @@ class _JudgesPageState extends State<JudgesPage> {
                       child: Text(
                         judgesController.status == Status.loading
                             ? 'Cargando jueces...'
-                            : 'No se encontraron jueces.',
-                        style: TextStyle(color: isDark ? Colors.white.withOpacity(0.5) : Colors.black.withOpacity(0.5)),
+                            : 'No hay datos disponibles.',
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
                       ),
                     )
                   : GridView.builder(

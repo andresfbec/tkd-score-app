@@ -184,43 +184,50 @@ class _AppShellState extends State<AppShell> {
   // ============================================================
   // DERECHA — ESTADO DEL SISTEMA (Minimalista)
   // ============================================================
-  Widget _buildHeaderRight() {
-    final Color syncColor = isCloudSynced
-        ? const Color(0xFF1466D1)
-        : AppColors.warning;
+Widget _buildHeaderRight() {
+  final Color syncColor = isCloudSynced
+      ? const Color(0xFF1466D1)
+      : AppColors.warning;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Sincronización
-        _HoverChip(
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      // Sincronización (Con Tooltip al hacer hover)
+      Tooltip(
+        message: isCloudSynced ? 'Sincronizado' : 'Sin sincronizar',
+        child: _HoverChip(
           icon: FluentIcons.cloud,
-          label: isCloudSynced ? 'Sincronizado' : 'Sin sincronizar',
+          label: '', // Eliminamos el texto visual continuo
           color: syncColor,
           onTap: () {},
         ),
+      ),
 
-        const SizedBox(width: 4),
+      // const SizedBox(width: 2),
 
-        // Estado de conexión
-        const _ConnectionChip(),
+      // Estado de conexión
+      const _ConnectionChip(),
 
-        const SizedBox(width: 4),
+      // const SizedBox(width: 2),
 
-        // Notificaciones
-        _HoverChip(
+      // Notificaciones (Con Tooltip al hacer hover)
+      Tooltip(
+        message: 'Alertas',
+        child: _HoverChip(
           icon: FluentIcons.ringer,
-          label: 'Alertas',
+          label: '', // Eliminamos el texto visual continuo
           onTap: () {
             // TODO: abrir notificaciones
           },
         ),
+      ),
 
-        const SizedBox(width: 8),
-      ],
-    );
-  }
+      const SizedBox(width: 8),
+    ],
+  );
+}
+
 }
 
 // ============================================================
@@ -271,7 +278,7 @@ class _HoverChipState extends State<_HoverChip> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(widget.icon, size: 14, color: defaultColor),
-              const SizedBox(width: 5),
+              // const SizedBox(width: 5),
               Text(
                 widget.label,
                 style: TextStyle(

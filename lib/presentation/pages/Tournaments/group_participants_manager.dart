@@ -26,6 +26,7 @@ class _GroupParticipantsManagerState extends State<GroupParticipantsManager> {
   Widget build(BuildContext context) {
     final insCtrl = context.watch<InscriptionsController>();
     final groupsCtrl = context.read<GroupsController>();
+    final isDark = FluentTheme.of(context).brightness == Brightness.dark;
     
     // Todas las inscripciones del torneo
     final allInscriptions = insCtrl.inscriptions;
@@ -44,20 +45,35 @@ class _GroupParticipantsManagerState extends State<GroupParticipantsManager> {
       constraints: const BoxConstraints(maxWidth: 600, maxHeight: 800),
       content: Column(
         children: [
-          const Text('Selecciona los alumnos que pertenecen a este grupo.', 
-            style: TextStyle(fontWeight: FontWeight.bold)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(FluentIcons.info, size: 14, color: isDark ? const Color.fromARGB(255, 184, 184, 184) : Colors.black),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  'Selecciona los alumnos que quieres asignar a este grupo.',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: isDark ? const Color.fromARGB(255, 190, 190, 190) : const Color.fromARGB(255, 85, 85, 85),
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Expanded(
             child: ListView(
               children: [
-                if (inGroup.isNotEmpty) ...[
+                if (inGroup.isNotEmpty) ... [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text('En este grupo:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                   ),
                   ...inGroup.map((ins) => _buildInscriptionTile(ins, true, groupsCtrl, context)),
                 ],
-                if (unassigned.isNotEmpty) ...[
+                if (unassigned.isNotEmpty) ... [
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8.0),
                     child: Text('Alumnos sin grupo asignado:', style: TextStyle(fontWeight: FontWeight.bold)),

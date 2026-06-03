@@ -19,6 +19,11 @@ import '../../../domain/usecases/versus/set_versus_winner.dart';
 import '../../../domain/usecases/versus/swap_versus_participants.dart';
 import '../../../domain/usecases/versus/is_versus_round_complete.dart';
 import '../../../domain/usecases/versus/get_max_bracket_round.dart';
+import '../../../domain/usecases/versus/generate_group_bracket_usecase.dart';
+
+import 'dependency_inscriptions.dart';
+import 'dependency_combat_settings.dart';
+import 'dependency_combat_rounds.dart';
 
 class InjectionVersus {
   static final InjectionVersus _instance = InjectionVersus._internal();
@@ -32,6 +37,15 @@ class InjectionVersus {
       versusDao: VersusDao(AppDatabaseProvider.instance),
     );
   }
+
+  VersusRepositoryImpl get repository => _getRepo;
+
+  GenerateGroupBracketUseCase get generateGroupBracket => GenerateGroupBracketUseCase(
+        inscriptionsRepository: InjectionInscriptions().inscriptionsRepository,
+        versusRepository: _getRepo,
+        combatSettingsRepository: InjectionCombatSettings().repository,
+        combatRoundsRepository: InjectionCombatRounds().repository,
+      );
 
   CreateVersus get createVersus => CreateVersus(_getRepo);
   CreateBatchVersus get createBatchVersus => CreateBatchVersus(_getRepo);

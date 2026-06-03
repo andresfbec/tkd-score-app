@@ -77,9 +77,10 @@ class _StudentsPageState extends State<StudentsPage> {
   String get _headerSubtitle {
     switch (_viewState) {
       case _StudentViewState.create:
-        return 'Crear Alumno';
+        return 'Crear alumno';
       case _StudentViewState.edit:
-        return 'Editar Alumno: ${_studentToEdit?.names ?? ''}';
+        // return 'Editar Alumno: ${_studentToEdit?.names ?? ''}';
+        return 'Editar alumno';
       case _StudentViewState.list:
         return '';
     }
@@ -261,6 +262,15 @@ class _StudentsPageState extends State<StudentsPage> {
         duration: const Duration(milliseconds: 280),
         switchInCurve: Curves.easeInOutCubic,
         switchOutCurve: Curves.easeInOutCubic,
+        layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              ...previousChildren,
+              if (currentChild != null) currentChild,
+            ],
+          );
+        },
         transitionBuilder: (Widget child, Animation<double> animation) {
           // La entrada siempre va de derecha (1.0) a centro (0.0)
           // La salida va de centro (0.0) hacia izquierda (-0.3) con fade
@@ -349,7 +359,8 @@ class _StudentsPageState extends State<StudentsPage> {
       children: [
         Expanded(
           flex: ui.showStudentsDetail ? 5 : 1,
-          child: CustomTable(
+          child: SingleChildScrollView(
+            child: CustomTable(
             columns: columns,
             data: data,
             selectedRow: ui.selectedStudentRow,
@@ -401,6 +412,7 @@ class _StudentsPageState extends State<StudentsPage> {
                 ),
               );
             },
+            ),
           ),
         ),
 
@@ -410,18 +422,21 @@ class _StudentsPageState extends State<StudentsPage> {
           Expanded(
             flex: 2,
             child: ui.selectedStudent == null
-                ? Center(
-                        child: Text(
-                          'Sin datos disponibles.',
-                          style: FluentTheme.of(context).typography.body
-                              ?.copyWith(
-                                fontSize: 13,
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.7)
-                                    : Colors.black.withOpacity(0.7),
-                              ),
-                        ),
-                      )
+                ? Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 1), // Espacio opcional desde arriba
+          child: Text(
+            'Sin datos disponibles.',
+            style: FluentTheme.of(context).typography.body?.copyWith(
+              fontSize: 13,
+              color: isDark
+                  ? Colors.white.withOpacity(0.7)
+                  : Colors.black.withOpacity(0.7),
+            ),
+          ),
+        ),
+      )
                 : Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -444,3 +459,4 @@ class _StudentsPageState extends State<StudentsPage> {
     );
   }
 }
+

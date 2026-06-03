@@ -71,7 +71,8 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
               ),
               const TextSpan(text: '  >  '),
               TextSpan(
-                text: 'Grupos de Combate para Torneo ${widget.tournament.name}',
+                // text: 'Grupos de Combate para Torneo ${widget.tournament.name}',
+                text: 'Grupos de combate',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,
                   fontWeight: AppTypography.semiBold,
@@ -112,46 +113,21 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
                               group: group,
                               participants: groupInscriptions,
                               onExecuteMatches: () {
-                                _showExecuteMatchesDialog(context, group, groupInscriptions);
+                                Navigator.push(
+                                  context,
+                                  NoTransitionPageRoute(
+                                    child: CombatVisualizationPage(
+                                      groupId: group.id!,
+                                      tournamentId: widget.tournament.id!,
+                                      groupName: group.name,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           );
                         },
                       ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showExecuteMatchesDialog(BuildContext context, GroupsEntity group, List<InscriptionsEntity> participants) {
-    showDialog(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: Text('Ejecutar Combates: ${group.name}'),
-        content: const Text(
-          'Esta funcionalidad permitirá generar las llaves y comenzar el arbitraje de los combates. '
-          '\n\n¿Deseas continuar?',
-        ),
-        actions: [
-          Button(
-            child: const Text('Cancelar'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          FilledButton(
-            child: const Text('Comenzar'),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                NoTransitionPageRoute(
-                  child: CombatVisualizationPage(
-                    group: group,
-                    participants: participants,
-                  ),
-                ),
-              );
-            },
           ),
         ],
       ),
