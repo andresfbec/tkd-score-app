@@ -10,8 +10,8 @@ import '../../controllers/tournaments_controller.dart';
 import '../../widgets/cards/tournament_card.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/input_search.dart';
-import 'create_tournament_page.dart';
-import 'edit_tournament_page.dart';
+import 'create_edit/create_tournament_page.dart';
+import 'create_edit/edit_tournament_page.dart';
 import 'combat_settings_page.dart';
 import 'tournament_execution_page.dart';
 import '../../../core/utils/no_transition_route.dart';
@@ -174,7 +174,7 @@ class TournamentsPage extends StatelessWidget {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.6,
+                        childAspectRatio: 1.4,
                       ),
                       itemCount: list.length,
                       itemBuilder: (context, index) {

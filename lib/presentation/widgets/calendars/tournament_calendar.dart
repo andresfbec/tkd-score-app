@@ -155,7 +155,7 @@ class _TournamentCalendarState extends State<TournamentCalendar> {
                     calendarBuilders: CalendarBuilders(
                       defaultBuilder: (context, day, focusedDay) {
                         return MouseRegion(
-                          cursor: SystemMouseCursors.click,
+                          cursor: SystemMouseCursors.basic,
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
@@ -234,7 +234,7 @@ class _TournamentCalendarState extends State<TournamentCalendar> {
 
               Icon(
                 _isOpen ? FluentIcons.chevron_up : FluentIcons.chevron_down,
-                size: 12,
+                size: 10,
                 color: theme.resources.textFillColorSecondary,
               ),
             ],

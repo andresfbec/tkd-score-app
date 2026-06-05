@@ -20,6 +20,8 @@ import '../../../domain/usecases/versus/swap_versus_participants.dart';
 import '../../../domain/usecases/versus/is_versus_round_complete.dart';
 import '../../../domain/usecases/versus/get_max_bracket_round.dart';
 import '../../../domain/usecases/versus/generate_group_bracket_usecase.dart';
+import '../../../domain/usecases/versus/update_versus_round_state.dart';
+import '../../../domain/usecases/versus/advance_round_winners.dart';
 
 import 'dependency_inscriptions.dart';
 import 'dependency_combat_settings.dart';
@@ -63,4 +65,6 @@ class InjectionVersus {
   SwapVersusParticipants get swapVersusParticipants => SwapVersusParticipants(_getRepo);
   IsVersusRoundComplete get isVersusRoundComplete => IsVersusRoundComplete(_getRepo);
   GetMaxBracketRound get getMaxBracketRound => GetMaxBracketRound(_getRepo);
+  UpdateVersusRoundState get updateVersusRoundState => UpdateVersusRoundState(_getRepo);
+  AdvanceRoundWinners get advanceRoundWinners => AdvanceRoundWinners(_getRepo);
 }

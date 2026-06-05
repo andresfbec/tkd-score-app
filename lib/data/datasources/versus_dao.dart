@@ -165,4 +165,18 @@ class VersusDao {
     final result = await query.getSingle();
     return result.read(_db.versus.bracketRound.max()) ?? 0;
   }
+
+  /// Actualiza el estado de la ronda para todos los versus de un grupo y ronda del bracket
+  Future<bool> updateRoundState(int groupId, int bracketRound, String roundState) async {
+    final rowsAffected = await (_db.update(_db.versus)
+          ..where((tbl) =>
+              tbl.groupId.equals(groupId) &
+              tbl.bracketRound.equals(bracketRound) &
+              tbl.isActive.equals(1)))
+        .write(VersusCompanion(
+          roundState: Value(roundState),
+          updatedAt: Value(DateTime.now()),
+        ));
+    return rowsAffected > 0;
+  }
 }

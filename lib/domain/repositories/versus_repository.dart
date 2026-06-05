@@ -22,4 +22,5 @@ abstract class VersusRepository {
   });
   Future<bool> isRoundComplete(int groupId, int bracketRound);
   Future<int> getMaxBracketRound(int groupId);
+  Future<bool> updateRoundState(int groupId, int bracketRound, String roundState);
 }

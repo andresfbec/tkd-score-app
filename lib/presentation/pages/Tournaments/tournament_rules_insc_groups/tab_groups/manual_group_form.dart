@@ -1,11 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import '../../../domain/entities/groups_entity.dart';
-import '../../controllers/groups_controller.dart';
-import '../../controllers/belts_controller.dart';
-import '../../widgets/inputs/custom_input.dart';
-import '../../widgets/inputs/custom_dropdown.dart';
-import '../../../core/enums/input_type.dart';
+import '../../../../../domain/entities/groups_entity.dart';
+import '../../../../controllers/groups_controller.dart';
+import '../../../../controllers/belts_controller.dart';
+import '../../../../widgets/inputs/custom_input.dart';
+import '../../../../widgets/inputs/custom_dropdown.dart';
+import '../../../../../core/enums/input_type.dart';
 
 class ManualGroupForm extends StatefulWidget {
   final int tournamentId;

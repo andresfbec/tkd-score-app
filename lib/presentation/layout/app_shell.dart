@@ -11,12 +11,12 @@ import '../widgets/calendars/tournament_calendar.dart';
 import '../../core/utils/no_transition_route.dart';
 
 // ----- PAGES -----
-import '../pages/Tournaments/tournaments_page.dart';
+import '../pages/tournaments/tournaments_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/judges_page.dart';
-import '../pages/headquarters_page.dart';
+import '../pages/headquarters/headquarters_page.dart';
 import '../pages/users_page_.dart';
-import '../pages/Students/students_page.dart';
+import '../pages/students/students_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});

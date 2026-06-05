@@ -1,12 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import '../../../core/enums/status.dart';
-import '../../../core/utils/status_handler.dart';
-import '../../../core/utils/format_date.dart';
-import '../../../domain/entities/tournament_entity.dart';
-import '../../../domain/entities/students_entity.dart';
-import '../../controllers/students_controller.dart';
-import '../../controllers/inscriptions_controller.dart';
+import '../../../../core/enums/status.dart';
+import '../../../../core/utils/status_handler.dart';
+import '../../../../core/utils/format_date.dart';
+import '../../../../domain/entities/tournament_entity.dart';
+import '../../../../domain/entities/students_entity.dart';
+import '../../../controllers/students_controller.dart';
+import '../../../controllers/inscriptions_controller.dart';
 
 class InscriptionsTournament extends StatefulWidget {
   final TournamentEntity tournament;

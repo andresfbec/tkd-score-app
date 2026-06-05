@@ -1,9 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import '../../../domain/entities/tournament_entity.dart';
-import '../../controllers/groups_controller.dart';
-import '../../../core/enums/status.dart';
-import '../../../core/utils/status_handler.dart';
+import '../../../../../domain/entities/tournament_entity.dart';
+import '../../../../controllers/groups_controller.dart';
+import '../../../../../core/enums/status.dart';
+import '../../../../../core/utils/status_handler.dart';
 import 'manual_group_form.dart';
 import 'group_participants_manager.dart';
 

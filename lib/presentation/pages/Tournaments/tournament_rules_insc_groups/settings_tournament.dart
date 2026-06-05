@@ -1,15 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app.dart';
-import '../../../core/enums/input_type.dart';
-import '../../../core/enums/status.dart';
-import '../../../domain/entities/tournament_entity.dart';
-import '../../../domain/entities/combat_settings_entity.dart';
-import '../../controllers/combat_settings_controller.dart';
-import '../../forms/validators.dart';
-import '../../widgets/inputs/custom_dropdown.dart';
-import '../../widgets/inputs/custom_input.dart';
+import '../../../../core/constants/app.dart';
+import '../../../../core/enums/input_type.dart';
+import '../../../../core/enums/status.dart';
+import '../../../../domain/entities/tournament_entity.dart';
+import '../../../../domain/entities/combat_settings_entity.dart';
+import '../../../controllers/combat_settings_controller.dart';
+import '../../../forms/validators.dart';
+import '../../../widgets/inputs/custom_dropdown.dart';
+import '../../../widgets/inputs/custom_input.dart';
 
 class SettingsTournament extends StatefulWidget {
   final TournamentEntity tournament;

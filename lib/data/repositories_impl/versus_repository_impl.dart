@@ -128,4 +128,9 @@ class VersusRepositoryImpl implements VersusRepository {
   Future<int> getMaxBracketRound(int groupId) {
     return versusDao.getMaxBracketRound(groupId);
   }
+
+  @override
+  Future<bool> updateRoundState(int groupId, int bracketRound, String roundState) {
+    return versusDao.updateRoundState(groupId, bracketRound, roundState);
+  }
 }

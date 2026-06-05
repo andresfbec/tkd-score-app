@@ -1,9 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import '../../../domain/entities/groups_entity.dart';
-import '../../controllers/inscriptions_controller.dart';
-import '../../controllers/groups_controller.dart';
-import '../../../core/utils/format_date.dart';
+import '../../../../../domain/entities/groups_entity.dart';
+import '../../../../controllers/inscriptions_controller.dart';
+import '../../../../controllers/groups_controller.dart';
+import '../../../../../core/utils/format_date.dart';
 
 class GroupParticipantsManager extends StatefulWidget {
   final GroupsEntity group;

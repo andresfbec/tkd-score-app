@@ -101,6 +101,8 @@ class GenerateGroupBracketUseCase {
           nextVsWinnerId = insertedIds["${r + 1}-${(m + 1) ~/ 2}"];
         }
 
+        final isByeMatch = r == 1 && inscriptionBId == null && inscriptionAId != null;
+
         final vs = VersusEntity(
           tournamentId: tournamentId,
           groupId: groupId,
@@ -109,7 +111,8 @@ class GenerateGroupBracketUseCase {
           bracketRound: r,
           bracketOrder: m,
           nextVsWinnerId: nextVsWinnerId,
-          state: 'pending',
+          state: isByeMatch ? 'completed' : 'pending',
+          winnerInscriptionId: isByeMatch ? inscriptionAId : null,
           roundState: 'draft',
         );
 

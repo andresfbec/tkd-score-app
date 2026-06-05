@@ -5,9 +5,9 @@ import '../../../core/constants/app.dart';
 import '../../../core/utils/status_handler.dart';
 import '../../../domain/entities/tournament_entity.dart';
 import '../../controllers/combat_settings_controller.dart';
-import 'groups_tournament.dart';
-import 'inscriptions_tournament.dart';
-import 'settings_tournament.dart';
+import 'tournament_rules_insc_groups/tab_groups/groups_tournament.dart';
+import 'tournament_rules_insc_groups/inscriptions_tournament.dart';
+import 'tournament_rules_insc_groups/settings_tournament.dart';
 
 class CombatSettingsPage extends StatefulWidget {
   final TournamentEntity tournament;

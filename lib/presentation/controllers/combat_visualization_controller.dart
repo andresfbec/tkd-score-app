@@ -3,12 +3,16 @@ import '../../../domain/entities/versus_entity.dart';
 import '../../../domain/usecases/versus/generate_group_bracket_usecase.dart';
 import '../../../domain/usecases/versus/swap_versus_participants.dart';
 import '../../../domain/repositories/inscriptions_repository.dart';
+import '../../../domain/usecases/versus/update_versus_round_state.dart';
+import '../../../domain/usecases/versus/advance_round_winners.dart';
 import '../models/combat_bracket_models.dart';
 
 class CombatVisualizationController extends ChangeNotifier {
   final GenerateGroupBracketUseCase _generateBracket;
   final InscriptionsRepository _inscriptionsRepository;
   final SwapVersusParticipants _swapParticipants;
+  final UpdateVersusRoundState _updateVersusRoundState;
+  final AdvanceRoundWinners _advanceRoundWinners;
 
   List<VersusEntity>? versus;
   List<BracketRound> rounds = [];
@@ -18,6 +22,8 @@ class CombatVisualizationController extends ChangeNotifier {
     this._generateBracket,
     this._inscriptionsRepository,
     this._swapParticipants,
+    this._updateVersusRoundState,
+    this._advanceRoundWinners,
   );
 
   Future<void> loadBracket(int groupId, int tournamentId) async {
@@ -132,6 +138,42 @@ class CombatVisualizationController extends ChangeNotifier {
       await loadBracket(groupId, tournamentId);
     } catch (e) {
       debugPrint('Error en swap de participantes: $e');
+      loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> confirmRound({
+    required int groupId,
+    required int bracketRound,
+    required int tournamentId,
+  }) async {
+    loading = true;
+    notifyListeners();
+    try {
+      await _updateVersusRoundState(groupId, bracketRound, 'confirmed');
+      // Recargar para refrescar los datos desde la BD
+      await loadBracket(groupId, tournamentId);
+    } catch (e) {
+      debugPrint('Error al confirmar la ronda: $e');
+      loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> advanceWinners({
+    required int groupId,
+    required int currentRound,
+    required int tournamentId,
+  }) async {
+    loading = true;
+    notifyListeners();
+    try {
+      await _advanceRoundWinners(groupId, currentRound);
+      // Volver a cargar el bracket para reflejar los competidores avanzados
+      await loadBracket(groupId, tournamentId);
+    } catch (e) {
+      debugPrint('Error al avanzar ganadores: $e');
       loading = false;
       notifyListeners();
     }
