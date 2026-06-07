@@ -84,7 +84,7 @@ class CombatEventsRepositoryImpl implements CombatEventsRepository {
   @override
   Future<int> insertCorrection({
     required int roundId,
-    required String pointType,
+    required int pointTypeId,
     required String targetParticipant,
     required double pointsDelta,
     double? matchSeconds,
@@ -93,7 +93,7 @@ class CombatEventsRepositoryImpl implements CombatEventsRepository {
   }) {
     return combatEventsDao.insertCorrection(
       roundId: roundId,
-      pointType: pointType,
+      pointTypeId: pointTypeId,
       targetParticipant: targetParticipant,
       pointsDelta: pointsDelta,
       matchSeconds: matchSeconds,

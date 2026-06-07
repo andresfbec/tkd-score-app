@@ -9110,6 +9110,610 @@ class CombatRoundsCompanion extends UpdateCompanion<CombatRound> {
   }
 }
 
+class $PointTypesTable extends PointTypes
+    with TableInfo<$PointTypesTable, PointType> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PointTypesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pointsValueMeta = const VerificationMeta(
+    'pointsValue',
+  );
+  @override
+  late final GeneratedColumn<int> pointsValue = GeneratedColumn<int>(
+    'points_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyZoneMeta = const VerificationMeta(
+    'bodyZone',
+  );
+  @override
+  late final GeneratedColumn<String> bodyZone = GeneratedColumn<String>(
+    'body_zone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _techniqueTypeMeta = const VerificationMeta(
+    'techniqueType',
+  );
+  @override
+  late final GeneratedColumn<String> techniqueType = GeneratedColumn<String>(
+    'technique_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isPenaltyMeta = const VerificationMeta(
+    'isPenalty',
+  );
+  @override
+  late final GeneratedColumn<bool> isPenalty = GeneratedColumn<bool>(
+    'is_penalty',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_penalty" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _synchronizedMeta = const VerificationMeta(
+    'synchronized',
+  );
+  @override
+  late final GeneratedColumn<int> synchronized = GeneratedColumn<int>(
+    'synchronized',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<int> isActive = GeneratedColumn<int>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    pointsValue,
+    bodyZone,
+    techniqueType,
+    isPenalty,
+    createdAt,
+    updatedAt,
+    synchronized,
+    isActive,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'point_types';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PointType> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('points_value')) {
+      context.handle(
+        _pointsValueMeta,
+        pointsValue.isAcceptableOrUnknown(
+          data['points_value']!,
+          _pointsValueMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_pointsValueMeta);
+    }
+    if (data.containsKey('body_zone')) {
+      context.handle(
+        _bodyZoneMeta,
+        bodyZone.isAcceptableOrUnknown(data['body_zone']!, _bodyZoneMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyZoneMeta);
+    }
+    if (data.containsKey('technique_type')) {
+      context.handle(
+        _techniqueTypeMeta,
+        techniqueType.isAcceptableOrUnknown(
+          data['technique_type']!,
+          _techniqueTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_techniqueTypeMeta);
+    }
+    if (data.containsKey('is_penalty')) {
+      context.handle(
+        _isPenaltyMeta,
+        isPenalty.isAcceptableOrUnknown(data['is_penalty']!, _isPenaltyMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('synchronized')) {
+      context.handle(
+        _synchronizedMeta,
+        synchronized.isAcceptableOrUnknown(
+          data['synchronized']!,
+          _synchronizedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PointType map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PointType(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      pointsValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}points_value'],
+      )!,
+      bodyZone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body_zone'],
+      )!,
+      techniqueType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}technique_type'],
+      )!,
+      isPenalty: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_penalty'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      synchronized: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}synchronized'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_active'],
+      )!,
+    );
+  }
+
+  @override
+  $PointTypesTable createAlias(String alias) {
+    return $PointTypesTable(attachedDatabase, alias);
+  }
+}
+
+class PointType extends DataClass implements Insertable<PointType> {
+  final int id;
+  final String name;
+  final int pointsValue;
+  final String bodyZone;
+  final String techniqueType;
+  final bool isPenalty;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int synchronized;
+  final int isActive;
+  const PointType({
+    required this.id,
+    required this.name,
+    required this.pointsValue,
+    required this.bodyZone,
+    required this.techniqueType,
+    required this.isPenalty,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.synchronized,
+    required this.isActive,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['points_value'] = Variable<int>(pointsValue);
+    map['body_zone'] = Variable<String>(bodyZone);
+    map['technique_type'] = Variable<String>(techniqueType);
+    map['is_penalty'] = Variable<bool>(isPenalty);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['synchronized'] = Variable<int>(synchronized);
+    map['is_active'] = Variable<int>(isActive);
+    return map;
+  }
+
+  PointTypesCompanion toCompanion(bool nullToAbsent) {
+    return PointTypesCompanion(
+      id: Value(id),
+      name: Value(name),
+      pointsValue: Value(pointsValue),
+      bodyZone: Value(bodyZone),
+      techniqueType: Value(techniqueType),
+      isPenalty: Value(isPenalty),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      synchronized: Value(synchronized),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory PointType.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PointType(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      pointsValue: serializer.fromJson<int>(json['pointsValue']),
+      bodyZone: serializer.fromJson<String>(json['bodyZone']),
+      techniqueType: serializer.fromJson<String>(json['techniqueType']),
+      isPenalty: serializer.fromJson<bool>(json['isPenalty']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      synchronized: serializer.fromJson<int>(json['synchronized']),
+      isActive: serializer.fromJson<int>(json['isActive']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'pointsValue': serializer.toJson<int>(pointsValue),
+      'bodyZone': serializer.toJson<String>(bodyZone),
+      'techniqueType': serializer.toJson<String>(techniqueType),
+      'isPenalty': serializer.toJson<bool>(isPenalty),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'synchronized': serializer.toJson<int>(synchronized),
+      'isActive': serializer.toJson<int>(isActive),
+    };
+  }
+
+  PointType copyWith({
+    int? id,
+    String? name,
+    int? pointsValue,
+    String? bodyZone,
+    String? techniqueType,
+    bool? isPenalty,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? synchronized,
+    int? isActive,
+  }) => PointType(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    pointsValue: pointsValue ?? this.pointsValue,
+    bodyZone: bodyZone ?? this.bodyZone,
+    techniqueType: techniqueType ?? this.techniqueType,
+    isPenalty: isPenalty ?? this.isPenalty,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    synchronized: synchronized ?? this.synchronized,
+    isActive: isActive ?? this.isActive,
+  );
+  PointType copyWithCompanion(PointTypesCompanion data) {
+    return PointType(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      pointsValue: data.pointsValue.present
+          ? data.pointsValue.value
+          : this.pointsValue,
+      bodyZone: data.bodyZone.present ? data.bodyZone.value : this.bodyZone,
+      techniqueType: data.techniqueType.present
+          ? data.techniqueType.value
+          : this.techniqueType,
+      isPenalty: data.isPenalty.present ? data.isPenalty.value : this.isPenalty,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      synchronized: data.synchronized.present
+          ? data.synchronized.value
+          : this.synchronized,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PointType(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('pointsValue: $pointsValue, ')
+          ..write('bodyZone: $bodyZone, ')
+          ..write('techniqueType: $techniqueType, ')
+          ..write('isPenalty: $isPenalty, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('synchronized: $synchronized, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    pointsValue,
+    bodyZone,
+    techniqueType,
+    isPenalty,
+    createdAt,
+    updatedAt,
+    synchronized,
+    isActive,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PointType &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.pointsValue == this.pointsValue &&
+          other.bodyZone == this.bodyZone &&
+          other.techniqueType == this.techniqueType &&
+          other.isPenalty == this.isPenalty &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.synchronized == this.synchronized &&
+          other.isActive == this.isActive);
+}
+
+class PointTypesCompanion extends UpdateCompanion<PointType> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<int> pointsValue;
+  final Value<String> bodyZone;
+  final Value<String> techniqueType;
+  final Value<bool> isPenalty;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> synchronized;
+  final Value<int> isActive;
+  const PointTypesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.pointsValue = const Value.absent(),
+    this.bodyZone = const Value.absent(),
+    this.techniqueType = const Value.absent(),
+    this.isPenalty = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.synchronized = const Value.absent(),
+    this.isActive = const Value.absent(),
+  });
+  PointTypesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required int pointsValue,
+    required String bodyZone,
+    required String techniqueType,
+    this.isPenalty = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.synchronized = const Value.absent(),
+    this.isActive = const Value.absent(),
+  }) : name = Value(name),
+       pointsValue = Value(pointsValue),
+       bodyZone = Value(bodyZone),
+       techniqueType = Value(techniqueType);
+  static Insertable<PointType> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<int>? pointsValue,
+    Expression<String>? bodyZone,
+    Expression<String>? techniqueType,
+    Expression<bool>? isPenalty,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? synchronized,
+    Expression<int>? isActive,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (pointsValue != null) 'points_value': pointsValue,
+      if (bodyZone != null) 'body_zone': bodyZone,
+      if (techniqueType != null) 'technique_type': techniqueType,
+      if (isPenalty != null) 'is_penalty': isPenalty,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (synchronized != null) 'synchronized': synchronized,
+      if (isActive != null) 'is_active': isActive,
+    });
+  }
+
+  PointTypesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<int>? pointsValue,
+    Value<String>? bodyZone,
+    Value<String>? techniqueType,
+    Value<bool>? isPenalty,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? synchronized,
+    Value<int>? isActive,
+  }) {
+    return PointTypesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      pointsValue: pointsValue ?? this.pointsValue,
+      bodyZone: bodyZone ?? this.bodyZone,
+      techniqueType: techniqueType ?? this.techniqueType,
+      isPenalty: isPenalty ?? this.isPenalty,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      synchronized: synchronized ?? this.synchronized,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (pointsValue.present) {
+      map['points_value'] = Variable<int>(pointsValue.value);
+    }
+    if (bodyZone.present) {
+      map['body_zone'] = Variable<String>(bodyZone.value);
+    }
+    if (techniqueType.present) {
+      map['technique_type'] = Variable<String>(techniqueType.value);
+    }
+    if (isPenalty.present) {
+      map['is_penalty'] = Variable<bool>(isPenalty.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (synchronized.present) {
+      map['synchronized'] = Variable<int>(synchronized.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<int>(isActive.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PointTypesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('pointsValue: $pointsValue, ')
+          ..write('bodyZone: $bodyZone, ')
+          ..write('techniqueType: $techniqueType, ')
+          ..write('isPenalty: $isPenalty, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('synchronized: $synchronized, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $CombatEventsTable extends CombatEvents
     with TableInfo<$CombatEventsTable, CombatEvent> {
   @override
@@ -9143,16 +9747,19 @@ class $CombatEventsTable extends CombatEvents
       'REFERENCES combat_rounds (id) ON UPDATE CASCADE ON DELETE RESTRICT',
     ),
   );
-  static const VerificationMeta _pointTypeMeta = const VerificationMeta(
-    'pointType',
+  static const VerificationMeta _pointTypeIdMeta = const VerificationMeta(
+    'pointTypeId',
   );
   @override
-  late final GeneratedColumn<String> pointType = GeneratedColumn<String>(
-    'point_type',
+  late final GeneratedColumn<int> pointTypeId = GeneratedColumn<int>(
+    'point_type_id',
     aliasedName,
     false,
-    type: DriftSqlType.string,
+    type: DriftSqlType.int,
     requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES point_types (id) ON UPDATE CASCADE ON DELETE RESTRICT',
+    ),
   );
   static const VerificationMeta _targetParticipantMeta = const VerificationMeta(
     'targetParticipant',
@@ -9197,9 +9804,6 @@ class $CombatEventsTable extends CombatEvents
     true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES judge (id) ON UPDATE CASCADE ON DELETE SET NULL',
-    ),
   );
   static const VerificationMeta _isValidMeta = const VerificationMeta(
     'isValid',
@@ -9302,7 +9906,7 @@ class $CombatEventsTable extends CombatEvents
   List<GeneratedColumn> get $columns => [
     id,
     roundId,
-    pointType,
+    pointTypeId,
     targetParticipant,
     pointsDelta,
     matchSeconds,
@@ -9339,13 +9943,16 @@ class $CombatEventsTable extends CombatEvents
     } else if (isInserting) {
       context.missing(_roundIdMeta);
     }
-    if (data.containsKey('point_type')) {
+    if (data.containsKey('point_type_id')) {
       context.handle(
-        _pointTypeMeta,
-        pointType.isAcceptableOrUnknown(data['point_type']!, _pointTypeMeta),
+        _pointTypeIdMeta,
+        pointTypeId.isAcceptableOrUnknown(
+          data['point_type_id']!,
+          _pointTypeIdMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_pointTypeMeta);
+      context.missing(_pointTypeIdMeta);
     }
     if (data.containsKey('target_participant')) {
       context.handle(
@@ -9464,9 +10071,9 @@ class $CombatEventsTable extends CombatEvents
         DriftSqlType.int,
         data['${effectivePrefix}round_id'],
       )!,
-      pointType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}point_type'],
+      pointTypeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}point_type_id'],
       )!,
       targetParticipant: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -9528,7 +10135,7 @@ class $CombatEventsTable extends CombatEvents
 class CombatEvent extends DataClass implements Insertable<CombatEvent> {
   final int id;
   final int roundId;
-  final String pointType;
+  final int pointTypeId;
   final String targetParticipant;
   final double pointsDelta;
   final double? matchSeconds;
@@ -9544,7 +10151,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
   const CombatEvent({
     required this.id,
     required this.roundId,
-    required this.pointType,
+    required this.pointTypeId,
     required this.targetParticipant,
     required this.pointsDelta,
     this.matchSeconds,
@@ -9563,7 +10170,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['round_id'] = Variable<int>(roundId);
-    map['point_type'] = Variable<String>(pointType);
+    map['point_type_id'] = Variable<int>(pointTypeId);
     map['target_participant'] = Variable<String>(targetParticipant);
     map['points_delta'] = Variable<double>(pointsDelta);
     if (!nullToAbsent || matchSeconds != null) {
@@ -9593,7 +10200,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
     return CombatEventsCompanion(
       id: Value(id),
       roundId: Value(roundId),
-      pointType: Value(pointType),
+      pointTypeId: Value(pointTypeId),
       targetParticipant: Value(targetParticipant),
       pointsDelta: Value(pointsDelta),
       matchSeconds: matchSeconds == null && nullToAbsent
@@ -9627,7 +10234,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
     return CombatEvent(
       id: serializer.fromJson<int>(json['id']),
       roundId: serializer.fromJson<int>(json['roundId']),
-      pointType: serializer.fromJson<String>(json['pointType']),
+      pointTypeId: serializer.fromJson<int>(json['pointTypeId']),
       targetParticipant: serializer.fromJson<String>(json['targetParticipant']),
       pointsDelta: serializer.fromJson<double>(json['pointsDelta']),
       matchSeconds: serializer.fromJson<double?>(json['matchSeconds']),
@@ -9652,7 +10259,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'roundId': serializer.toJson<int>(roundId),
-      'pointType': serializer.toJson<String>(pointType),
+      'pointTypeId': serializer.toJson<int>(pointTypeId),
       'targetParticipant': serializer.toJson<String>(targetParticipant),
       'pointsDelta': serializer.toJson<double>(pointsDelta),
       'matchSeconds': serializer.toJson<double?>(matchSeconds),
@@ -9671,7 +10278,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
   CombatEvent copyWith({
     int? id,
     int? roundId,
-    String? pointType,
+    int? pointTypeId,
     String? targetParticipant,
     double? pointsDelta,
     Value<double?> matchSeconds = const Value.absent(),
@@ -9687,7 +10294,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
   }) => CombatEvent(
     id: id ?? this.id,
     roundId: roundId ?? this.roundId,
-    pointType: pointType ?? this.pointType,
+    pointTypeId: pointTypeId ?? this.pointTypeId,
     targetParticipant: targetParticipant ?? this.targetParticipant,
     pointsDelta: pointsDelta ?? this.pointsDelta,
     matchSeconds: matchSeconds.present ? matchSeconds.value : this.matchSeconds,
@@ -9713,7 +10320,9 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
     return CombatEvent(
       id: data.id.present ? data.id.value : this.id,
       roundId: data.roundId.present ? data.roundId.value : this.roundId,
-      pointType: data.pointType.present ? data.pointType.value : this.pointType,
+      pointTypeId: data.pointTypeId.present
+          ? data.pointTypeId.value
+          : this.pointTypeId,
       targetParticipant: data.targetParticipant.present
           ? data.targetParticipant.value
           : this.targetParticipant,
@@ -9750,7 +10359,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
     return (StringBuffer('CombatEvent(')
           ..write('id: $id, ')
           ..write('roundId: $roundId, ')
-          ..write('pointType: $pointType, ')
+          ..write('pointTypeId: $pointTypeId, ')
           ..write('targetParticipant: $targetParticipant, ')
           ..write('pointsDelta: $pointsDelta, ')
           ..write('matchSeconds: $matchSeconds, ')
@@ -9771,7 +10380,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
   int get hashCode => Object.hash(
     id,
     roundId,
-    pointType,
+    pointTypeId,
     targetParticipant,
     pointsDelta,
     matchSeconds,
@@ -9791,7 +10400,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
       (other is CombatEvent &&
           other.id == this.id &&
           other.roundId == this.roundId &&
-          other.pointType == this.pointType &&
+          other.pointTypeId == this.pointTypeId &&
           other.targetParticipant == this.targetParticipant &&
           other.pointsDelta == this.pointsDelta &&
           other.matchSeconds == this.matchSeconds &&
@@ -9809,7 +10418,7 @@ class CombatEvent extends DataClass implements Insertable<CombatEvent> {
 class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
   final Value<int> id;
   final Value<int> roundId;
-  final Value<String> pointType;
+  final Value<int> pointTypeId;
   final Value<String> targetParticipant;
   final Value<double> pointsDelta;
   final Value<double?> matchSeconds;
@@ -9825,7 +10434,7 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
   const CombatEventsCompanion({
     this.id = const Value.absent(),
     this.roundId = const Value.absent(),
-    this.pointType = const Value.absent(),
+    this.pointTypeId = const Value.absent(),
     this.targetParticipant = const Value.absent(),
     this.pointsDelta = const Value.absent(),
     this.matchSeconds = const Value.absent(),
@@ -9842,7 +10451,7 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
   CombatEventsCompanion.insert({
     this.id = const Value.absent(),
     required int roundId,
-    required String pointType,
+    required int pointTypeId,
     required String targetParticipant,
     required double pointsDelta,
     this.matchSeconds = const Value.absent(),
@@ -9856,13 +10465,13 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
     this.synchronized = const Value.absent(),
     this.isActive = const Value.absent(),
   }) : roundId = Value(roundId),
-       pointType = Value(pointType),
+       pointTypeId = Value(pointTypeId),
        targetParticipant = Value(targetParticipant),
        pointsDelta = Value(pointsDelta);
   static Insertable<CombatEvent> custom({
     Expression<int>? id,
     Expression<int>? roundId,
-    Expression<String>? pointType,
+    Expression<int>? pointTypeId,
     Expression<String>? targetParticipant,
     Expression<double>? pointsDelta,
     Expression<double>? matchSeconds,
@@ -9879,7 +10488,7 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (roundId != null) 'round_id': roundId,
-      if (pointType != null) 'point_type': pointType,
+      if (pointTypeId != null) 'point_type_id': pointTypeId,
       if (targetParticipant != null) 'target_participant': targetParticipant,
       if (pointsDelta != null) 'points_delta': pointsDelta,
       if (matchSeconds != null) 'match_seconds': matchSeconds,
@@ -9899,7 +10508,7 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
   CombatEventsCompanion copyWith({
     Value<int>? id,
     Value<int>? roundId,
-    Value<String>? pointType,
+    Value<int>? pointTypeId,
     Value<String>? targetParticipant,
     Value<double>? pointsDelta,
     Value<double?>? matchSeconds,
@@ -9916,7 +10525,7 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
     return CombatEventsCompanion(
       id: id ?? this.id,
       roundId: roundId ?? this.roundId,
-      pointType: pointType ?? this.pointType,
+      pointTypeId: pointTypeId ?? this.pointTypeId,
       targetParticipant: targetParticipant ?? this.targetParticipant,
       pointsDelta: pointsDelta ?? this.pointsDelta,
       matchSeconds: matchSeconds ?? this.matchSeconds,
@@ -9941,8 +10550,8 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
     if (roundId.present) {
       map['round_id'] = Variable<int>(roundId.value);
     }
-    if (pointType.present) {
-      map['point_type'] = Variable<String>(pointType.value);
+    if (pointTypeId.present) {
+      map['point_type_id'] = Variable<int>(pointTypeId.value);
     }
     if (targetParticipant.present) {
       map['target_participant'] = Variable<String>(targetParticipant.value);
@@ -9988,7 +10597,7 @@ class CombatEventsCompanion extends UpdateCompanion<CombatEvent> {
     return (StringBuffer('CombatEventsCompanion(')
           ..write('id: $id, ')
           ..write('roundId: $roundId, ')
-          ..write('pointType: $pointType, ')
+          ..write('pointTypeId: $pointTypeId, ')
           ..write('targetParticipant: $targetParticipant, ')
           ..write('pointsDelta: $pointsDelta, ')
           ..write('matchSeconds: $matchSeconds, ')
@@ -11140,6 +11749,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $InscriptionTable inscription = $InscriptionTable(this);
   late final $VersusTable versus = $VersusTable(this);
   late final $CombatRoundsTable combatRounds = $CombatRoundsTable(this);
+  late final $PointTypesTable pointTypes = $PointTypesTable(this);
   late final $CombatEventsTable combatEvents = $CombatEventsTable(this);
   late final $ScoreTable score = $ScoreTable(this);
   late final $WinnerTable winner = $WinnerTable(this);
@@ -11162,6 +11772,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     inscription,
     versus,
     combatRounds,
+    pointTypes,
     combatEvents,
     score,
     winner,
@@ -11401,14 +12012,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'judge',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('combat_events', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'judge',
+        'point_types',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('combat_events', kind: UpdateKind.update)],
@@ -15850,27 +16454,6 @@ final class $$JudgeTableReferences
     );
   }
 
-  static MultiTypedResultKey<$CombatEventsTable, List<CombatEvent>>
-  _combatEventsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.combatEvents,
-    aliasName: $_aliasNameGenerator(
-      db.judge.id,
-      db.combatEvents.registeredByJudgeId,
-    ),
-  );
-
-  $$CombatEventsTableProcessedTableManager get combatEventsRefs {
-    final manager = $$CombatEventsTableTableManager($_db, $_db.combatEvents)
-        .filter(
-          (f) => f.registeredByJudgeId.id.sqlEquals($_itemColumn<int>('id')!),
-        );
-
-    final cache = $_typedResult.readTableOrNull(_combatEventsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
   static MultiTypedResultKey<$ScoreTable, List<ScoreData>> _scoreRefsTable(
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
@@ -15970,31 +16553,6 @@ class $$JudgeTableFilterComposer extends Composer<_$AppDatabase, $JudgeTable> {
           }) => $$JudgeTournamentTableFilterComposer(
             $db: $db,
             $table: $db.judgeTournament,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> combatEventsRefs(
-    Expression<bool> Function($$CombatEventsTableFilterComposer f) f,
-  ) {
-    final $$CombatEventsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.combatEvents,
-      getReferencedColumn: (t) => t.registeredByJudgeId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$CombatEventsTableFilterComposer(
-            $db: $db,
-            $table: $db.combatEvents,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16166,31 +16724,6 @@ class $$JudgeTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> combatEventsRefs<T extends Object>(
-    Expression<T> Function($$CombatEventsTableAnnotationComposer a) f,
-  ) {
-    final $$CombatEventsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.combatEvents,
-      getReferencedColumn: (t) => t.registeredByJudgeId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$CombatEventsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.combatEvents,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
   Expression<T> scoreRefs<T extends Object>(
     Expression<T> Function($$ScoreTableAnnotationComposer a) f,
   ) {
@@ -16230,11 +16763,7 @@ class $$JudgeTableTableManager
           $$JudgeTableUpdateCompanionBuilder,
           (JudgeData, $$JudgeTableReferences),
           JudgeData,
-          PrefetchHooks Function({
-            bool judgeTournamentRefs,
-            bool combatEventsRefs,
-            bool scoreRefs,
-          })
+          PrefetchHooks Function({bool judgeTournamentRefs, bool scoreRefs})
         > {
   $$JudgeTableTableManager(_$AppDatabase db, $JudgeTable table)
     : super(
@@ -16306,16 +16835,11 @@ class $$JudgeTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({
-                judgeTournamentRefs = false,
-                combatEventsRefs = false,
-                scoreRefs = false,
-              }) {
+              ({judgeTournamentRefs = false, scoreRefs = false}) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (judgeTournamentRefs) db.judgeTournament,
-                    if (combatEventsRefs) db.combatEvents,
                     if (scoreRefs) db.score,
                   ],
                   addJoins: null,
@@ -16339,27 +16863,6 @@ class $$JudgeTableTableManager
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.judgeId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (combatEventsRefs)
-                        await $_getPrefetchedData<
-                          JudgeData,
-                          $JudgeTable,
-                          CombatEvent
-                        >(
-                          currentTable: table,
-                          referencedTable: $$JudgeTableReferences
-                              ._combatEventsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$JudgeTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).combatEventsRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.registeredByJudgeId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -16400,11 +16903,7 @@ typedef $$JudgeTableProcessedTableManager =
       $$JudgeTableUpdateCompanionBuilder,
       (JudgeData, $$JudgeTableReferences),
       JudgeData,
-      PrefetchHooks Function({
-        bool judgeTournamentRefs,
-        bool combatEventsRefs,
-        bool scoreRefs,
-      })
+      PrefetchHooks Function({bool judgeTournamentRefs, bool scoreRefs})
     >;
 typedef $$JudgeTournamentTableCreateCompanionBuilder =
     JudgeTournamentCompanion Function({
@@ -20580,11 +21079,412 @@ typedef $$CombatRoundsTableProcessedTableManager =
         bool combatEventsRefs,
       })
     >;
+typedef $$PointTypesTableCreateCompanionBuilder =
+    PointTypesCompanion Function({
+      Value<int> id,
+      required String name,
+      required int pointsValue,
+      required String bodyZone,
+      required String techniqueType,
+      Value<bool> isPenalty,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> synchronized,
+      Value<int> isActive,
+    });
+typedef $$PointTypesTableUpdateCompanionBuilder =
+    PointTypesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<int> pointsValue,
+      Value<String> bodyZone,
+      Value<String> techniqueType,
+      Value<bool> isPenalty,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> synchronized,
+      Value<int> isActive,
+    });
+
+final class $$PointTypesTableReferences
+    extends BaseReferences<_$AppDatabase, $PointTypesTable, PointType> {
+  $$PointTypesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$CombatEventsTable, List<CombatEvent>>
+  _combatEventsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.combatEvents,
+    aliasName: $_aliasNameGenerator(
+      db.pointTypes.id,
+      db.combatEvents.pointTypeId,
+    ),
+  );
+
+  $$CombatEventsTableProcessedTableManager get combatEventsRefs {
+    final manager = $$CombatEventsTableTableManager(
+      $_db,
+      $_db.combatEvents,
+    ).filter((f) => f.pointTypeId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_combatEventsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$PointTypesTableFilterComposer
+    extends Composer<_$AppDatabase, $PointTypesTable> {
+  $$PointTypesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pointsValue => $composableBuilder(
+    column: $table.pointsValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bodyZone => $composableBuilder(
+    column: $table.bodyZone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get techniqueType => $composableBuilder(
+    column: $table.techniqueType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isPenalty => $composableBuilder(
+    column: $table.isPenalty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get synchronized => $composableBuilder(
+    column: $table.synchronized,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> combatEventsRefs(
+    Expression<bool> Function($$CombatEventsTableFilterComposer f) f,
+  ) {
+    final $$CombatEventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.combatEvents,
+      getReferencedColumn: (t) => t.pointTypeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CombatEventsTableFilterComposer(
+            $db: $db,
+            $table: $db.combatEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$PointTypesTableOrderingComposer
+    extends Composer<_$AppDatabase, $PointTypesTable> {
+  $$PointTypesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get pointsValue => $composableBuilder(
+    column: $table.pointsValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bodyZone => $composableBuilder(
+    column: $table.bodyZone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get techniqueType => $composableBuilder(
+    column: $table.techniqueType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isPenalty => $composableBuilder(
+    column: $table.isPenalty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get synchronized => $composableBuilder(
+    column: $table.synchronized,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PointTypesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PointTypesTable> {
+  $$PointTypesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get pointsValue => $composableBuilder(
+    column: $table.pointsValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bodyZone =>
+      $composableBuilder(column: $table.bodyZone, builder: (column) => column);
+
+  GeneratedColumn<String> get techniqueType => $composableBuilder(
+    column: $table.techniqueType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isPenalty =>
+      $composableBuilder(column: $table.isPenalty, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get synchronized => $composableBuilder(
+    column: $table.synchronized,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  Expression<T> combatEventsRefs<T extends Object>(
+    Expression<T> Function($$CombatEventsTableAnnotationComposer a) f,
+  ) {
+    final $$CombatEventsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.combatEvents,
+      getReferencedColumn: (t) => t.pointTypeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CombatEventsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.combatEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$PointTypesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PointTypesTable,
+          PointType,
+          $$PointTypesTableFilterComposer,
+          $$PointTypesTableOrderingComposer,
+          $$PointTypesTableAnnotationComposer,
+          $$PointTypesTableCreateCompanionBuilder,
+          $$PointTypesTableUpdateCompanionBuilder,
+          (PointType, $$PointTypesTableReferences),
+          PointType,
+          PrefetchHooks Function({bool combatEventsRefs})
+        > {
+  $$PointTypesTableTableManager(_$AppDatabase db, $PointTypesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PointTypesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PointTypesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PointTypesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int> pointsValue = const Value.absent(),
+                Value<String> bodyZone = const Value.absent(),
+                Value<String> techniqueType = const Value.absent(),
+                Value<bool> isPenalty = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> synchronized = const Value.absent(),
+                Value<int> isActive = const Value.absent(),
+              }) => PointTypesCompanion(
+                id: id,
+                name: name,
+                pointsValue: pointsValue,
+                bodyZone: bodyZone,
+                techniqueType: techniqueType,
+                isPenalty: isPenalty,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                synchronized: synchronized,
+                isActive: isActive,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                required int pointsValue,
+                required String bodyZone,
+                required String techniqueType,
+                Value<bool> isPenalty = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> synchronized = const Value.absent(),
+                Value<int> isActive = const Value.absent(),
+              }) => PointTypesCompanion.insert(
+                id: id,
+                name: name,
+                pointsValue: pointsValue,
+                bodyZone: bodyZone,
+                techniqueType: techniqueType,
+                isPenalty: isPenalty,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                synchronized: synchronized,
+                isActive: isActive,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PointTypesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({combatEventsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (combatEventsRefs) db.combatEvents],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (combatEventsRefs)
+                    await $_getPrefetchedData<
+                      PointType,
+                      $PointTypesTable,
+                      CombatEvent
+                    >(
+                      currentTable: table,
+                      referencedTable: $$PointTypesTableReferences
+                          ._combatEventsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$PointTypesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).combatEventsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.pointTypeId == item.id,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$PointTypesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PointTypesTable,
+      PointType,
+      $$PointTypesTableFilterComposer,
+      $$PointTypesTableOrderingComposer,
+      $$PointTypesTableAnnotationComposer,
+      $$PointTypesTableCreateCompanionBuilder,
+      $$PointTypesTableUpdateCompanionBuilder,
+      (PointType, $$PointTypesTableReferences),
+      PointType,
+      PrefetchHooks Function({bool combatEventsRefs})
+    >;
 typedef $$CombatEventsTableCreateCompanionBuilder =
     CombatEventsCompanion Function({
       Value<int> id,
       required int roundId,
-      required String pointType,
+      required int pointTypeId,
       required String targetParticipant,
       required double pointsDelta,
       Value<double?> matchSeconds,
@@ -20602,7 +21502,7 @@ typedef $$CombatEventsTableUpdateCompanionBuilder =
     CombatEventsCompanion Function({
       Value<int> id,
       Value<int> roundId,
-      Value<String> pointType,
+      Value<int> pointTypeId,
       Value<String> targetParticipant,
       Value<double> pointsDelta,
       Value<double?> matchSeconds,
@@ -20640,19 +21540,19 @@ final class $$CombatEventsTableReferences
     );
   }
 
-  static $JudgeTable _registeredByJudgeIdTable(_$AppDatabase db) =>
-      db.judge.createAlias(
-        $_aliasNameGenerator(db.combatEvents.registeredByJudgeId, db.judge.id),
+  static $PointTypesTable _pointTypeIdTable(_$AppDatabase db) =>
+      db.pointTypes.createAlias(
+        $_aliasNameGenerator(db.combatEvents.pointTypeId, db.pointTypes.id),
       );
 
-  $$JudgeTableProcessedTableManager? get registeredByJudgeId {
-    final $_column = $_itemColumn<int>('registered_by_judge_id');
-    if ($_column == null) return null;
-    final manager = $$JudgeTableTableManager(
+  $$PointTypesTableProcessedTableManager get pointTypeId {
+    final $_column = $_itemColumn<int>('point_type_id')!;
+
+    final manager = $$PointTypesTableTableManager(
       $_db,
-      $_db.judge,
+      $_db.pointTypes,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_registeredByJudgeIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_pointTypeIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -20696,11 +21596,6 @@ class $$CombatEventsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get pointType => $composableBuilder(
-    column: $table.pointType,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get targetParticipant => $composableBuilder(
     column: $table.targetParticipant,
     builder: (column) => ColumnFilters(column),
@@ -20713,6 +21608,11 @@ class $$CombatEventsTableFilterComposer
 
   ColumnFilters<double> get matchSeconds => $composableBuilder(
     column: $table.matchSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get registeredByJudgeId => $composableBuilder(
+    column: $table.registeredByJudgeId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20774,20 +21674,20 @@ class $$CombatEventsTableFilterComposer
     return composer;
   }
 
-  $$JudgeTableFilterComposer get registeredByJudgeId {
-    final $$JudgeTableFilterComposer composer = $composerBuilder(
+  $$PointTypesTableFilterComposer get pointTypeId {
+    final $$PointTypesTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.registeredByJudgeId,
-      referencedTable: $db.judge,
+      getCurrentColumn: (t) => t.pointTypeId,
+      referencedTable: $db.pointTypes,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$JudgeTableFilterComposer(
+          }) => $$PointTypesTableFilterComposer(
             $db: $db,
-            $table: $db.judge,
+            $table: $db.pointTypes,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -20835,11 +21735,6 @@ class $$CombatEventsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get pointType => $composableBuilder(
-    column: $table.pointType,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get targetParticipant => $composableBuilder(
     column: $table.targetParticipant,
     builder: (column) => ColumnOrderings(column),
@@ -20852,6 +21747,11 @@ class $$CombatEventsTableOrderingComposer
 
   ColumnOrderings<double> get matchSeconds => $composableBuilder(
     column: $table.matchSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get registeredByJudgeId => $composableBuilder(
+    column: $table.registeredByJudgeId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -20913,20 +21813,20 @@ class $$CombatEventsTableOrderingComposer
     return composer;
   }
 
-  $$JudgeTableOrderingComposer get registeredByJudgeId {
-    final $$JudgeTableOrderingComposer composer = $composerBuilder(
+  $$PointTypesTableOrderingComposer get pointTypeId {
+    final $$PointTypesTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.registeredByJudgeId,
-      referencedTable: $db.judge,
+      getCurrentColumn: (t) => t.pointTypeId,
+      referencedTable: $db.pointTypes,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$JudgeTableOrderingComposer(
+          }) => $$PointTypesTableOrderingComposer(
             $db: $db,
-            $table: $db.judge,
+            $table: $db.pointTypes,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -20972,9 +21872,6 @@ class $$CombatEventsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get pointType =>
-      $composableBuilder(column: $table.pointType, builder: (column) => column);
-
   GeneratedColumn<String> get targetParticipant => $composableBuilder(
     column: $table.targetParticipant,
     builder: (column) => column,
@@ -20987,6 +21884,11 @@ class $$CombatEventsTableAnnotationComposer
 
   GeneratedColumn<double> get matchSeconds => $composableBuilder(
     column: $table.matchSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get registeredByJudgeId => $composableBuilder(
+    column: $table.registeredByJudgeId,
     builder: (column) => column,
   );
 
@@ -21040,20 +21942,20 @@ class $$CombatEventsTableAnnotationComposer
     return composer;
   }
 
-  $$JudgeTableAnnotationComposer get registeredByJudgeId {
-    final $$JudgeTableAnnotationComposer composer = $composerBuilder(
+  $$PointTypesTableAnnotationComposer get pointTypeId {
+    final $$PointTypesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.registeredByJudgeId,
-      referencedTable: $db.judge,
+      getCurrentColumn: (t) => t.pointTypeId,
+      referencedTable: $db.pointTypes,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$JudgeTableAnnotationComposer(
+          }) => $$PointTypesTableAnnotationComposer(
             $db: $db,
-            $table: $db.judge,
+            $table: $db.pointTypes,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -21102,7 +22004,7 @@ class $$CombatEventsTableTableManager
           CombatEvent,
           PrefetchHooks Function({
             bool roundId,
-            bool registeredByJudgeId,
+            bool pointTypeId,
             bool replacesEventId,
           })
         > {
@@ -21121,7 +22023,7 @@ class $$CombatEventsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> roundId = const Value.absent(),
-                Value<String> pointType = const Value.absent(),
+                Value<int> pointTypeId = const Value.absent(),
                 Value<String> targetParticipant = const Value.absent(),
                 Value<double> pointsDelta = const Value.absent(),
                 Value<double?> matchSeconds = const Value.absent(),
@@ -21137,7 +22039,7 @@ class $$CombatEventsTableTableManager
               }) => CombatEventsCompanion(
                 id: id,
                 roundId: roundId,
-                pointType: pointType,
+                pointTypeId: pointTypeId,
                 targetParticipant: targetParticipant,
                 pointsDelta: pointsDelta,
                 matchSeconds: matchSeconds,
@@ -21155,7 +22057,7 @@ class $$CombatEventsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int roundId,
-                required String pointType,
+                required int pointTypeId,
                 required String targetParticipant,
                 required double pointsDelta,
                 Value<double?> matchSeconds = const Value.absent(),
@@ -21171,7 +22073,7 @@ class $$CombatEventsTableTableManager
               }) => CombatEventsCompanion.insert(
                 id: id,
                 roundId: roundId,
-                pointType: pointType,
+                pointTypeId: pointTypeId,
                 targetParticipant: targetParticipant,
                 pointsDelta: pointsDelta,
                 matchSeconds: matchSeconds,
@@ -21196,7 +22098,7 @@ class $$CombatEventsTableTableManager
           prefetchHooksCallback:
               ({
                 roundId = false,
-                registeredByJudgeId = false,
+                pointTypeId = false,
                 replacesEventId = false,
               }) {
                 return PrefetchHooks(
@@ -21233,17 +22135,17 @@ class $$CombatEventsTableTableManager
                                   )
                                   as T;
                         }
-                        if (registeredByJudgeId) {
+                        if (pointTypeId) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.registeredByJudgeId,
+                                    currentColumn: table.pointTypeId,
                                     referencedTable:
                                         $$CombatEventsTableReferences
-                                            ._registeredByJudgeIdTable(db),
+                                            ._pointTypeIdTable(db),
                                     referencedColumn:
                                         $$CombatEventsTableReferences
-                                            ._registeredByJudgeIdTable(db)
+                                            ._pointTypeIdTable(db)
                                             .id,
                                   )
                                   as T;
@@ -21289,7 +22191,7 @@ typedef $$CombatEventsTableProcessedTableManager =
       CombatEvent,
       PrefetchHooks Function({
         bool roundId,
-        bool registeredByJudgeId,
+        bool pointTypeId,
         bool replacesEventId,
       })
     >;
@@ -22554,6 +23456,8 @@ class $AppDatabaseManager {
       $$VersusTableTableManager(_db, _db.versus);
   $$CombatRoundsTableTableManager get combatRounds =>
       $$CombatRoundsTableTableManager(_db, _db.combatRounds);
+  $$PointTypesTableTableManager get pointTypes =>
+      $$PointTypesTableTableManager(_db, _db.pointTypes);
   $$CombatEventsTableTableManager get combatEvents =>
       $$CombatEventsTableTableManager(_db, _db.combatEvents);
   $$ScoreTableTableManager get score =>

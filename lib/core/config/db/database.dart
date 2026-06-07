@@ -20,6 +20,7 @@ import 'package:tkd_score/data/tables/inscription.dart';
 import 'package:tkd_score/data/tables/versus.dart';
 import 'package:tkd_score/data/tables/score.dart';
 import 'package:tkd_score/data/tables/winner.dart';
+import 'package:tkd_score/data/tables/point_types.dart';
 
 // cinturones iniciales (se insertan en la migración onCreate)
 import '../../constants/initial_data.dart';
@@ -45,6 +46,7 @@ part 'database.g.dart'; // se generará automáticamente
     CombatEvents,
     Score,
     Winner,
+    PointTypes,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -61,11 +63,15 @@ class AppDatabase extends _$AppDatabase {
       await batch((batch) {
         // Uso de lista externa
         batch.insertAll(belts, InitialData.initialBelts);
+        batch.insertAll(pointTypes, InitialData.initialPointTypes);
       });
     },
     onUpgrade: (m, from, to) async {
-      if (from < 4) {
+      if (from < 6) {
         await customStatement('PRAGMA foreign_keys = OFF');
+        try {
+          await m.deleteTable('point_types');
+        } catch (_) {}
         await m.deleteTable('combat_events');
         await m.deleteTable('combat_rounds');
         await m.deleteTable('winner');
@@ -88,6 +94,7 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
         await batch((batch) {
           batch.insertAll(belts, InitialData.initialBelts);
+          batch.insertAll(pointTypes, InitialData.initialPointTypes);
         });
       }
     },

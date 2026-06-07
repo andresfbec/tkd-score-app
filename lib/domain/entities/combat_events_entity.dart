@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class CombatEventsEntity extends Equatable {
   final int? id;
   final int roundId;
-  final String pointType;
+  final int pointTypeId;
   final String targetParticipant;
   final double pointsDelta;
   final double? matchSeconds;
@@ -16,7 +16,7 @@ class CombatEventsEntity extends Equatable {
   const CombatEventsEntity({
     this.id,
     required this.roundId,
-    required this.pointType,
+    required this.pointTypeId,
     required this.targetParticipant,
     required this.pointsDelta,
     this.matchSeconds,
@@ -30,7 +30,7 @@ class CombatEventsEntity extends Equatable {
   CombatEventsEntity copyWith({
     int? id,
     int? roundId,
-    String? pointType,
+    int? pointTypeId,
     String? targetParticipant,
     double? pointsDelta,
     double? matchSeconds,
@@ -43,7 +43,7 @@ class CombatEventsEntity extends Equatable {
     return CombatEventsEntity(
       id: id ?? this.id,
       roundId: roundId ?? this.roundId,
-      pointType: pointType ?? this.pointType,
+      pointTypeId: pointTypeId ?? this.pointTypeId,
       targetParticipant: targetParticipant ?? this.targetParticipant,
       pointsDelta: pointsDelta ?? this.pointsDelta,
       matchSeconds: matchSeconds ?? this.matchSeconds,
@@ -59,7 +59,7 @@ class CombatEventsEntity extends Equatable {
   List<Object?> get props => [
         id,
         roundId,
-        pointType,
+        pointTypeId,
         targetParticipant,
         pointsDelta,
         matchSeconds,

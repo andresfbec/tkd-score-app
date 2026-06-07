@@ -137,7 +137,7 @@ class CombatEventsController extends ChangeNotifier {
 
   Future<void> insertCorrection({
     required int roundId,
-    required String pointType,
+    required int pointTypeId,
     required String targetParticipant,
     required double pointsDelta,
     double? matchSeconds,
@@ -149,7 +149,7 @@ class CombatEventsController extends ChangeNotifier {
       notifyListeners();
       await insertCorrectionUseCase(
         roundId: roundId,
-        pointType: pointType,
+        pointTypeId: pointTypeId,
         targetParticipant: targetParticipant,
         pointsDelta: pointsDelta,
         matchSeconds: matchSeconds,

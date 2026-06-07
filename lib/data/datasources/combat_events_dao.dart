@@ -91,7 +91,7 @@ class CombatEventsDao {
   /// Registra un evento de corrección que reemplaza a otro evento
   Future<int> insertCorrection({
     required int roundId,
-    required String pointType,
+    required int pointTypeId,
     required String targetParticipant,
     required double pointsDelta,
     double? matchSeconds,
@@ -104,7 +104,7 @@ class CombatEventsDao {
     // Luego insertar el evento de corrección
     return insert(CombatEventsCompanion.insert(
       roundId: roundId,
-      pointType: pointType,
+      pointTypeId: pointTypeId,
       targetParticipant: targetParticipant,
       pointsDelta: pointsDelta,
       matchSeconds: matchSeconds != null ? Value(matchSeconds) : const Value.absent(),

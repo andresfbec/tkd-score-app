@@ -7,7 +7,7 @@ class CombatEventsMapper {
     return CombatEventsEntity(
       id: data.id,
       roundId: data.roundId,
-      pointType: data.pointType,
+      pointTypeId: data.pointTypeId,
       targetParticipant: data.targetParticipant,
       pointsDelta: data.pointsDelta,
       matchSeconds: data.matchSeconds,
@@ -23,7 +23,7 @@ class CombatEventsMapper {
     return CombatEventsCompanion(
       id: entity.id != null ? Value(entity.id!) : const Value.absent(),
       roundId: Value(entity.roundId),
-      pointType: Value(entity.pointType),
+      pointTypeId: Value(entity.pointTypeId),
       targetParticipant: Value(entity.targetParticipant),
       pointsDelta: Value(entity.pointsDelta),
       matchSeconds: entity.matchSeconds != null ? Value(entity.matchSeconds!) : const Value.absent(),

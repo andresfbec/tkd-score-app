@@ -16,6 +16,12 @@ import '../../../domain/usecases/combat_rounds/set_combat_round_winner.dart';
 import '../../../domain/usecases/combat_rounds/are_all_rounds_complete.dart';
 import '../../../domain/usecases/combat_rounds/get_active_combat_round.dart';
 import '../../../domain/usecases/combat_rounds/delete_all_combat_rounds_by_versus.dart';
+import '../../../domain/usecases/combat_rounds/initialize_combat_rounds.dart';
+import '../../../domain/usecases/versus/evaluate_versus_completion.dart';
+import '../../../domain/usecases/combat_rounds/get_executable_round.dart';
+import '../../../domain/usecases/combat_rounds/determine_round_winner.dart';
+import 'dependency_versus.dart';
+import 'dependency_combat_settings.dart';
 
 class InjectionCombatRounds {
   static final InjectionCombatRounds _instance = InjectionCombatRounds._internal();
@@ -45,4 +51,13 @@ class InjectionCombatRounds {
   AreAllRoundsComplete get areAllRoundsComplete => AreAllRoundsComplete(_getRepo);
   GetActiveCombatRound get getActiveCombatRound => GetActiveCombatRound(_getRepo);
   DeleteAllCombatRoundsByVersus get deleteAllCombatRoundsByVersus => DeleteAllCombatRoundsByVersus(_getRepo);
+  GetExecutableRound get getExecutableRound => GetExecutableRound();
+  EvaluateVersusCompletion get evaluateVersusCompletion => EvaluateVersusCompletion();
+  DetermineRoundWinner get determineRoundWinner => DetermineRoundWinner();
+  
+  InitializeCombatRounds get initializeCombatRounds => InitializeCombatRounds(
+        combatRoundsRepository: _getRepo,
+        versusRepository: InjectionVersus().repository,
+        combatSettingsRepository: InjectionCombatSettings().repository,
+      );
 }

@@ -7,7 +7,7 @@ class InsertCombatEventCorrection {
 
   Future<int> call({
     required int roundId,
-    required String pointType,
+    required int pointTypeId,
     required String targetParticipant,
     required double pointsDelta,
     double? matchSeconds,
@@ -16,7 +16,7 @@ class InsertCombatEventCorrection {
   }) async {
     return await repository.insertCorrection(
       roundId: roundId,
-      pointType: pointType,
+      pointTypeId: pointTypeId,
       targetParticipant: targetParticipant,
       pointsDelta: pointsDelta,
       matchSeconds: matchSeconds,

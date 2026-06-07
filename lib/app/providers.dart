@@ -184,6 +184,13 @@ class AppProviders {
           areAllRoundsCompleteUseCase: containerCombatRounds.areAllRoundsComplete,
           getActiveRoundUseCase: containerCombatRounds.getActiveCombatRound,
           deleteAllByVersusUseCase: containerCombatRounds.deleteAllCombatRoundsByVersus,
+          initializeUseCase: containerCombatRounds.initializeCombatRounds,
+          getVersusByIdUseCase: containerVersus.getVersusById,
+          getCombatSettingByTournamentIdUseCase: containerCombatSettings.getCombatSettingByTournamentId,
+          getExecutableRoundUseCase: containerCombatRounds.getExecutableRound,
+          evaluateVersusCompletionUseCase: containerCombatRounds.evaluateVersusCompletion,
+          setVersusWinnerUseCase: containerVersus.setVersusWinner,
+           determineRoundWinnerUseCase: containerCombatRounds.determineRoundWinner,
         ),
       ),
       ChangeNotifierProvider<CombatEventsController>(

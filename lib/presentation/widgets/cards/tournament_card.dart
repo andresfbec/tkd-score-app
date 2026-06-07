@@ -452,7 +452,7 @@ class _IconActionButton extends StatelessWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           ),
         ),
-        child: Icon(icon, size: 15),
+        child: Icon(icon, size: 18),
       ),
     );
   }

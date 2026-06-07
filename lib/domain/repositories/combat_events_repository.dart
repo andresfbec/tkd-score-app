@@ -12,7 +12,7 @@ abstract class CombatEventsRepository {
   Future<bool> invalidateEvent(int eventId, {required String reason});
   Future<int> insertCorrection({
     required int roundId,
-    required String pointType,
+    required int pointTypeId,
     required String targetParticipant,
     required double pointsDelta,
     double? matchSeconds,
