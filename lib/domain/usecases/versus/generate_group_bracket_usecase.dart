@@ -22,14 +22,22 @@ class GenerateGroupBracketUseCase {
 
   /// Inicializa la estructura de llaves (bracket) de un grupo del torneo si no ha sido creada.
   /// 
-  /// Si ya existen combates para este [groupId], simplemente los retorna sin sobreescribir.
+  /// Si ya existen combates para este [groupId], simplemente los retorna sin sobreescribir
+  /// a menos que [forceRegen] sea true.
   /// Obtiene las reglas del torneo de [CombatSettingsRepository] para inicializar los
   /// rounds correspondientes a cada combate en la base de datos a través de [CombatRoundsRepository].
-  Future<List<VersusEntity>> call(int groupId, int tournamentId) async {
+  Future<List<VersusEntity>> call(int groupId, int tournamentId, {bool forceRegen = false}) async {
     // 1. Validar si ya existen combates para este grupo para evitar borrar el progreso
     final existingVersus = await versusRepository.getByGroupId(groupId);
-    if (existingVersus.isNotEmpty) {
+    if (existingVersus.isNotEmpty && !forceRegen) {
+      print('⚠️  [GenerateGroupBracket] Ya existen combates. Usando existentes. Use forceRegen=true para regenerar.');
       return existingVersus;
+    }
+    
+    // Si forceRegen es true, borrar los existentes
+    if (existingVersus.isNotEmpty && forceRegen) {
+      print('🔄 [GenerateGroupBracket] forceRegen=true. Borrando combates existentes...');
+      await versusRepository.deleteAllByGroup(groupId);
     }
 
     // 2. Obtener la configuración del torneo para los combates (cantidad de rounds)
@@ -111,8 +119,8 @@ class GenerateGroupBracketUseCase {
           bracketRound: r,
           bracketOrder: m,
           nextVsWinnerId: nextVsWinnerId,
-          state: isByeMatch ? 'completed' : 'pending',
-          winnerInscriptionId: isByeMatch ? inscriptionAId : null,
+          state: 'pending',  // ← SIEMPRE 'pending', incluso los byes
+          winnerInscriptionId: null,  // ← NO asignar ganador aquí
           roundState: 'draft',
         );
 

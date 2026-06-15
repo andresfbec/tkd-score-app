@@ -37,6 +37,7 @@ class _CombatVisualizationPageState extends State<CombatVisualizationPage> {
       InjectionVersus().swapVersusParticipants,
       InjectionVersus().updateVersusRoundState,
       InjectionVersus().advanceRoundWinners,
+      InjectionVersus().resolveByes,
     );
     _controller.addListener(() => setState(() {}));
     _controller.loadBracket(widget.groupId, widget.tournamentId);

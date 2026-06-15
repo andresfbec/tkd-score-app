@@ -240,10 +240,9 @@ class GroupExecutionCard extends StatelessWidget {
                     ),
                   ),
                   child: const Text(
-                    'Ejecutar',
+                    'Ver combates',
                     style: TextStyle(
                       fontSize: 16,
-                      
                     ),
                   ),
                 ),

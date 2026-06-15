@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/combat_rounds_controller.dart';
-import 'combat_event_scoring_page.dart';
+import 'combat_round_scoring/combat_event_scoring_page.dart';
 
 class CombatRoundsExecutionPage extends StatefulWidget {
   final int versusId;
@@ -57,22 +57,29 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldPage(
-      header: PageHeader(
-        title: Text('Ejecución de Combate #${widget.matchNumber}'),
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: IconButton(
-            icon: const Icon(FluentIcons.back),
-            onPressed: () => Navigator.pop(context),
+    return Consumer<CombatRoundsController>(
+      builder: (context, roundsController, _) {
+        final nameA = roundsController.competitorAName;
+        final nameB = roundsController.competitorBName;
+
+        return ScaffoldPage(
+          header: PageHeader(
+            title: Text('Combate #${widget.matchNumber} · $nameA vs $nameB'),
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: IconButton(
+                icon: const Icon(FluentIcons.back),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
           ),
-        ),
-      ),
-      content: _buildContent(),
+          content: _buildContent(context, roundsController),
+        );
+      },
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context, CombatRoundsController outerController) {
     if (_isLoading) {
       return const Center(
         child: ProgressRing(),
@@ -113,6 +120,8 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
         final rounds = controller.rounds;
         final executable = controller.executableRound;
         final winnerId = controller.matchWinnerId;
+        final nameA = controller.competitorAName;
+        final nameB = controller.competitorBName;
 
         if (rounds.isEmpty) {
           return const Center(
@@ -138,12 +147,13 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Detalle del Combate',
+                              '$nameA vs $nameB',
                               style: FluentTheme.of(context).typography.bodyStrong,
                             ),
                             const SizedBox(height: 4),
-                            Text('Versus ID: ${widget.versusId} | Formato: ${controller.combatSettings?.formatType ?? "Cargando..."}'),
-                            Text('Total Rounds: ${controller.combatSettings?.roundsMax ?? "Cargando..."}'),
+                            Text('Formato: ${controller.combatSettings?.formatType ?? "Cargando..."}'),
+                            Text('Rondas: ${controller.combatSettings?.roundsMax ?? "Cargando..."}'),
+                            Text('Puntos para ganar: ${controller.combatSettings?.pointsToWin ?? "Cargando..."}'),
                           ],
                         ),
                       ],
@@ -176,7 +186,7 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
                           ),
                           subtitle: isCompleted
                               ? Text(
-                                  'Puntos: ${round.pointsA} - ${round.pointsB} | Ganador ID: ${round.winnerInscriptionId}',
+                                  'Puntos: ${round.pointsA} ($nameA) - ${round.pointsB} ($nameB)',
                                 )
                               : Text('Estado: ${round.state}'),
                           trailing: isExecutable
@@ -191,7 +201,12 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
                                           roundNumber: round.roundNumber,
                                         ),
                                       ),
-                                    );
+                                    ).then((_) {
+                                      // Refrescar el stream de rounds al volver de la página de arbitraje
+                                      if (mounted) {
+                                        context.read<CombatRoundsController>().startListening(widget.versusId);
+                                      }
+                                    });
                                   },
                                   child: const Text('Ejecutar Combate'),
                                 )
@@ -226,17 +241,21 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
                               onPressed: () async {
                                 await controller.finalizeVersus();
                                 if (mounted) {
+                                  // Capturamos el Navigator de esta página ANTES de abrir el diálogo.
+                                  // El context dentro del builder del diálogo puede resolver
+                                  // a un Navigator diferente (el raíz), causando pantalla negra.
+                                  final pageNavigator = Navigator.of(context);
                                   showDialog(
                                     context: context,
-                                    builder: (context) => ContentDialog(
+                                    builder: (dialogContext) => ContentDialog(
                                       title: const Text('Combate Finalizado'),
                                       content: const Text('El resultado del combate ha sido guardado exitosamente.'),
                                       actions: [
                                         Button(
                                           child: const Text('Cerrar'),
                                           onPressed: () {
-                                            Navigator.pop(context); // pop dialog
-                                            Navigator.pop(context); // pop page
+                                            Navigator.of(dialogContext).pop(); // cierra el diálogo
+                                            pageNavigator.pop();               // vuelve al diagrama
                                           },
                                         ),
                                       ],

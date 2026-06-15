@@ -22,6 +22,7 @@ import '../../../domain/usecases/versus/get_max_bracket_round.dart';
 import '../../../domain/usecases/versus/generate_group_bracket_usecase.dart';
 import '../../../domain/usecases/versus/update_versus_round_state.dart';
 import '../../../domain/usecases/versus/advance_round_winners.dart';
+import '../../../domain/usecases/versus/resolve_byes_usecase.dart';
 
 import 'dependency_inscriptions.dart';
 import 'dependency_combat_settings.dart';
@@ -67,4 +68,5 @@ class InjectionVersus {
   GetMaxBracketRound get getMaxBracketRound => GetMaxBracketRound(_getRepo);
   UpdateVersusRoundState get updateVersusRoundState => UpdateVersusRoundState(_getRepo);
   AdvanceRoundWinners get advanceRoundWinners => AdvanceRoundWinners(_getRepo);
+  ResolveByes get resolveByes => ResolveByes(_getRepo);
 }

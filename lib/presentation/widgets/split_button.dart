@@ -43,11 +43,11 @@ class _BotonIniciarWidgetState extends State<BotonIniciarWidget> {
           items: [
             MenuFlyoutItem(
               leading: const Icon(FluentIcons.settings),
-              text: const Text('Configurar'),
+              text: const Text('Organizar'),
               onPressed: () {
                 // Cerramos el menú usando la navegación nativa del flyout en esta versión
                 Navigator.of(context).pop(); 
-                print('Acción secundaria: Configurar seleccionado');
+                print('Acción secundaria: Organizar seleccionado');
               },
             ),
           ],

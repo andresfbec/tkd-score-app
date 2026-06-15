@@ -6,7 +6,7 @@ import '../../controllers/inscriptions_controller.dart';
 import '../../../core/enums/status.dart';
 import '../../../core/utils/status_handler.dart';
 import '../../../core/constants/app.dart';
-import 'combat_visualization/combat_visualization_page.dart';
+import 'visualization_combat_diagram/combat_visualization_page.dart';
 import '../../../core/utils/no_transition_route.dart';
 // INTEGRACIÓN: Importación del nuevo componente de tarjeta
 import '../../widgets/cards/group_execution_card.dart'; 

@@ -370,10 +370,10 @@ class TournamentCard extends StatelessWidget {
               // ),
             ),
             child: Text(
-              'Configurar',
+              'Gestionar',
               style: TextStyle(
                 fontSize: 16,
-                color: accentColor,
+                // color: accentColor,
               ),
             ),
           ),
@@ -477,7 +477,7 @@ class _StartSplitButton extends StatelessWidget {
         child: MenuFlyout(
           items: [
             MenuFlyoutItem(
-              text: const Text('Configurar'),
+              text: const Text('Gestionar'),
               onPressed: () {
                 Navigator.of(context).pop();
                 onConfigure();

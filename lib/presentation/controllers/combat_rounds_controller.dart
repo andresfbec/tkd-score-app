@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/combat_rounds_entity.dart';
 import '../../domain/entities/versus_entity.dart';
 import '../../domain/entities/combat_settings_entity.dart';
+import '../../domain/entities/combat_events_entity.dart';
+import '../../domain/entities/point_types_entity.dart';
+import '../../domain/repositories/inscriptions_repository.dart';
 import '../../domain/usecases/combat_rounds/create_combat_round.dart';
 import '../../domain/usecases/combat_rounds/create_batch_combat_rounds.dart';
 import '../../domain/usecases/combat_rounds/update_combat_round.dart';
@@ -49,6 +52,8 @@ class CombatRoundsController extends ChangeNotifier {
   final SetVersusWinner setVersusWinnerUseCase;
   final DetermineRoundWinner determineRoundWinnerUseCase;
 
+  final InscriptionsRepository inscriptionsRepository;
+
   CombatRoundsController({
     required this.createUseCase,
     required this.createBatchUseCase,
@@ -70,6 +75,7 @@ class CombatRoundsController extends ChangeNotifier {
     required this.evaluateVersusCompletionUseCase,
     required this.setVersusWinnerUseCase,
     required this.determineRoundWinnerUseCase,
+    required this.inscriptionsRepository,
   });
 
   List<CombatRoundsEntity> _rounds = [];
@@ -83,11 +89,16 @@ class CombatRoundsController extends ChangeNotifier {
   CombatRoundsEntity? _executableRound;
   int? _matchWinnerId;
 
+  String _competitorAName = "Competidor Azul";
+  String _competitorBName = "Competidor Rojo";
+
   List<CombatRoundsEntity> get rounds => _rounds;
   VersusEntity? get versus => _versus;
   CombatSettingsEntity? get combatSettings => _combatSettings;
   CombatRoundsEntity? get executableRound => _executableRound;
   int? get matchWinnerId => _matchWinnerId;
+  String get competitorAName => _competitorAName;
+  String get competitorBName => _competitorBName;
 
   Future<void> initializeCombatRounds(int versusId) async {
     try {
@@ -110,9 +121,24 @@ class CombatRoundsController extends ChangeNotifier {
       _versus = await getVersusByIdUseCase(versusId);
       if (_versus != null) {
         _combatSettings = await getCombatSettingByTournamentIdUseCase(_versus!.tournamentId);
+
+        if (_versus!.inscriptionAId != null) {
+          final insA = await inscriptionsRepository.getById(_versus!.inscriptionAId!);
+          if (insA != null) {
+            _competitorAName = '${insA.studentNames ?? ""} ${insA.studentSurnames ?? ""}'.trim();
+            if (_competitorAName.isEmpty) _competitorAName = "Competidor Azul";
+          }
+        }
+        if (_versus!.inscriptionBId != null) {
+          final insB = await inscriptionsRepository.getById(_versus!.inscriptionBId!);
+          if (insB != null) {
+            _competitorBName = '${insB.studentNames ?? ""} ${insB.studentSurnames ?? ""}'.trim();
+            if (_competitorBName.isEmpty) _competitorBName = "Competidor Rojo";
+          }
+        }
       }
     } catch (e) {
-      print("Error loading versus/settings: $e");
+      print("Error loading versus/settings/competitors: $e");
     }
 
     _subscription?.cancel();
@@ -258,12 +284,16 @@ class CombatRoundsController extends ChangeNotifier {
     required int pointsB,
     required int? inscriptionAId,
     required int? inscriptionBId,
+    required List<CombatEventsEntity> events,
+    required List<PointTypesEntity> pointTypes,
   }) {
     return determineRoundWinnerUseCase(
       pointsA: pointsA,
       pointsB: pointsB,
       inscriptionAId: inscriptionAId,
       inscriptionBId: inscriptionBId,
+      events: events,
+      pointTypes: pointTypes,
     );
   }
 

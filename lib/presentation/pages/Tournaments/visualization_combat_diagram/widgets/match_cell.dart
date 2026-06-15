@@ -11,7 +11,13 @@ class MatchCell extends StatelessWidget {
   final int matchNumber;
   final MatchNode match;
   final bool isLocked;
-  final Function(int sourceVersusId, String sourceSlot, int targetVersusId, String targetSlot)? onSwap;
+  final Function(
+    int sourceVersusId,
+    String sourceSlot,
+    int targetVersusId,
+    String targetSlot,
+  )?
+  onSwap;
 
   const MatchCell({
     super.key,
@@ -51,7 +57,12 @@ class MatchCell extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4, right: 8),
+            padding: const EdgeInsets.only(
+              left: 12,
+              top: 4,
+              bottom: 4,
+              right: 8,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -139,17 +150,25 @@ class MatchCell extends StatelessWidget {
   ) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    final isWinner =
+        participant != null &&
+        match.versus.winnerInscriptionId == participant.id; // verificacion de ganador para marcarlo en ui 
+
     final name = participant != null
         ? '${participant.studentNames ?? ""} ${participant.studentSurnames ?? ""}'
         : 'BYE';
     final school = participant?.headquartersName ?? 'N/A';
 
-    final bool isEditable = participant != null && match.versus.roundState == 'draft' && !isLocked;
+    final bool isEditable =
+        participant != null && match.versus.roundState == 'draft' && !isLocked;
 
     final Widget content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: isWinner 
+          ? Colors.green.withOpacity(0.20)  // Verde para ganadores
+          : Colors.transparent,
         borderRadius: isTop
             ? const BorderRadius.only(
                 topLeft: Radius.circular(10),
@@ -159,6 +178,9 @@ class MatchCell extends StatelessWidget {
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
               ),
+        // border: isWinner 
+        //   ? Border.all(color: Colors.green, width: 2)
+        //   : null,
       ),
       child: Row(
         children: [
@@ -173,9 +195,7 @@ class MatchCell extends StatelessWidget {
                 ],
               ),
               shape: BoxShape.circle,
-              border: Border.all(
-                color: theme.accentColor.withOpacity(0.2),
-              ),
+              border: Border.all(color: theme.accentColor.withOpacity(0.2)),
             ),
             child: Center(
               child: Text(
@@ -207,9 +227,7 @@ class MatchCell extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.getTextSecondary(
-                      isDark,
-                    ).withOpacity(0.7),
+                    color: AppColors.getTextSecondary(isDark).withOpacity(0.7),
                     letterSpacing: 0.5,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -219,20 +237,14 @@ class MatchCell extends StatelessWidget {
           ),
           if (participant == null)
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Text(
                 'BYE',
-                style: TextStyle(
-                  fontSize: 8,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
               ),
             )
           else if (isEditable)

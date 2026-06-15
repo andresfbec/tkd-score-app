@@ -5,6 +5,7 @@ import '../../../domain/usecases/versus/swap_versus_participants.dart';
 import '../../../domain/repositories/inscriptions_repository.dart';
 import '../../../domain/usecases/versus/update_versus_round_state.dart';
 import '../../../domain/usecases/versus/advance_round_winners.dart';
+import '../../../domain/usecases/versus/resolve_byes_usecase.dart';
 import '../models/combat_bracket_models.dart';
 
 class CombatVisualizationController extends ChangeNotifier {
@@ -13,6 +14,7 @@ class CombatVisualizationController extends ChangeNotifier {
   final SwapVersusParticipants _swapParticipants;
   final UpdateVersusRoundState _updateVersusRoundState;
   final AdvanceRoundWinners _advanceRoundWinners;
+  final ResolveByes _resolveByes;
 
   List<VersusEntity>? versus;
   List<BracketRound> rounds = [];
@@ -24,6 +26,7 @@ class CombatVisualizationController extends ChangeNotifier {
     this._swapParticipants,
     this._updateVersusRoundState,
     this._advanceRoundWinners,
+    this._resolveByes,
   );
 
   Future<void> loadBracket(int groupId, int tournamentId) async {
@@ -71,13 +74,17 @@ class CombatVisualizationController extends ChangeNotifier {
 
         final List<MatchNode> matches = [];
         for (var vs in roundVersus) {
+          final player1 = inscriptionsMap[vs.inscriptionAId];
+          final player2 = inscriptionsMap[vs.inscriptionBId];
+          final winner = inscriptionsMap[vs.winnerInscriptionId];
+          
           matches.add(
             MatchNode(
               matchNumber: vs.bracketOrder,
               versus: vs,
-              player1: inscriptionsMap[vs.inscriptionAId],
-              player2: inscriptionsMap[vs.inscriptionBId],
-              winner: inscriptionsMap[vs.winnerInscriptionId],
+              player1: player1,
+              player2: player2,
+              winner: winner,
             ),
           );
         }
@@ -151,8 +158,16 @@ class CombatVisualizationController extends ChangeNotifier {
     loading = true;
     notifyListeners();
     try {
+      // 1. Confirmar la ronda (bloquear cambios)
       await _updateVersusRoundState(groupId, bracketRound, 'confirmed');
-      // Recargar para refrescar los datos desde la BD
+      
+      // 2. Si es Ronda 1, resolver todos los byes automáticamente
+      if (bracketRound == 1) {
+        print('🔵 [confirmRound] Es Ronda 1, ejecutando ResolveByes...');
+        await _resolveByes(groupId);
+      }
+      
+      // 3. Recargar para refrescar los datos desde la BD
       await loadBracket(groupId, tournamentId);
     } catch (e) {
       debugPrint('Error al confirmar la ronda: $e');

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/combat_events_entity.dart';
+import '../../domain/entities/point_types_entity.dart';
 import '../../domain/usecases/combat_events/create_combat_event.dart';
 import '../../domain/usecases/combat_events/create_batch_combat_events.dart';
 import '../../domain/usecases/combat_events/update_combat_event.dart';
@@ -181,9 +182,62 @@ class CombatEventsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  RoundScore getRoundScore(List<PointTypesEntity> pointTypes) {
+    double scoreA = 0.0;
+    double scoreB = 0.0;
+    int penaltiesA = 0;
+    int penaltiesB = 0;
+
+    final pointTypesMap = {for (var pt in pointTypes) pt.id: pt};
+
+    for (final event in _events) {
+      if (event.isValid != 1) continue;
+
+      final type = pointTypesMap[event.pointTypeId];
+      if (type == null) continue;
+
+      if (type.isPenalty) {
+        if (event.targetParticipant == 'A') {
+          penaltiesA++;
+          scoreB += event.pointsDelta;
+        } else {
+          penaltiesB++;
+          scoreA += event.pointsDelta;
+        }
+      } else {
+        if (event.targetParticipant == 'A') {
+          scoreA += event.pointsDelta;
+        } else {
+          scoreB += event.pointsDelta;
+        }
+      }
+    }
+
+    return RoundScore(
+      scoreA: scoreA,
+      scoreB: scoreB,
+      penaltiesA: penaltiesA,
+      penaltiesB: penaltiesB,
+    );
+  }
+
   @override
   void dispose() {
     _subscription?.cancel();
     super.dispose();
   }
+}
+
+class RoundScore {
+  final double scoreA;
+  final double scoreB;
+  final int penaltiesA;
+  final int penaltiesB;
+
+  const RoundScore({
+    this.scoreA = 0.0,
+    this.scoreB = 0.0,
+    this.penaltiesA = 0,
+    this.penaltiesB = 0,
+  });
 }

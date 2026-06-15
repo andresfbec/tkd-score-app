@@ -5,9 +5,9 @@ import '../../../core/constants/app.dart';
 import '../../../core/utils/status_handler.dart';
 import '../../../domain/entities/tournament_entity.dart';
 import '../../controllers/combat_settings_controller.dart';
-import 'tournament_rules_insc_groups/tab_groups/groups_tournament.dart';
-import 'tournament_rules_insc_groups/inscriptions_tournament.dart';
-import 'tournament_rules_insc_groups/settings_tournament.dart';
+import 'tournament_configuration/groups/groups_tournament.dart';
+import 'tournament_configuration/inscriptions_tournament.dart';
+import 'tournament_configuration/settings_tournament.dart';
 
 class CombatSettingsPage extends StatefulWidget {
   final TournamentEntity tournament;
@@ -86,7 +86,7 @@ class _CombatSettingsPageState extends State<CombatSettingsPage> {
               const TextSpan(text: '  >  '),
               TextSpan(
                 // text: 'Configuración: ${widget.tournament.name}',
-                text: 'Configuración de torneo',
+                text: 'Gestión de torneo',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,
                   fontWeight: AppTypography.semiBold,

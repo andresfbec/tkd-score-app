@@ -28,6 +28,8 @@ import '../presentation/controllers/combat_events_controller.dart';
 import '../core/config/containers/dependency_versus.dart';
 import '../core/config/containers/dependency_combat_rounds.dart';
 import '../core/config/containers/dependency_combat_events.dart';
+import '../core/config/containers/dependency_point_types.dart';
+import '../presentation/controllers/point_types_controller.dart';
 import 'ui_state_provider.dart';
 
 class AppProviders {
@@ -48,6 +50,7 @@ class AppProviders {
     final containerVersus = InjectionVersus();
     final containerCombatRounds = InjectionCombatRounds();
     final containerCombatEvents = InjectionCombatEvents();
+    final containerPointTypes = InjectionPointTypes();
 
     return [
       // ThemeProvider
@@ -136,6 +139,11 @@ class AppProviders {
           getAllUseCase: containerBelts.getAllBelts,
         )..loadBelts(),
       ),
+      ChangeNotifierProvider<PointTypesController>(
+        create: (_) => PointTypesController(
+          getAllUseCase: containerPointTypes.getAllPointTypes,
+        )..loadPointTypes(),
+      ),
       ChangeNotifierProvider<GroupsController>(
         create: (_) => GroupsController(
           generateStandardGroupsUseCase: containerGroups.generateStandardGroups,
@@ -190,7 +198,8 @@ class AppProviders {
           getExecutableRoundUseCase: containerCombatRounds.getExecutableRound,
           evaluateVersusCompletionUseCase: containerCombatRounds.evaluateVersusCompletion,
           setVersusWinnerUseCase: containerVersus.setVersusWinner,
-           determineRoundWinnerUseCase: containerCombatRounds.determineRoundWinner,
+          determineRoundWinnerUseCase: containerCombatRounds.determineRoundWinner,
+          inscriptionsRepository: containerInscriptions.inscriptionsRepository,
         ),
       ),
       ChangeNotifierProvider<CombatEventsController>(

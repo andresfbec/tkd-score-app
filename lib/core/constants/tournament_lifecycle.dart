@@ -18,13 +18,13 @@ abstract class TournamentLifecycle {
       case created:
         return 'Creado';
       case settingsReady:
-        return 'Reglas definidas';
+        return 'Config.';
       case groupsReady:
-        return 'Grupos definidos';
+        return 'Grupos';
       case live:
         return 'En curso';
       case finished:
-        return 'Finalizado';
+        return 'Fin';
       default:
         return phase;
     }
