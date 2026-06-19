@@ -7,7 +7,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final String label;
   final T? value;
   final List<ComboBoxItem<T>> items;
-  final ValueChanged<T?> onChanged;
+  final ValueChanged<T?>? onChanged; // <--- Se agregó el '?' para que acepte null
   final String? placeholder;
   final double? width;
 
@@ -16,7 +16,7 @@ class CustomDropdown<T> extends StatelessWidget {
     required this.label,
     required this.value,
     required this.items,
-    required this.onChanged,
+    required this.onChanged, // <--- Sigue siendo requerido poner el parámetro, pero ahora acepta null
     this.placeholder,
     this.width,
   });
@@ -29,9 +29,9 @@ class CustomDropdown<T> extends StatelessWidget {
     final dropdown = ComboBox<T>(
       value: value,
       items: items,
-      onChanged: onChanged,
+      onChanged: onChanged, // Fluent UI deshabilitará automáticamente el ComboBox si esto es null
       placeholder: Text(placeholder ?? 'Seleccione una opción'),
-      isExpanded: true, // Para que ocupe todo el ancho del SizedBox
+      isExpanded: true, 
     );
 
     return Column(

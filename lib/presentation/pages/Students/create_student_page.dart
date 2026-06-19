@@ -18,7 +18,20 @@ import '../../../core/constants/student_form_options.dart';
 class StudentFormPage extends StatefulWidget {
   final int? initialHeadquarterId;
 
-  const StudentFormPage({super.key, this.initialHeadquarterId});
+  /// Cuando es true, omite el ScaffoldPage y el header propio,
+  /// devolviendo sólo el cuerpo del formulario para ser embebido
+  /// dentro del AnimatedSwitcher de StudentsPage.
+  final bool isEmbedded;
+
+  /// Callback para regresar a la vista anterior cuando se usa embebido.
+  final VoidCallback? onGoBack;
+
+  const StudentFormPage({
+    super.key,
+    this.initialHeadquarterId,
+    this.isEmbedded = false,
+    this.onGoBack,
+  });
 
   @override
   State<StudentFormPage> createState() => _StudentFormPageState();
@@ -27,14 +40,12 @@ class StudentFormPage extends StatefulWidget {
 class _StudentFormPageState extends State<StudentFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controladores de texto
   final _namesController = TextEditingController();
   final _surnamesController = TextEditingController();
   final _idNumberController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
 
-  // Estados de selección
   DateTime _birthDate = DateTime.now().subtract(const Duration(days: 365 * 10));
   String _gender = 'Masculino';
   int? _selectedHqId;
@@ -47,12 +58,155 @@ class _StudentFormPageState extends State<StudentFormPage> {
     _selectedHqId = widget.initialHeadquarterId;
   }
 
+  // ── Cuerpo del formulario, reutilizable en ambos modos ──────────────────
+  Widget _buildFormBody(BuildContext context, bool isDark) {
+    final hqController = context.watch<HeadquartersController>();
+
+    return SingleChildScrollView(
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          padding: const EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 10),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                _buildSectionTitle('Información Básica'),
+                const SizedBox(height: 20),
+                Wrap(
+                  spacing: 24,
+                  runSpacing: 24,
+                  children: [
+                    CustomInput(
+                      width: 360,
+                      label: 'Nombres Completos',
+                      type: InputType.name,
+                      controller: _namesController,
+                      placeholder: 'Escriba los nombres',
+                      validator: FormValidations.validateName,
+                    ),
+                    CustomInput(
+                      width: 360,
+                      label: 'Apellidos Completos',
+                      type: InputType.name,
+                      controller: _surnamesController,
+                      placeholder: 'Escriba los apellidos',
+                      validator: (v) => FormValidations.required(v, field: 'Apellidos'),
+                    ),
+                    CustomDatePicker(
+                      width: 360,
+                      label: 'Fecha de Nacimiento',
+                      selected: _birthDate,
+                      onChanged: (v) => setState(() => _birthDate = v),
+                    ),
+                    CustomDropdown<String>(
+                      width: 360,
+                      label: 'Género',
+                      value: _gender,
+                      items: const [
+                        ComboBoxItem(value: 'Masculino', child: Text('Masculino')),
+                        ComboBoxItem(value: 'Femenino', child: Text('Femenino')),
+                      ],
+                      onChanged: (v) => setState(() => _gender = v!),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 45),
+                _buildSectionTitle('Información Adicional'),
+                const SizedBox(height: 20),
+                Wrap(
+                  spacing: 24,
+                  runSpacing: 24,
+                  children: [
+                    CustomDropdown<String>(
+                      width: 250,
+                      label: 'Tipo Doc.',
+                      value: _typeIdentify,
+                      items: StudentFormOptions.identifyTypes.map((item) {
+                        return ComboBoxItem(
+                          value: item['value']!,
+                          child: Text(item['label']!),
+                        );
+                      }).toList(),
+                      onChanged: (v) => setState(() => _typeIdentify = v!),
+                    ),
+                    CustomInput(
+                      width: 230,
+                      label: 'Número de Documento',
+                      type: InputType.number,
+                      controller: _idNumberController,
+                      validator: (v) => FormValidations.required(v, field: 'Documento'),
+                    ),
+                    CustomDropdown<int>(
+                      width: 230,
+                      label: 'Sede de Entrenamiento',
+                      value: _selectedHqId,
+                      placeholder: 'Seleccione Sede',
+                      items: hqController.headquarters.map((h) {
+                        return ComboBoxItem<int>(value: h.id, child: Text(h.name));
+                      }).toList(),
+                      onChanged: (v) => setState(() => _selectedHqId = v),
+                    ),
+                    CustomDropdown<int>(
+                      width: 230,
+                      label: 'Cinturón / Grado Actual',
+                      value: _selectedBeltId,
+                      placeholder: 'Seleccione Grado',
+                      items: StudentFormOptions.belts.map((b) {
+                        return ComboBoxItem<int>(
+                          value: b['id'] as int,
+                          child: Text(b['name'] as String),
+                        );
+                      }).toList(),
+                      onChanged: (v) => setState(() => _selectedBeltId = v),
+                    ),
+                    CustomInput(
+                      width: 110,
+                      label: 'Peso (Kg)',
+                      type: InputType.number,
+                      controller: _weightController,
+                      placeholder: '00.0',
+                    ),
+                    CustomInput(
+                      width: 110,
+                      label: 'Talla (Cm)',
+                      type: InputType.number,
+                      controller: _heightController,
+                      placeholder: '000',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 60),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton(
+                    onPressed: _saveStudent,
+                    child: const Text(
+                      'Guardar Alumno',
+                      style: TextStyle(fontWeight: AppTypography.regular),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hqController = context.watch<HeadquartersController>();
-    final theme = FluentTheme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
+    final bool isDark = FluentTheme.of(context).brightness == Brightness.dark;
 
+    // ── Modo embebido: sólo el cuerpo, sin ScaffoldPage ────────────────────
+    if (widget.isEmbedded) {
+      return _buildFormBody(context, isDark);
+    }
+
+    // ── Modo legacy (Navigator.push): ScaffoldPage completo con header ─────
     return ScaffoldPage.scrollable(
       header: PageHeader(
         title: RichText(
@@ -72,172 +226,30 @@ class _StudentFormPageState extends State<StudentFormPage> {
                     child: Text(
                       'Alumnos',
                       style: TextStyle(
-                      fontSize: AppTypography.titleView,
-                      fontWeight: AppTypography.semiBold,
-                      fontFamily: AppTypography.fontFamily,
-                      color: AppColors.getTextPrimary(isDark),
-                    ),
+                        fontSize: AppTypography.titleView,
+                        fontWeight: AppTypography.semiBold,
+                        fontFamily: AppTypography.fontFamily,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
                     ),
                   ),
                 ),
               ),
               const TextSpan(text: '  >  '),
-               TextSpan(
-                text: 'Crear Alumno',
+              TextSpan(
+                text: 'Crear alumno',
                 style: TextStyle(
-                fontSize: AppTypography.titleView,
-                fontWeight: AppTypography.semiBold,
-                fontFamily: AppTypography.fontFamily,
-                color: AppColors.getTextPrimary(isDark),
-              ),
+                  fontSize: AppTypography.titleView,
+                  fontWeight: AppTypography.semiBold,
+                  fontFamily: AppTypography.fontFamily,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
               ),
             ],
           ),
         ),
       ),
-      children: [
-        const SizedBox(height: 10),
-        Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 800),
-            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 40),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-
-                  _buildSectionTitle('Información Básica'),
-                  const SizedBox(height: 20),
-                  
-                  Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    children: [
-                      CustomInput(
-                        width: 360,
-                        label: 'Nombres Completos',
-                        type: InputType.name,
-                        controller: _namesController,
-                        placeholder: 'Escriba los nombres',
-                        validator: FormValidations.validateName,
-                      ),
-                      CustomInput(
-                        width: 360,
-                        label: 'Apellidos Completos',
-                        type: InputType.name,
-                        controller: _surnamesController,
-                        placeholder: 'Escriba los apellidos',
-                        validator: (v) => FormValidations.required(v, field: 'Apellidos'),
-                      ),
-                      CustomDatePicker(
-                        width: 360,
-                        label: 'Fecha de Nacimiento',
-                        selected: _birthDate,
-                        onChanged: (v) => setState(() => _birthDate = v),
-                      ),
-                      CustomDropdown<String>(
-                        width: 360,
-                        label: 'Género',
-                        value: _gender,
-                        items: const [
-                          ComboBoxItem(value: 'Masculino', child: Text('Masculino')),
-                          ComboBoxItem(value: 'Femenino', child: Text('Femenino')),
-                        ],
-                        onChanged: (v) => setState(() => _gender = v!),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 45),
-                  _buildSectionTitle('Detalles Técnicos y Físicos'),
-                  const SizedBox(height: 20),
-
-                  Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    children: [
-                      CustomDropdown<String>(
-                      width: 250, // Un poco más angosto que los demás
-                      label: 'Tipo Doc.',
-                      value: _typeIdentify,
-                      items: StudentFormOptions.identifyTypes.map((item) {
-                        return ComboBoxItem(
-                          value: item['value']!,
-                          child: Text(item['label']!),
-                        );
-                      }).toList(),
-                      onChanged: (v) => setState(() => _typeIdentify = v!),
-                    ),
-                      CustomInput(
-                        width: 230,
-                        label: 'Número de Documento',
-                        type: InputType.number,
-                        controller: _idNumberController,
-                        validator: (v) => FormValidations.required(v, field: 'Documento'),
-                      ),
-                      CustomDropdown<int>(
-                        width: 230,
-                        label: 'Sede de Entrenamiento',
-                        value: _selectedHqId,
-                        placeholder: 'Seleccione Sede',
-                        items: hqController.headquarters.map((h) {
-                          return ComboBoxItem<int>(value: h.id, child: Text(h.name));
-                        }).toList(),
-                        onChanged: (v) => setState(() => _selectedHqId = v),
-                      ),
-                      CustomDropdown<int>(
-                        width: 230,
-                        label: 'Cinturón / Grado Actual',
-                        value: _selectedBeltId,
-                        placeholder: 'Seleccione Grado',
-                        items: StudentFormOptions.belts.map((b) {
-                          return ComboBoxItem<int>(
-                            value: b['id'] as int,
-                            child: Text(b['name'] as String),
-                          );
-                        }).toList(),
-                        onChanged: (v) => setState(() => _selectedBeltId = v),
-                      ),
-                      CustomInput(
-                        width: 110,
-                        label: 'Peso (Kg)',
-                        type: InputType.number,
-                        controller: _weightController,
-                        placeholder: '00.0',
-                      ),
-                      CustomInput(
-                        width: 110,
-                        label: 'Talla (Cm)',
-                        type: InputType.number,
-                        controller: _heightController,
-                        placeholder: '000',
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 60),
-
-                  // Botón de acción principal
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: FilledButton(
-                      style: ButtonStyle(
-                      ),
-                      onPressed: _saveStudent,
-                      child: const Text(
-                        'Guardar Alumno',
-                        style: TextStyle(fontWeight: AppTypography.regular),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+      children: [_buildFormBody(context, isDark)],
     );
   }
 
@@ -302,7 +314,12 @@ class _StudentFormPageState extends State<StudentFormPage> {
       );
 
       context.read<StudentsController>().addStudent(student);
-      Navigator.pop(context);
+
+      if (widget.isEmbedded && widget.onGoBack != null) {
+        widget.onGoBack!();
+      } else {
+        Navigator.pop(context);
+      }
     }
   }
 

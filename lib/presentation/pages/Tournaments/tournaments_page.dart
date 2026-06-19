@@ -10,43 +10,43 @@ import '../../controllers/tournaments_controller.dart';
 import '../../widgets/cards/tournament_card.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/input_search.dart';
-import 'create_tournament_page.dart';
-import 'edit_tournament_page.dart';
+import 'forms/create_tournament_page.dart';
+import 'forms/edit_tournament_page.dart';
+import 'combat_settings_page.dart';
+import 'tournament_execution_page.dart';
+import '../../../core/utils/no_transition_route.dart';
 
 class TournamentsPage extends StatelessWidget {
   const TournamentsPage({super.key});
 
+  void _openExecution(BuildContext context, TournamentEntity t) {
+    Navigator.of(context).push(
+      NoTransitionPageRoute(
+        child: TournamentExecutionPage(tournament: t),
+      ),
+    );
+  }
+
   void _openCreate(BuildContext context) {
     Navigator.of(context).push(
-      FluentPageRoute(
-        builder: (_) => const CreateTournamentPage(),
+      NoTransitionPageRoute(
+        child: const CreateTournamentPage(),
       ),
     );
   }
 
   void _openEdit(BuildContext context, TournamentEntity t) {
     Navigator.of(context).push(
-      FluentPageRoute(
-        builder: (_) => EditTournamentPage(tournament: t),
+      NoTransitionPageRoute(
+        child: EditTournamentPage(tournament: t),
       ),
     );
   }
 
-  void _openConfigurePlaceholder(BuildContext context, TournamentEntity t) {
-    showDialog(
-      context: context,
-      builder: (ctx) => ContentDialog(
-        title: const Text('Configurar torneo'),
-        content: Text(
-          'Aquí enlazarás las reglas de combate y la definición de grupos '
-          'para "${t.name}". (Pantalla en construcción.)',
-        ),
-        actions: [
-          FilledButton(
-            child: const Text('Entendido'),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-        ],
+  void _openConfigure(BuildContext context, TournamentEntity t) {
+    Navigator.of(context).push(
+      NoTransitionPageRoute(
+        child: CombatSettingsPage(tournament: t),
       ),
     );
   }
@@ -61,8 +61,8 @@ class TournamentsPage extends StatelessWidget {
       builder: (dialogContext) => ContentDialog(
         title: const Text('Iniciar torneo'),
         content: Text(
-          '¿Pasar "${t.name}" a estado en curso? '
-          'Luego no podrás editarlo ni eliminarlo desde aquí.',
+          '¿Deseas iniciar el torneo "${t.name}"? '
+          'Luego no podrás editar las reglas, grupos ni participantes. Por favor verifica los datos antes de iniciar el torneo.',
         ),
         actions: [
           Button(
@@ -174,7 +174,7 @@ class TournamentsPage extends StatelessWidget {
                         crossAxisCount: 3,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.02,
+                        childAspectRatio: 1.4,
                       ),
                       itemCount: list.length,
                       itemBuilder: (context, index) {
@@ -184,10 +184,11 @@ class TournamentsPage extends StatelessWidget {
                           hasCombatSettings: false,
                           hasGroupsDefined: false,
                           onConfigure: () =>
-                              _openConfigurePlaceholder(context, t),
+                              _openConfigure(context, t),
                           onStart: () => _confirmStart(context, t),
                           onEdit: () => _openEdit(context, t),
                           onDelete: () => _confirmDelete(context, t),
+                          onManageMatches: () => _openExecution(context, t),
                         );
                       },
                     ),

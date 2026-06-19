@@ -4,7 +4,6 @@ abstract class TournamentLifecycle {
   static const String created = 'created';
   static const String settingsReady = 'settings_ready';
   static const String groupsReady = 'groups_ready';
-  static const String readyToStart = 'ready_to_start';
   static const String live = 'live';
   static const String finished = 'finished';
 
@@ -19,15 +18,13 @@ abstract class TournamentLifecycle {
       case created:
         return 'Creado';
       case settingsReady:
-        return 'Reglas definidas';
+        return 'Config.';
       case groupsReady:
-        return 'Grupos definidos';
-      case readyToStart:
-        return 'Listo para iniciar';
+        return 'Grupos';
       case live:
         return 'En curso';
       case finished:
-        return 'Finalizado';
+        return 'Fin';
       default:
         return phase;
     }
@@ -40,10 +37,10 @@ abstract class TournamentLifecycle {
 
   static bool showConfigureButton(String phase) {
     final p = normalize(phase);
-    return p == created;
+    return p == created || p == settingsReady || p == groupsReady;
   }
 
-  /// Puede iniciarse si la fase lo indica o si hay señal explícita de reglas + grupos (cuando conectes DAOs).
+  /// Puede iniciarse si está en la fase de grupos definidos.
   static bool canShowStartButton({
     required String phase,
     required bool hasCombatSettings,
@@ -51,7 +48,21 @@ abstract class TournamentLifecycle {
   }) {
     final p = normalize(phase);
     if (p == live || p == finished) return false;
-    if (p == readyToStart) return true;
-    return hasCombatSettings && hasGroupsDefined;
+    return p == groupsReady;
+  }
+
+  /// Evalúa si el torneo cumple con las condiciones para pasar al estado 'Grupos definidos'
+  /// (y por lo tanto, estar listo para iniciar):
+  /// 1. Tiene al menos una inscripción.
+  /// 2. Tiene al menos un grupo creado.
+  /// 3. TODAS las inscripciones activas tienen un grupo asignado.
+  static bool canAdvanceToGroupsReady({
+    required int totalInscriptions,
+    required int totalGroups,
+    required int unassignedInscriptionsCount,
+  }) {
+    return totalInscriptions > 0 && 
+           totalGroups > 0 && 
+           unassignedInscriptionsCount == 0;
   }
 }

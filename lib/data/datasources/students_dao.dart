@@ -53,20 +53,17 @@ class StudentsDao {
     final hoy = DateTime.now();
 
     if (minAge != null) {
-      // Si quiero alguien de MÍNIMO 10 años, su fecha de nacimiento
-      // debe ser IGUAL o ANTERIOR a "Hoy hace 10 años".
-      final fechaLimiteMin = DateTime(hoy.year - minAge, hoy.month, hoy.day);
+      // Si quiero alguien de MÍNIMO 19 años, su fecha de nacimiento
+      // debe ser el mismo día de hace 19 años o antes.
+      // Usamos el final del día para ser inclusivos.
+      final fechaLimiteMin = DateTime(hoy.year - minAge, hoy.month, hoy.day, 23, 59, 59);
       query.where(_db.students.birthDate.isSmallerOrEqualValue(fechaLimiteMin));
     }
 
     if (maxAge != null) {
-      // Si quiero alguien de MÁXIMO 17 años, su fecha de nacimiento
-      // debe ser POSTERIOR a "Hoy hace 18 años".
-      final fechaLimiteMax = DateTime(
-        hoy.year - maxAge - 1,
-        hoy.month,
-        hoy.day + 1,
-      );
+      // Si quiero alguien de MÁXIMO 19 años, no debe haber cumplido los 20.
+      // Osea, debe haber nacido DESPUÉS de "hace 20 años".
+      final fechaLimiteMax = DateTime(hoy.year - maxAge - 1, hoy.month, hoy.day + 1);
       query.where(_db.students.birthDate.isBiggerOrEqualValue(fechaLimiteMax));
     }
 

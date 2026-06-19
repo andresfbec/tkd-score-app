@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app.dart';
 import '../../core/theme/theme_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -75,22 +76,37 @@ class SettingsPage extends StatelessWidget {
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Información de la aplicación',
-                      style: TextStyle(
-                        fontSize: AppTypography.titleMedium,
-                        fontWeight: AppTypography.semiBold,
-                        color: AppColors.getTextPrimary(isDark),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInfoItem('Nombre', AppConstants.appName, isDark),
-                    _buildInfoItem('Versión', '1.0.0', isDark),
-                    _buildInfoItem('Desarrollador', 'Equipo de desarrollo TKD', isDark),
-                  ],
+                child: FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        height: 100,
+                        child: Center(child: ProgressRing()),
+                      );
+                    }
+                    
+                    final info = snapshot.data;
+                    final version = info != null ? 'V ${info.version}+${info.buildNumber}' : '1.0.0';
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Información de la aplicación',
+                          style: TextStyle(
+                            fontSize: AppTypography.titleMedium,
+                            fontWeight: AppTypography.semiBold,
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInfoItem('Nombre', AppConstants.appName, isDark),
+                        _buildInfoItem('Versión', version, isDark),
+                        _buildInfoItem('Desarrollador', 'Equipo de desarrollo TKD', isDark),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

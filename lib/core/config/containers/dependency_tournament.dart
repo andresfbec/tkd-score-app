@@ -1,5 +1,8 @@
 import '../db/app_database_provider.dart';
 import '../../../data/datasources/tournament_dao.dart';
+import '../../../data/datasources/combat_settings_dao.dart';
+import '../../../data/datasources/groups_dao.dart';
+import '../../../data/datasources/inscriptions_dao.dart';
 import '../../../data/repositories_impl/tournament_repository_impl.dart';
 
 import '../../../domain/usecases/tournament/create_tournament.dart';
@@ -10,6 +13,7 @@ import '../../../domain/usecases/tournament/get_tournament_by_id.dart';
 import '../../../domain/usecases/tournament/find_tournaments.dart';
 import '../../../domain/usecases/tournament/watch_tournaments.dart';
 import '../../../domain/usecases/tournament/start_tournament.dart';
+import '../../../domain/usecases/tournament/sync_tournament_setup_phase.dart';
 
 class InjectionTournament {
   static final InjectionTournament _instance = InjectionTournament._internal();
@@ -21,6 +25,9 @@ class InjectionTournament {
   TournamentRepositoryImpl get tournamentRepository {
     return _repository ??= TournamentRepositoryImpl(
       TournamentDao(AppDatabaseProvider.instance),
+      CombatSettingsDao(AppDatabaseProvider.instance),
+      GroupsDao(AppDatabaseProvider.instance),
+      InscriptionsDao(AppDatabaseProvider.instance),
     );
   }
 
@@ -32,4 +39,5 @@ class InjectionTournament {
   FindTournaments get findTournaments => FindTournaments(tournamentRepository);
   WatchTournaments get watchTournaments => WatchTournaments(tournamentRepository);
   StartTournament get startTournament => StartTournament(tournamentRepository);
+  SyncTournamentSetupPhase get syncTournamentSetupPhase => SyncTournamentSetupPhase(tournamentRepository);
 }

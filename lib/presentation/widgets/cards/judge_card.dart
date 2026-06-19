@@ -6,7 +6,7 @@ class JudgeCard extends StatelessWidget {
   final String document;
   final String phone;
   final String rank;
-  final String club; // 🔥 nuevo campo
+  final String club; 
   final int tournaments;
 
   final VoidCallback? onTap;
@@ -20,7 +20,7 @@ class JudgeCard extends StatelessWidget {
     required this.document,
     required this.phone,
     required this.rank,
-    required this.club, // 🔥 requerido
+    required this.club, 
     required this.tournaments,
     this.onTap,
     this.onEdit,
@@ -120,7 +120,7 @@ class JudgeCard extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              /// 🔥 SCROLL AREA
+              
               Expanded(
                 child: SingleChildScrollView(
                   child: Row(
@@ -146,7 +146,7 @@ class JudgeCard extends StatelessWidget {
                             _infoItem('Rango', rank, mutedText),
                             const SizedBox(height: 6),
 
-                            /// 🔥 NUEVO
+                            
                             _infoItem('Club afiliado', club, mutedText),
                           ],
                         ),
@@ -158,14 +158,15 @@ class JudgeCard extends StatelessWidget {
 
               /// 🔹 ACCIONES
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
-                    icon: const Icon(FluentIcons.edit, size: 16),
+                    icon: const Icon(FluentIcons.edit, size: 18),
                     onPressed: onEdit,
                   ),
+                  const SizedBox(width: 4),
                   IconButton(
-                    icon: const Icon(FluentIcons.delete, size: 16),
+                    icon: const Icon(FluentIcons.delete, size: 18),
                     onPressed: onDelete,
                   ),
                 ],

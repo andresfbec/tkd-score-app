@@ -1,18 +1,18 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app.dart';
-import '../../../core/constants/tournament_form_options.dart';
-import '../../../core/enums/input_type.dart';
-import '../../../core/enums/status.dart';
-import '../../../core/utils/status_handler.dart';
-import '../../../domain/entities/tournament_entity.dart';
+import '../../../../core/constants/app.dart';
+import '../../../../core/constants/tournament_form_options.dart';
+import '../../../../core/enums/input_type.dart';
+import '../../../../core/enums/status.dart';
+import '../../../../core/utils/status_handler.dart';
+import '../../../../domain/entities/tournament_entity.dart';
 
-import '../../controllers/tournaments_controller.dart';
-import '../../forms/validators.dart';
-import '../../widgets/inputs/custom_date_picker.dart';
-import '../../widgets/inputs/custom_dropdown.dart';
-import '../../widgets/inputs/custom_input.dart';
+import '../../../controllers/tournaments_controller.dart';
+import '../../../forms/validators.dart';
+import '../../../widgets/inputs/custom_date_picker.dart';
+import '../../../widgets/inputs/custom_dropdown.dart';
+import '../../../widgets/inputs/custom_input.dart';
 
 /// Formulario de torneo. [existing] distinto de null implica modo edición
 /// (también puedes usar [EditTournamentPage]).
@@ -96,7 +96,8 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
               const TextSpan(text: '  >  '),
               TextSpan(
                 text: widget.isEditMode
-                    ? 'Editar: ${widget.existing!.name}'
+                    // ? 'Editar ${widget.existing!.name}'
+                    ? 'Editar torneo'
                     : 'Crear torneo',
                 style: TextStyle(
                   fontSize: AppTypography.titleView,

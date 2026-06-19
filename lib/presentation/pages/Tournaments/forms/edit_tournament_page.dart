@@ -1,4 +1,4 @@
-import '../../../domain/entities/tournament_entity.dart';
+import '../../../../domain/entities/tournament_entity.dart';
 import 'create_tournament_page.dart';
 
 /// Edición reutilizando el mismo formulario que [CreateTournamentPage].

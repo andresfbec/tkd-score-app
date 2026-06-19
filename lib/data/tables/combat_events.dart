@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'combat_rounds.dart';
-import 'judge.dart';
+import 'point_types.dart';
 
 class CombatEvents extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -10,16 +10,16 @@ class CombatEvents extends Table {
     onDelete: KeyAction.restrict,
     onUpdate: KeyAction.cascade,
   )();
-  TextColumn get pointType => text()();
+  IntColumn get pointTypeId => integer().references(
+    PointTypes,
+    #id,
+    onDelete: KeyAction.restrict,
+    onUpdate: KeyAction.cascade,
+  )();
   TextColumn get targetParticipant => text()();
   RealColumn get pointsDelta => real()();
   RealColumn get matchSeconds => real().nullable()();
-  IntColumn get registeredByJudgeId => integer().nullable().references(
-    Judge,
-    #id,
-    onDelete: KeyAction.setNull,
-    onUpdate: KeyAction.cascade,
-  )();
+  IntColumn get registeredByJudgeId => integer().nullable()();
 
   // Audit trail: events are never deleted, only marked as omitted/corrected.
   IntColumn get isValid => integer().withDefault(const Constant(1))();

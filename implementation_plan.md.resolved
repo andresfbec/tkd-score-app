@@ -1,0 +1,75 @@
+# Implementación de Lógica de Combates y Brackets
+
+Este plan detalla las modificaciones a nivel de base de datos (Drift) y capa de dominio (Entidades y Casos de Uso)
+necesarias para soportar el flujo del torneo piramidal con soporte para **Byes**, **asignación aleatoria**, y **bloqueo por rondas**.
+
+## Respuestas a tus preguntas sobre la tabla `Versus`
+
+Has preguntado si los campos de la tabla `Versus` actual son suficientes o si haría falta algo más. El diseño actual es **casi perfecto**, pero para cumplir con todo lo que pides en tu archivo `.md`, **sí necesitamos hacer 3 modificaciones clave**:
+
+1. **Permitir Byes (`inscriptionAId` e `inscriptionBId` deben ser nulos)**:
+   Actualmente, los campos están definidos como `integer().references(...)()`. Esto significa que son obligatorios (NOT NULL). Para representar un "Bye" (una casilla donde un participante no tiene oponente y pasa directo a la siguiente ronda), uno o ambos campos de inscripción deben poder quedar en nulo (`.nullable()`).
+   
+2. **Estado de la Ronda (`roundState`)**:
+   Mencionaste: *"la edicion del orden de los versus o enfrentamientos solo deben poder modificarse en la ronda que se este ejecutando en el momento"*. 
+   Actualmente existe un `TextColumn get state` que puede servir para el estado del *combate en sí* (ej. pending, active, finished). Pero necesitamos saber si la **ronda completa** ya fue confirmada (botón "Ejecutar ronda"). Lo ideal es agregar un campo como `TextColumn get roundState => text().withDefault(const Constant('draft'))();` en la tabla `Versus`. Si el `roundState` es `'draft'`, se permite Drag&Drop; si es `'confirmed'` o `'execution'`, se bloquea la edición.
+
+3. **Número de ronda (`bracketRound`)**:
+   Preguntaste: *"ver si es necesario incluir en el versus el numero de la ronda"*.
+   ¡La buena noticia es que **ya lo tienes**! Tu campo `IntColumn get bracketRound => integer().withDefault(const Constant(1))();` es exactamente lo que necesitamos. Esto nos permitirá agrupar los combates por ronda (1 = Octavos, 2 = Cuartos, etc.) y asegurarnos de que solo se pueda editar la ronda actual.
+
+---
+
+## User Review Required
+
+> [!WARNING]
+> Las siguientes modificaciones alterarán el esquema de la base de datos (Drift). 
+> **¿Estás de acuerdo con hacer `inscriptionAId` y `inscriptionBId` Nullable y agregar el campo `roundState`?** Esto requerirá ejecutar el build_runner para actualizar la base de datos.
+
+## Proposed Changes
+
+### Capa de Datos (Drift Tablas)
+
+#### [MODIFY] [versus.dart](file:///c:/ProyectosFlutter/tkd_score/lib/data/tables/versus.dart)
+Modificaremos la tabla para admitir Byes y el estado de la ronda.
+- `inscriptionAId` -> `integer().nullable().references(...)()`
+- `inscriptionBId` -> `integer().nullable().references(...)()`
+- Añadir campo: `TextColumn get roundState => text().withDefault(const Constant('draft'))();`
+
+#### [MODIFY] [versus_entity.dart](file:///c:/ProyectosFlutter/tkd_score/lib/domain/entities/versus_entity.dart)
+Actualizaremos la entidad para reflejar los cambios en la BD.
+- `final int? inscriptionAId;`
+- `final int? inscriptionBId;`
+- `final String roundState;`
+
+#### [MODIFY] [versus_mapper.dart](file:///c:/ProyectosFlutter/tkd_score/lib/data/mappers/versus_mapper.dart)
+Actualizaremos el mapeador para manejar correctamente los valores nulos en las inscripciones y el nuevo campo `roundState`.
+
+### Capa de Dominio (Casos de Uso)
+
+#### [NEW] `lib/domain/usecases/versus/generate_group_bracket_usecase.dart`
+Crearemos un caso de uso que implementará la **lógica matemática** descrita en tu plan:
+1. **Recibir participantes**: Toma la lista de estudiantes inscritos en un grupo.
+2. **Cálculo de la Potencia de 2**: Calcula el tamaño del árbol ($N$). Ej: Para 5 participantes, $N = 8$.
+3. **Cálculo de Byes**: $N - P$. En el ejemplo, $8 - 5 = 3$ Byes.
+4. **Asignación Aleatoria**: Mezcla aleatoriamente a los participantes.
+5. **Generación de las Casillas (Versus)**: 
+   - Genera los nodos para la `bracketRound = 1`.
+   - Distribuye equitativamente los participantes y los Byes (donde una inscripción queda `null`).
+   - Genera las rondas subsiguientes (`bracketRound = 2`, etc.) dejando ambas inscripciones en `null` (ya que dependerán de los ganadores de la ronda anterior).
+   - Asigna las referencias `nextVsWinnerId`.
+
+#### [NEW] `lib/domain/usecases/versus/confirm_round_usecase.dart`
+Crearemos un caso de uso para ejecutar el botón **"Ejecutar Ronda"**.
+- Tomará el `groupId` y el `bracketRound`.
+- Cambiará el `roundState` de todos los versus de esa ronda a `'confirmed'`.
+- **Lógica Automática para Byes**: Si un Versus en esta ronda confirmada tiene un participante y un Bye (la otra inscripción es `null`), automáticamente se le asignará ese participante como `winnerInscriptionId` y avanzará al `nextVsWinnerId` correspondiente.
+
+## Verification Plan
+
+### Automated Tests
+- Correr el comando `dart run build_runner build -d` para asegurar que las clases autogeneradas por Drift se construyen sin errores con los nuevos campos Nullable.
+
+### Manual Verification
+- Una vez implementada esta capa de lógica, se proveerá el esquema base listo para que la UI se conecte y utilice estos campos.
+- Validar que al solicitar los Versus de un grupo, las inscripciones nulas no generan errores y se mapean correctamente.

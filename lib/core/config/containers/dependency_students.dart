@@ -25,7 +25,7 @@ class InjectionStudents {
   StudentsRepositoryImpl? _repository;
 
   // Este "getter" se encarga de crear el repositorio si no existe
-  StudentsRepositoryImpl get _getRepo {
+  StudentsRepositoryImpl get studentsRepository {
     return _repository ??= StudentsRepositoryImpl(
       studentsDao: StudentsDao(AppDatabaseProvider.instance),
     );
@@ -34,18 +34,18 @@ class InjectionStudents {
   // Estos son los que usa tu Controller. 
   // Si los llamas, ellos mismos crean lo que necesitan.
   CreateStudent get createStudent => CreateStudent(
-        _getRepo,
+        studentsRepository,
         InjectionHeadquarters().headquartersRepository,
         InjectionBelts().beltsRepository,
       );
 
   UpdateStudent get updateStudent => UpdateStudent(
-        _getRepo,
+        studentsRepository,
         InjectionHeadquarters().headquartersRepository,
         InjectionBelts().beltsRepository,
       );
 
-  DeleteStudent get deleteStudent => DeleteStudent(_getRepo);
+  DeleteStudent get deleteStudent => DeleteStudent(studentsRepository);
   
-  WatchStudents get watchStudents => WatchStudents(_getRepo);
+  WatchStudents get watchStudents => WatchStudents(studentsRepository);
 }
