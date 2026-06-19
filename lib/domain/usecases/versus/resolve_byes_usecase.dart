@@ -1,9 +1,11 @@
 import '../../repositories/versus_repository.dart';
+import '../../repositories/combat_rounds_repository.dart';
 
 class ResolveByes {
   final VersusRepository repository;
+  final CombatRoundsRepository combatRoundsRepository;
 
-  ResolveByes(this.repository);
+  ResolveByes(this.repository, this.combatRoundsRepository);
 
   /// Resuelve todos los byes de la Ronda 1 de un grupo:
   /// - Identifica versus donde inscriptionBId es null (bye)
@@ -29,6 +31,18 @@ class ResolveByes {
         );
 
         await repository.update(updatedBye);
+
+        // Marcar todos los combat rounds del bye como completed
+        final rounds = await combatRoundsRepository.getByVersusId(bye.id!);
+        for (final round in rounds) {
+          await combatRoundsRepository.update(
+            round.copyWith(
+              state: 'completed',
+              winnerInscriptionId: bye.inscriptionAId,
+              endAt: DateTime.now(),
+            ),
+          );
+        }
 
         print('   ✅ Bye resuelto: Versus ${bye.id}, Ganador: ${bye.inscriptionAId}');
       }

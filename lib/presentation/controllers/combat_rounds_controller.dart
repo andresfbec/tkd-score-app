@@ -100,6 +100,9 @@ class CombatRoundsController extends ChangeNotifier {
   String get competitorAName => _competitorAName;
   String get competitorBName => _competitorBName;
 
+  /// Retorna true si este versus es un BYE (participante sin oponente).
+  bool get isByeMatch => _versus?.inscriptionBId == null;
+
   Future<void> initializeCombatRounds(int versusId) async {
     try {
       status = Status.loading;
@@ -159,6 +162,14 @@ class CombatRoundsController extends ChangeNotifier {
 
   void _updateStateAndWinner() {
     if (_versus == null || _combatSettings == null) return;
+
+    // Cortocircuito: si el versus ya tiene un ganador en BD (ej. bye resuelto),
+    // usarlo directamente sin recalcular desde los rounds.
+    if (_versus!.winnerInscriptionId != null) {
+      _matchWinnerId = _versus!.winnerInscriptionId;
+      _executableRound = null; // No hay round ejecutable si ya hay ganador
+      return;
+    }
 
     _matchWinnerId = evaluateVersusCompletionUseCase(
       settings: _combatSettings!,

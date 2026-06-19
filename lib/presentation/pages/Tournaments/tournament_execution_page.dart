@@ -112,7 +112,7 @@ class _TournamentExecutionPageState extends State<TournamentExecutionPage> {
                         itemCount: groupsCtrl.groups.length,
                         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 460, 
-                          mainAxisExtent: 220,    
+                          mainAxisExtent: 300,    
                           crossAxisSpacing: 20,   
                           mainAxisSpacing: 20,    
                         ),

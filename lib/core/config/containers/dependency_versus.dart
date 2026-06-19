@@ -68,5 +68,5 @@ class InjectionVersus {
   GetMaxBracketRound get getMaxBracketRound => GetMaxBracketRound(_getRepo);
   UpdateVersusRoundState get updateVersusRoundState => UpdateVersusRoundState(_getRepo);
   AdvanceRoundWinners get advanceRoundWinners => AdvanceRoundWinners(_getRepo);
-  ResolveByes get resolveByes => ResolveByes(_getRepo);
+  ResolveByes get resolveByes => ResolveByes(_getRepo, InjectionCombatRounds().repository);
 }

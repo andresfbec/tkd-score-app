@@ -68,6 +68,9 @@ class GroupExecutionCard extends StatelessWidget {
     final chipBg = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.05);
+    final labelColor = isDark
+        ? Colors.white.withValues(alpha: 0.40)
+        : const Color(0xFF8A8886);
 
     final bool canExecute = participants.length >= 2;
 
@@ -114,7 +117,6 @@ class GroupExecutionCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Badge de participantes + botón modal unificados
                 Tooltip(
                   message: 'Ver participantes',
                   child: Button(
@@ -123,9 +125,6 @@ class GroupExecutionCard extends StatelessWidget {
                       padding: WidgetStateProperty.all(
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       ),
-                      // border: WidgetStateProperty.all(
-                      //   BorderSide(color: borderColor, width: 0.5),
-                      // ),
                       shape: WidgetStateProperty.all(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
@@ -158,42 +157,48 @@ class GroupExecutionCard extends StatelessWidget {
             ),
           ),
 
-          // ── Cuerpo: metadata ────────────────────────────────────────
+          // ── Cuerpo: metadata con títulos ────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _MetaChip(
-                  icon: FluentIcons.people,
-                  label: group.gender ?? 'Mixto',
-                  isDark: isDark,
+                _MetaField(
+                  icon: FluentIcons.tag,
+                  label: 'Género',
+                  value: group.gender == 'mixed'
+                      ? 'Mixto'
+                      : group.gender == 'male'
+                          ? 'Masculino'
+                          : 'Femenino',
+                  labelColor: labelColor,
                   accentColor: theme.accentColor,
                   textColor: secondaryColor,
                 ),
-                const SizedBox(height: 6),
-                _MetaChip(
-                  icon: FluentIcons.date_time12,
-                  label: '${group.ageMin ?? 0} – ${group.ageMax ?? 99} años',
-                  isDark: isDark,
+                const SizedBox(height: 5),
+                _MetaField(
+                  icon: FluentIcons.date_time_mirrored,
+                  label: 'Edad',
+                  value: '${group.ageMin ?? 0} – ${group.ageMax ?? 99} años',
+                  labelColor: labelColor,
                   accentColor: theme.accentColor,
                   textColor: secondaryColor,
                 ),
-                const SizedBox(height: 6),
-                _MetaChip(
-                  icon: FluentIcons.medical,
-                  label:
-                      '${group.weightMin ?? 0} – ${group.weightMax ?? 999} kg',
-                  isDark: isDark,
+                const SizedBox(height: 5),
+                _MetaField(
+                  icon: FluentIcons.scale_volume,
+                  label: 'Peso',
+                  value: '${group.weightMin ?? 0} – ${group.weightMax ?? 999} kg',
+                  labelColor: labelColor,
                   accentColor: theme.accentColor,
                   textColor: secondaryColor,
                 ),
-                const SizedBox(height: 6),
-                _MetaChip(
-                  icon: FluentIcons.unknown,
-                  label:
-                      '${group.beltFromId ?? 0} – ${group.beltToId ?? 999}',
-                  isDark: isDark,
+                const SizedBox(height: 5),
+                _MetaField(
+                  icon: FluentIcons.ribbon,
+                  label: 'Cinturón',
+                  value: '${group.beltFromId ?? 0} – ${group.beltToId ?? 999}',
+                  labelColor: labelColor,
                   accentColor: theme.accentColor,
                   textColor: secondaryColor,
                 ),
@@ -256,20 +261,22 @@ class GroupExecutionCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Fila de metadato con ícono
+// Campo de metadato con ícono, título y valor
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _MetaChip extends StatelessWidget {
+class _MetaField extends StatelessWidget {
   final IconData icon;
   final String label;
-  final bool isDark;
+  final String value;
+  final Color labelColor;
   final Color accentColor;
   final Color textColor;
 
-  const _MetaChip({
+  const _MetaField({
     required this.icon,
     required this.label,
-    required this.isDark,
+    required this.value,
+    required this.labelColor,
     required this.accentColor,
     required this.textColor,
   });
@@ -277,15 +284,35 @@ class _MetaChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 14, color: accentColor),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
         Expanded(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12.5, color: textColor),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: labelColor,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: textColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
       ],

@@ -64,7 +64,9 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
 
         return ScaffoldPage(
           header: PageHeader(
-            title: Text('Combate #${widget.matchNumber} · $nameA vs $nameB'),
+            title: Text(roundsController.isByeMatch
+                ? 'Combate #${widget.matchNumber} · $nameA — BYE'
+                : 'Combate #${widget.matchNumber} · $nameA vs $nameB'),
             leading: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: IconButton(
@@ -117,6 +119,10 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
 
     return Consumer<CombatRoundsController>(
       builder: (context, controller, child) {
+        if (controller.isByeMatch) {
+          return _buildByeResolutionView(context, controller);
+        }
+
         final rounds = controller.rounds;
         final executable = controller.executableRound;
         final winnerId = controller.matchWinnerId;
@@ -276,6 +282,40 @@ class _CombatRoundsExecutionPageState extends State<CombatRoundsExecutionPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildByeResolutionView(
+    BuildContext context,
+    CombatRoundsController controller,
+  ) {
+    final winnerName = controller.competitorAName;
+
+    return Center(
+      child: Card(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(FluentIcons.completed, size: 48, color: Colors.green),
+            const SizedBox(height: 16),
+            Text(
+              'Combate resuelto — BYE',
+              style: FluentTheme.of(context).typography.title,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '$winnerName avanza automáticamente a la siguiente ronda.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Volver al Bracket'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
